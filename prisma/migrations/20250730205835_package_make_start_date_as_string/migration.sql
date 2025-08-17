@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Package" ALTER COLUMN "startDates" DROP NOT NULL,
+ALTER COLUMN "status" SET DEFAULT 'INACTIVE';

@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Package" ALTER COLUMN "maxCapacity" SET DATA TYPE TEXT,
+ALTER COLUMN "price" SET DATA TYPE TEXT;

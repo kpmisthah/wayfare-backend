@@ -1,0 +1,185 @@
+
+
+generator client {
+  provider = "prisma-client-js"
+  // output   = "../../node_modules/.prisma/client"
+   binaryTargets   = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_DATABASE_URL")
+}
+//enums
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+enum paymentStatus {
+  PAID
+  UNPAID
+  FAILED
+}
+
+enum AgencyStatus { 
+  ACTIVE
+  INACTIVE
+  PENDING
+}
+
+enum PackageStatus {
+  ACTIVE
+  INACTIVE
+}
+enum Role {
+  ADMIN
+  USER
+  AGENCY
+}
+//models
+
+model User {
+  id  String     @default(uuid()) @id
+  email String  @unique
+  name  String
+  password String? 
+  profileImage String?
+  bannerImage String?
+  isBlock Boolean @default(false)
+  isVerified Boolean @default(false)
+  refreshToken String? @default("null")
+  role Role @default(USER)
+  userProfile UserProfile? 
+  agencyProfile Agency?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserProfile {
+  id String @default(uuid()) @id
+  preferences preference[] @relation("UserPreferences")
+  location String?
+  phone String?
+  bookings Booking[]
+  feedbacks Feedbacks[]
+  review Review[]
+  itenararyIds String[]
+  chatIds String[]
+  user User @relation(fields: [userId],references: [id])
+  userId String @unique
+  createdAt DateTime @default(now())
+}
+model preference {
+  id String @default(uuid()) @id
+  name String
+  users UserProfile[] @relation("UserPreferences")
+}
+model UserVerification {
+  id  String     @default(uuid()) @id
+  name String?
+  email String @unique
+  // attemptCount Int @default(0)
+  otp String @unique
+  password String?
+  otp_expiry DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt 
+  phone String?
+  role Role @default(USER)
+}
+
+model Booking {
+  id  String     @default(uuid()) @id
+  packageId String
+  package Package @relation(fields: [packageId],references: [id])
+  userId String
+  user UserProfile? @relation(fields: [userId],references: [id])
+  feedbacks Feedbacks[]
+  transaction Transaction[]
+  review Review[]
+  travelDate String
+  peopleCount Int
+  connectiongroupId String
+  totalAmount Int
+  isCancellationAllowed Boolean
+  status BookingStatus
+  payment paymentStatus
+  isBooked Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Agency {
+  id  String     @default(uuid()) @id
+  description String?
+  status AgencyStatus @default(PENDING)
+  specialization String[] @default([])
+  phone String
+  package Package[]
+  transactionId String?
+  transaction Transaction? @relation(fields: [transactionId],references: [id])
+  pendingPayouts Int @default(0)
+  totalEarnings Int @default(0)
+  role Role @default(AGENCY)
+  user User @relation(fields: [userId],references: [id])
+  userId String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+}
+
+model Package {
+  id  String     @default(uuid()) @id
+  agencyId String
+  agency Agency @relation(fields: [agencyId],references: [id])
+  itineraryName String
+  description String
+  highlights String
+  picture String[]
+  duration String
+  startDates String?
+  destination String
+  status PackageStatus @default(INACTIVE)
+  maxCapacity String
+  price String
+  bookings Booking[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Transaction {
+  id  String     @default(uuid()) @id
+  agencyId Int
+  agency Agency[]
+  status paymentStatus
+  amount Int
+  initiatedBy Role @default(ADMIN)
+  relatedBookings Booking[]
+  paidAt DateTime @default(now())
+}
+
+model Feedbacks {
+  id  String     @default(uuid()) @id
+  userId String
+  user UserProfile @relation(fields: [userId],references: [id])
+  rating String
+  comment String
+  bookingId String
+  booking Booking @relation(fields: [bookingId],references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Review {
+  id  String     @default(uuid()) @id
+  userId String
+  user UserProfile @relation(fields: [userId],references: [id])
+  ratings Int
+  bookingId String
+  booking Booking @relation(fields: [bookingId],references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
