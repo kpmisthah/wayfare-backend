@@ -5,12 +5,9 @@ import {
   Post,
   Get,
   Put,
-  Patch,
-  Delete,
   Query,
   UseGuards,
   Inject,
-  Req,
 } from '@nestjs/common';
 
 import { CreateUserDto } from 'src/application/dtos/create-user.dto';
