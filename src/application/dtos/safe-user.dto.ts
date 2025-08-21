@@ -6,4 +6,5 @@ export type SafeUser = {
   email: string;
   isBlock: boolean;
   role:Role
+  isVerified:boolean
 };
