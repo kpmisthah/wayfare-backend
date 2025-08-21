@@ -11,7 +11,8 @@ export class UserMapper {
             name:userEntity.name,
             email:userEntity.email,
             isBlock:userEntity.isBlock,
-            role:userEntity.role
+            role:userEntity.role,
+            isVerified:userEntity.isVerified
         }
     }
 
