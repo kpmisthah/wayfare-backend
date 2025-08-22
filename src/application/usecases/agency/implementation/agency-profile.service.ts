@@ -26,8 +26,8 @@ export class AgencyProfilService implements IAgencyProfileService{
         @Inject('IAgencyRepository')
         private readonly agencyRepo:IAgencyRepository
     ){}
-    async updateProfile(updateAgencyProfileDto:UpdateAgencyProfileDto,agencyId):Promise<AgencyProfileDto|null>{  
-        const existingAgency = await this.agencyRepo.findById(agencyId)
+    async updateProfile(agencyId,updateAgencyProfileDto:UpdateAgencyProfileDto):Promise<AgencyProfileDto|null>{  
+        const existingAgency = await this.agencyRepo.findByUserId(agencyId)
         if(!existingAgency){
             return null
         }
@@ -50,5 +50,17 @@ export class AgencyProfilService implements IAgencyProfileService{
     async getAgencyProfile(){
         //cross check with DTO
         return await this.agencyProfileRepo.getAgencyProfile()
+    }
+
+    async findProfile(id:string){
+        let user = await this.userRepo.findById(id)
+        if(!user){
+            return null
+        }
+        let agency = await this.agencyProfileRepo.findByUserId(id)
+        if(!agency){
+            return null
+        }
+        return AgencyMapper.toAgencyProfileDto(agency,user)
     }
 }
