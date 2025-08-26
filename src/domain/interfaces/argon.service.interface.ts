@@ -1,4 +1,4 @@
 export interface IArgonService {
     hashPassword(password:string):Promise<string>
-    comparePassword(hash:string,plain:string):Promise<boolean>
+    comparePassword(plain:string,hash:string):Promise<boolean>
 }

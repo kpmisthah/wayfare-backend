@@ -7,4 +7,5 @@ export type SafeUser = {
   isBlock: boolean;
   role:Role
   isVerified:boolean
+  phone?:string
 };
