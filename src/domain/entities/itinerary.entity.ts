@@ -17,7 +17,7 @@ export class ItineraryEntity {
         if(!props.packageId){
             throw Error("No package id")
         }
-        return new ItineraryEntity('',props.day,props.activities,props.meals,props.accommodation,props.packageId)
+        return new ItineraryEntity('',props.day??'',props.activities??'',props.meals??'',props.accommodation??'',props.packageId)
     }
 
     get id():string{

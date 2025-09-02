@@ -30,26 +30,33 @@ export class UserRepository extends BaseRepository<UserEntity> implements IUserR
   // }
 
   async findAll(
-    page: number,
-    limit: number,
+    page?: number,
+    limit?: number,
     search?: string,
   ): Promise<{
     data: UserEntity[] | null;
-    page: number;
-    total: number;
-    totalPages: number;
+    page?: number;
+    total?: number;
+    totalPages?: number;
   }> {
-    const skip = (page - 1) * limit;
+    let skip:number
+    if(page && limit){
+      skip = (page - 1) * limit;
+    }else{
+      skip = 0
+      page = 0
+      limit = 0
+    }
     const data = await this._prisma.user.findMany({
-      where: {
-        role: 'USER',
-        ...(search && {
-          OR: [
-            { name: { contains: search, mode: 'insensitive' } },
-            { email: { contains: search, mode: 'insensitive' } },
-          ],
-        }),
-      },
+      // where: {
+      //   role: 'USER',
+      //   ...(search && {
+      //     OR: [
+      //       { name: { contains: search, mode: 'insensitive' } },
+      //       { email: { contains: search, mode: 'insensitive' } },
+      //     ],
+      //   }),
+      // },
       // select: {
       //   id: true,
       //   name: true,
@@ -58,14 +65,18 @@ export class UserRepository extends BaseRepository<UserEntity> implements IUserR
       //   isBlock: true,
       //   profileImage: true,
       // },
-      skip,
-      take: limit,
-      orderBy: {
-        createdAt: 'desc',
-      },
+      // skip,
+      // take: limit,
+      // orderBy: {
+      //   createdAt: 'desc',
+      // },
     });
- 
+
+    console.log(data,'data');
+    
     let allUser = UserMapper.toDomainMany(data)
+    console.log(allUser,'allUser');
+    
     const total = await this._prisma.user.count({
       where: {
         role: 'USER',

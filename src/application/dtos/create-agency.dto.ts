@@ -6,21 +6,16 @@ export class CreateAgencyDto {
   @IsString()
   @IsNotEmpty()
   description: string;
-  
-  @IsEnum(AgencyStatus)
-  status: AgencyStatus;
 
-  @IsArray()
-  specialization: string[];
-  
   @IsString()
-  @IsNotEmpty()
-  phone: string;
+  address:string
 
-  @IsEnum(Role)
-  role: Role;
+  @IsString()
+  licenseNumber?:string
 
-  @IsEmail()
-  email:string
+  @IsString()
+  ownerName?:string
 
+  @IsString()
+  websiteUrl?:string
 }

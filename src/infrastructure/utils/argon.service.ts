@@ -7,7 +7,9 @@ export class ArgonService implements IArgonService{
     async hashPassword(password: string): Promise<string> {
         return await argon2.hash(password)
     }
-    async comparePassword(hash: string, plain: string): Promise<boolean> {
+    async comparePassword(plain: string, hash: string): Promise<boolean> {
+        console.log(hash,'hashed and plain',plain);
+        
         return await argon2.verify(hash,plain)
     }
 }

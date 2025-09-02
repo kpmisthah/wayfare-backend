@@ -4,6 +4,7 @@ import { itineraryDto } from "./create-itenerary.dto"
 import { PackageStatus } from "src/domain/enums/package-status.enum"
 
 export class PackageDto {
+    id:string
     @IsString()
     title:string
     @IsString()
@@ -16,9 +17,17 @@ export class PackageDto {
     duration:string
     picture:string[]
     price:string
-    day:string
-    activities:string
-    meals:string
-    accommodation:string
+    // day:string
+    // activities:string
+    // meals:string
+    // accommodation:string
+    // @IsArray()
+    // @ValidateNested({each:true})
+    // @Type(()=>itineraryDto)
+    itinerary:itineraryDto[]
     status:PackageStatus
+    vehicle:string
+    pickup_point:string
+    drop_point:string
+    details:string
 }

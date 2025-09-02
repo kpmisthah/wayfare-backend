@@ -14,7 +14,8 @@ export class PackageMapper {
             pkg.duration??"",
             pkg.destination??"",
             pkg.status as PackageStatus,
-            pkg.price
+            pkg.price,
+            pkg.transportationId ?? ''
         )
     }
 
@@ -28,7 +29,8 @@ export class PackageMapper {
             duration:packageEntity.duration,
             destination:packageEntity.destination,
             status:packageEntity.status,
-            price:packageEntity.price
+            price:packageEntity.price,
+            transportation:{connect:{id:packageEntity.transportationId}}
         }
     }
     static toDomains(pkg:Package[]):PackageEntity[]{
