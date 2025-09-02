@@ -3,6 +3,7 @@ import { UpdateAgencyProfileDto } from "src/application/dtos/update-agency-profi
 import { AgencyProfile } from "src/domain/interfaces/agency-profile.interface";
 
 export interface IAgencyProfileService {
-    updateProfile(updateAgencyProfileDto:UpdateAgencyProfileDto,agencyId):Promise<AgencyProfileDto|null>
-    getAgencyProfile()   
+    updateProfile(agencyId,updateAgencyProfileDto:UpdateAgencyProfileDto):Promise<AgencyProfileDto|null>
+    getAgencyProfile()
+    findProfile(id:string)   
 }

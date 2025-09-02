@@ -1,8 +1,8 @@
-import { Package } from "@prisma/client";
-import { AddPackageDto } from "src/application/dtos/add-package.dto";
-import { RequestWithUser } from "../../auth/interfaces/request-with-user";
+
+import { PackageDto } from "src/application/dtos/add-package.dto";
 
 export interface IAgencyPackageService{
-    addPackages(addPackageDto:AddPackageDto,agencyId:string,files:Express.Multer.File[]):Promise<Package>
-    getPackages():Promise<Pick<Package,'itineraryName'|'destination'|'duration'|'status'|'createdAt'>[]>
+    addPackages(addPackageDto:PackageDto,userId:string,files:Express.Multer.File[]):Promise<PackageDto|null>
+    getPackages():Promise<PackageDto[]|null>
+    getAgencyPackages(userId:string):Promise<PackageDto[]|null>
 }
