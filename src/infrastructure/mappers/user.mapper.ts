@@ -7,10 +7,11 @@ export class UserMapper {
             user.id,
             user.name,
             user.email,
-            user.password,            
+            user.password ?? '',            
             user.role as Role,
             user.isBlock,
             user.isVerified,
+            user.phone,
             user.profileImage ?? '',
             user.bannerImage ?? '',
             user.refreshToken ?? ''
@@ -20,16 +21,22 @@ export class UserMapper {
     }
 
     static toPrisma(user:UserEntity):Omit<User,'id'|'createdAt'|'updatedAt'>{
-        return {
+        console.log(user,'toPrisma saving');
+        
+        let saveTodb = {
             email:user.email,
-            password:user.password,            name:user.name,
+            password:user.password,
+            name:user.name,
             role:user.role as $Enums.Role,
             isBlock:user.isBlock,
             profileImage:user.profileImage,
             bannerImage:user.bannerImage,
             refreshToken:user.refreshToken,
-            isVerified:user.isVerified
+            isVerified:user.isVerified,
+            phone:user.phone
         }
+        console.log(saveTodb,'in prisma saveToDb');
+        return saveTodb
     }
 
     static toDomainMany(users:User[]):UserEntity[]{

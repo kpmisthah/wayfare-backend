@@ -12,7 +12,7 @@ import {
 
 import { CreateUserDto } from 'src/application/dtos/create-user.dto';
 import { UpdateUserDto } from 'src/application/dtos/update-user.dto';
-import { IUserService } from 'src/application/usecases/users/interfaces/user.service.interface';
+import { IUserService } from 'src/application/usecases/users/interfaces/user.usecase.interface';
 import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
 
 @Controller('users')

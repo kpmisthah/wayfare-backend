@@ -22,8 +22,8 @@ import { ResetPasswordDto } from 'src/application/dtos/resetPassword.dto';
 import { GoogleOAuthGuard } from 'src/infrastructure/common/guard/google-oauth.guard';
 import { Request, Response } from 'express';
 import { GoogleLoginDto } from 'src/application/dtos/googleLogin.dto';
-import { IAuthService } from 'src/application/usecases/auth/interfaces/auth.service.interface';
-import { IUserService } from 'src/application/usecases/users/interfaces/user.service.interface';
+import { IAuthService } from 'src/application/usecases/auth/interfaces/auth.usecase.interface';
+import { IUserService } from 'src/application/usecases/users/interfaces/user.usecase.interface';
 import { Role as userRole} from 'src/domain/enums/role.enum';
 import { Roles} from '../roles/roles.decorator';
 import { RolesGuard } from '../roles/auth.guard';
@@ -166,10 +166,13 @@ export class AuthController {
 
   @UseGuards(AccessTokenGuard)
   @Get('me')
-  getMe(@Req() req: RequestWithUser) {
+  async getMe(@Req() req: RequestWithUser) {
     console.log("Ivide verundoo /meeee in backend porifiel");
     
-    return this.userService.findById(req.user.userId);
+    let user = await this.userService.findById(req.user.userId);
+    console.log(user,'user in /me');
+    return user
+    
   }
 
   @UseGuards(RefreshTokenGuard)

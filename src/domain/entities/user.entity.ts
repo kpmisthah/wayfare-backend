@@ -5,10 +5,11 @@ export class UserEntity {
     private readonly _id:string,
     private readonly _name: string,    
     private readonly _email: string,
-    private readonly _password: string | null|undefined,
+    private readonly _password: string,
     private readonly _role: Role,
     private readonly _isBlock:boolean,
-    private readonly _isVerified:boolean,    
+    private readonly _isVerified:boolean,
+    private readonly _phone?:string|null,    
     private readonly _profileImage?:string,
     private readonly _bannerImage?:string,
     private readonly _refreshToken?:string,
@@ -20,7 +21,8 @@ export class UserEntity {
   static create(props:{
     name:string,
     email:string,
-    password:string|null|undefined,
+    password:string
+    phone:string,
     refreshToken?:string|undefined,
     isBlock?:boolean,
     role:Role,
@@ -33,13 +35,14 @@ export class UserEntity {
       if(!props.name || props.name.trim() == ''){
         throw new Error('Invalid name')
       }
-      return new UserEntity('',props.name,props.email,props.password,props.role,props.isBlock ?? false,props.isVerified ?? false,props.refreshToken)
+      return new UserEntity('',props.name,props.email,props.password,props.role,props.isBlock ?? false,props.isVerified ?? false,props.phone??"",props.refreshToken,'','')
   }
   
   public update(props:{
     name?:string,
     email?:string,
-    password?:string
+    password?:string,
+    isVerified?:boolean
   }
   ):UserEntity {
     
@@ -57,7 +60,8 @@ export class UserEntity {
       props.password ?? this._password,
       this._role,
       this._isBlock,
-      this._isVerified,
+      props.isVerified ?? this._isVerified,
+      this._phone,
       this._profileImage,
       this._bannerImage,
       this._refreshToken
@@ -72,6 +76,7 @@ export class UserEntity {
       this._role,
       props.isBlock,
       this._isVerified,
+      this._phone,
       this._profileImage,
       this._bannerImage,
       this._refreshToken
@@ -117,6 +122,9 @@ export class UserEntity {
   }
   get isVerified():boolean{
     return this._isVerified
+  }
+  get phone():string{
+    return this._phone ?? ''
   }
 
 

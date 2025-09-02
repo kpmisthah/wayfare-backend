@@ -1,32 +1,41 @@
 import { $Enums, Agency, Package, Prisma } from "@prisma/client";
-import { AgencyProfileDto } from "src/application/dtos/agency-profile.dto";
 import { AgencyEntity } from "src/domain/entities/agency.entity";
 import { AgencyStatus } from "src/domain/enums/agency-status.enum";
-import { Role } from "src/domain/enums/role.enum";
 
-type Profile = {
-    id:string,
-    description:string|null,
-    phone:string,
-    status:$Enums.AgencyStatus
-    user:{
-        name:string,
-        email:string
-    }
-}
+
+// type Profile = {
+//     id:string,
+//     description:string|null,
+//     // phone:string,
+//     status:$Enums.AgencyStatus
+//     address:string|null
+//     licenseNumber:string|null
+//     ownerName:string|null
+//     websiteUrl:string|null
+//     user:{
+//         name:string,
+//         email:string,
+//         isVerified:boolean
+//     }
+// }
 export class AgencyMapper {
     static toDomain(agency:Agency):AgencyEntity{
         return new AgencyEntity(
             agency.id,
             agency.description,
             agency.status as AgencyStatus,
-            agency.specialization,
-            agency.phone,
-            agency.role as Role,
+            // agency.specialization,
+            // agency.phone,
+            // agency.role as Role,
             agency.userId,
             agency.pendingPayouts,
-            agency.totalEarnings,         
-            agency.transactionId,
+            agency.totalEarnings, 
+            agency.address,
+            agency.licenseNumber ?? '',
+            agency.ownerName ?? '',
+            agency.websiteUrl ?? '',        
+            agency.transactionId ?? '',
+            
         )
     }
 
@@ -39,26 +48,23 @@ export class AgencyMapper {
         return{
             description:agency.description,
             status:agency.status,
-            specialization:agency.specialization,
-            phone:agency.phone,
-            role:agency.role,            
+            // specialization:agency.specialization,
+            // phone:agency.phone,
+            // role:agency.role,            
             pendingPayouts:agency.pendingPayouts,
             totalEarnings:agency.totalEarnings,
+            address:agency.address,
+            licenseNumber:agency.licenseNumber,
+            ownerName:agency.ownerName,
+            websiteUrl:agency.websiteUrl,
             user:{
              connect:{id:agency.userId}
             }
         }
     }
-  static toProfile(agencies: Profile[]): AgencyProfileDto[] {
-    return agencies.map((agency) => ({
-      id: agency.id,
-      description:agency.description,
-      status: agency.status as AgencyStatus,
-      phone:agency.phone,
-      user: {
-        name: agency.user.name,
-        email: agency.user.email,
-      },
-    }));
+  static toProfile(agencies: Agency[]): AgencyEntity[] {
+    return agencies.map((agency) => {
+      return AgencyMapper.toDomain(agency)
+    })
   }
 }

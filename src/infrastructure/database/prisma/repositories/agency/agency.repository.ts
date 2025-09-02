@@ -36,24 +36,12 @@ export class AgencyRepository extends BaseRepository<AgencyEntity> implements IA
   //   return AgencyMapper.toDomain(createAgency)
   // }
 
-  async findAll(): Promise<AgencyProfileDto[] | null>
+  async findAll(): Promise<AgencyEntity[] | null>
   {
     let agency = await this.prisma.agency.findMany({
       where: {
         role: 'AGENCY',
-      },
-      select: {
-        id: true,
-        description:true,
-        status: true,        
-        phone:true,
-        user:{
-          select:{
-            name:true,
-            email:true
-          }
-        }
-      },
+      }
     });
     if(!agency){
       return null
@@ -63,11 +51,11 @@ export class AgencyRepository extends BaseRepository<AgencyEntity> implements IA
 
   async updateStatus(
     id: string,
-    updateAgencyStatus,
+    isVerified
   ): Promise<AgencyEntity | null> {
     const updatedData = await this.prisma.agency.update({
-      where: { id }, 
-      data:AgencyMapper.toPrisma(updateAgencyStatus) 
+      where: { userId:id }, 
+      data:AgencyMapper.toPrisma(isVerified) 
     });
     if(!updatedData) return null
     return AgencyMapper.toDomain(updatedData);
@@ -78,4 +66,17 @@ export class AgencyRepository extends BaseRepository<AgencyEntity> implements IA
   //   if(!agency) return null
   //   return AgencyMapper.toDomain(agency);
   // }
+  async findByUserId(id:string):Promise<AgencyEntity|null>{
+    console.log(id,'from agency repo findByUserId');
+    
+    const agency = await this.prisma.agency.findFirst({
+      where:{userId:id}
+    })
+    console.log(agency,'agency repo findBYUserID');
+    
+    if(!agency){
+      return null
+    }
+    return AgencyMapper.toDomain(agency)
+  }
 }

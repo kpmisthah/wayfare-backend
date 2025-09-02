@@ -2,10 +2,10 @@ import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { UserService } from 'src/application/usecases/users/implementation/users.service';
+import { UserService } from 'src/application/usecases/users/implementation/users.usecase';
 import { Request } from 'express';
-import { IUserService } from 'src/application/usecases/users/interfaces/user.service.interface';
-import { IAgencyService } from 'src/application/usecases/agency/interfaces/agency.service.interface';
+import { IUserService } from 'src/application/usecases/users/interfaces/user.usecase.interface';
+import { IAgencyService } from 'src/application/usecases/agency/interfaces/agency.usecase.interface';
 import { AgencyStatus } from 'src/domain/enums/agency-status.enum';
 import { Agency } from '@prisma/client';
 
