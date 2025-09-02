@@ -20,12 +20,12 @@ import { UserEntity } from 'src/domain/entities/user.entity';
 import { RefreshToken } from 'src/domain/entities/refreshToken.entity';
 import { Otp } from 'src/domain/entities/otp.entity';
 import { JwtTokenFactory } from './jwt-token.factory';
-import { IUserService } from 'src/application/usecases/users/interfaces/user.service.interface';
-import { IOtpService } from 'src/application/usecases/otp/interfaces/otp.service.interface';
+import { IUserService } from 'src/application/usecases/users/interfaces/user.usecase.interface';
+import { IOtpService } from 'src/application/usecases/otp/interfaces/otp.usecase.interface';
 import { IAuthRepository } from 'src/domain/repositories/auth/auth.repository.interface';
 import { IUserVerification } from 'src/domain/repositories/user/user-verification.repository.interface';
-import { IAuthService } from 'src/application/usecases/auth/interfaces/auth.service.interface';
-import { IAgencyService } from 'src/application/usecases/agency/interfaces/agency.service.interface';
+import { IAuthService } from 'src/application/usecases/auth/interfaces/auth.usecase.interface';
+import { IAgencyService } from 'src/application/usecases/agency/interfaces/agency.usecase.interface';
 import { Role } from 'src/domain/enums/role.enum';
 import { IArgonService } from 'src/domain/interfaces/argon.service.interface';
 @Injectable()
@@ -88,7 +88,8 @@ export class AuthService implements IAuthService {
     console.log(verifyOtpDto,'otp from front end');
     
     const record = await this.authRepo.findByOtp(verifyOtpDto.otp);
-
+    console.log(record,'record in verifyOtp');
+    
     if (!record || record?.otp != verifyOtpDto.otp) {
       throw new BadRequestException('Invalid Otp');
     }
@@ -99,7 +100,14 @@ export class AuthService implements IAuthService {
       throw new BadRequestException('Otp expired or invalid');
     // if (record.role == 'USER' || record.role == 'ADMIN') {
     // let userEntity = UserEntity.create(record)
-    let user = await this.userService.create(record);
+    let createUser = {
+      name:record.name,
+      email:record.email,
+      password:record.password,
+      role:record.role,
+      phone:record.phone
+    }
+    let user = await this.userService.create(createUser);
     console.log(user,'user in verify otp');
     
       if (!user) {
@@ -246,7 +254,8 @@ export class AuthService implements IAuthService {
 
   async signIn(loginDto: LoginDto) {
     try {
-      let userEntity = await this.userService.findByEmail(loginDto.email);
+      console.log(loginDto);
+    let userEntity = await this.userService.findByEmail(loginDto.email);
     console.log(userEntity,'userEntity');
     console.log("typeof",typeof userEntity?.role);
     
@@ -259,6 +268,8 @@ export class AuthService implements IAuthService {
       }
       // const userEntity = new UserEntity(user.email, user.password, user.name);
       
+      console.log("password is: ",userEntity.password)
+
       const isMatch = await this.argonService.comparePassword(loginDto.password,userEntity.password)
       console.log(isMatch,'matching password');
       

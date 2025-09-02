@@ -3,9 +3,9 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserService } from 'src/application/usecases/users/implementation/users.service';
+import { UserService } from 'src/application/usecases/users/implementation/users.usecase';
 import * as argon2 from 'argon2';
-import { IUserService } from 'src/application/usecases/users/interfaces/user.service.interface';
+import { IUserService } from 'src/application/usecases/users/interfaces/user.usecase.interface';
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(
   Strategy,

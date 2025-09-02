@@ -12,7 +12,7 @@ export class CreateUserDto {
   email: string;
 
   @MinLength(6)
-  password: string | null;
+  password: string
 
   @IsString()
   refreshToken?: string 
@@ -20,4 +20,6 @@ export class CreateUserDto {
   role:Role
 
   isBlock?:boolean
+
+  phone?:string
 }

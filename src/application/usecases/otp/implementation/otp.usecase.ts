@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
 import { randomInt } from 'crypto';
-import { IOtpService } from 'src/application/usecases/otp/interfaces/otp.service.interface';
+import { IOtpService } from 'src/application/usecases/otp/interfaces/otp.usecase.interface';
 import { IUserVerification } from 'src/domain/repositories/user/user-verification.repository.interface';
 import { UserVerificationEntity } from 'src/domain/entities/user-verification';
 import { Role } from 'src/domain/enums/role.enum';

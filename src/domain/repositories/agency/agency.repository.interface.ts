@@ -10,6 +10,7 @@ export interface IAgencyRepository {
   ): Promise<AgencyEntity | null> 
   findByEmail(email: string): Promise<AgencyEntity | null>; 
   create(agency:AgencyEntity): Promise<AgencyEntity | null>
-  findAll(): Promise<AgencyProfileDto[] | null>
+  findAll(): Promise<AgencyEntity[] | null>
   findById(id: string): Promise<AgencyEntity | null>;
+  findByUserId(id:string):Promise<AgencyEntity|null>
 }

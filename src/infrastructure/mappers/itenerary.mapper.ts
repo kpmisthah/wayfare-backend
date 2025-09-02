@@ -5,20 +5,20 @@ export class IteneraryMapper {
     static toDomain(itn:Itenerary):ItineraryEntity{
         return new ItineraryEntity(
             itn.id,
-            itn.day,
-            itn.activities,
-            itn.meals,
-            itn.accommodation,
+            itn.day ?? '',
+            itn.activities?? '',
+            itn.meals ?? '',
+            itn.accommodation?? '',
             itn.packageId
         )
     }
 
     static toPrisma(itineraryEntity:ItineraryEntity):Prisma.IteneraryCreateInput {
         return {
-            day:itineraryEntity.day,
-            activities:itineraryEntity.activities,
-            meals:itineraryEntity.meals,
-            accommodation:itineraryEntity.accommodation,
+            day:String(itineraryEntity.day)?? '',
+            activities:itineraryEntity.activities??"",
+            meals:itineraryEntity.meals??"",
+            accommodation:itineraryEntity.accommodation??"",
             package:{connect:{id:itineraryEntity.packageId}}
         }
     }

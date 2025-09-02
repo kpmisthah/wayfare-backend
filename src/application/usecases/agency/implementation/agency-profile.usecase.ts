@@ -2,12 +2,12 @@ import { Inject, Injectable } from "@nestjs/common";
 import { Agency } from "@prisma/client";
 import { UpdateAgencyProfileDto } from "src/application/dtos/update-agency-profile.dto";
 import { IAgencyProfileRepository } from "src/domain/repositories/agency/agency-profile.repository.interface";
-import { IAgencyProfileService } from "src/application/usecases/agency/interfaces/agency-profile.service.interface";
+import { IAgencyProfileService } from "src/application/usecases/agency/interfaces/agency-profile.service.usecase";
 import { AGENCY_PROFILE_TYPE } from "src/domain/types";
 import { AgencyProfile } from "src/domain/interfaces/agency-profile.interface";
-import { IAgencyService } from "../interfaces/agency.service.interface";
+import { IAgencyService } from "../interfaces/agency.usecase.interface";
 import { AgencyEntity } from "src/domain/entities/agency.entity";
-import { IUserService } from "../../users/interfaces/user.service.interface";
+import { IUserService } from "../../users/interfaces/user.usecase.interface";
 import { IAgencyRepository } from "src/domain/repositories/agency/agency.repository.interface";
 import { IUserRepository } from "src/domain/repositories/user/user.repository.interface";
 import { AgencyProfileDto } from "src/application/dtos/agency-profile.dto";
@@ -40,6 +40,8 @@ export class AgencyProfilService implements IAgencyProfileService{
         if(!agencyProfileEntity){
             return null
         }
+        console.log(agencyId,'agencyId');
+        
         let agency = await this.agencyProfileRepo.updateProfile(agencyProfileEntity,agencyId)
         if(!agency){
             return null
@@ -54,6 +56,7 @@ export class AgencyProfilService implements IAgencyProfileService{
 
     async findProfile(id:string){
         let user = await this.userRepo.findById(id)
+        // if(!user?.isVerified) return null
         if(!user){
             return null
         }
@@ -61,6 +64,7 @@ export class AgencyProfilService implements IAgencyProfileService{
         if(!agency){
             return null
         }
+        
         return AgencyMapper.toAgencyProfileDto(agency,user)
     }
 }

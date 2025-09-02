@@ -12,9 +12,11 @@ export class AgencyProfileRepository implements IAgencyProfileRepository{
     async updateProfile(updateAgencyProfile:AgencyEntity,agencyId):Promise<AgencyEntity|null>{
         
         let agencyProfileUpdate =  await this.prisma.agency.update({
-            where:{id:agencyId},
+            where:{userId:agencyId},
             data:AgencyMapper.toPrisma(updateAgencyProfile),
         })
+        console.log(agencyProfileUpdate,'in agency-profile-repo');
+        
         if(!agencyProfileUpdate){
             return null
         }
@@ -40,5 +42,14 @@ export class AgencyProfileRepository implements IAgencyProfileRepository{
             return null
         }
         return AgencyMapper.toDomainMany(getAgencies)
+    }
+    async findByUserId(id:string):Promise<AgencyEntity|null>{
+        let agencyProfile = await this.prisma.agency.findFirst({
+            where:{userId:id}
+        })
+        if(!agencyProfile){
+            return null
+        }
+        return AgencyMapper.toDomain(agencyProfile)
     }
 }
