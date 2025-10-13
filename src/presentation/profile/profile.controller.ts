@@ -14,10 +14,10 @@ import {
 import { RequestWithUser } from 'src/application/usecases/auth/interfaces/request-with-user';
 import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
 import { CreateProfileDto } from 'src/application/dtos/create-profile.dto';
-import { IProfileService } from 'src/application/usecases/profile/interfaces/profile.service.interface';
+import { IProfileService } from 'src/application/usecases/profile/interfaces/profile.usecase.interface';
 import { PROFILE_TYPE } from 'src/domain/types';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UploadProfileUseCase } from 'src/application/usecases/profile/implementation/upload-profile.service';
+import { UploadProfileUseCase } from 'src/application/usecases/profile/implementation/upload-profile.usecase';
 @Controller('user')
 export class ProfileController {
   constructor(
