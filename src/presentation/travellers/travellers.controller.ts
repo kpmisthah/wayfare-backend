@@ -1,0 +1,30 @@
+import { Controller, Get, Inject, Query, Req, UseGuards } from "@nestjs/common";
+import { RequestWithUser } from "src/application/usecases/auth/interfaces/request-with-user";
+import { ITravellersUsecase } from "src/application/usecases/travellers/interfaces/travellers.usecase.interface";
+import { AccessTokenGuard } from "src/infrastructure/common/guard/accessToken.guard";
+
+@Controller('travellers')
+@UseGuards(AccessTokenGuard)
+export class TravellersController {
+    constructor(
+        @Inject('ITravellersUsecase')
+        private readonly _travellersUsecase:ITravellersUsecase
+    ){}
+
+    @Get('same-destination')
+    async fetchTravellers(@Req() req:RequestWithUser, @Query('destination') destination:string){
+        console.log("Insidee fetchTravelllersss");
+        let userId = req.user['userId']
+        let t = await this._travellersUsecase.fetchTravellers(destination,userId)
+        console.log(t,'from ttt');
+        return t
+    }
+
+    @Get()
+    async fetchTravellersByUserDestinations(@Req() req:RequestWithUser){
+        let userId = req.user['userId']
+        // let userId = '1c025e7d-0826-4d2c-aece-2449bd69b9d7'
+        return await this._travellersUsecase.fetchTravellersByUserDestinations(userId)
+
+    }
+}

@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Itenerary" ALTER COLUMN "day" DROP NOT NULL,
+ALTER COLUMN "activities" DROP NOT NULL,
+ALTER COLUMN "meals" DROP NOT NULL,
+ALTER COLUMN "accommodation" DROP NOT NULL;

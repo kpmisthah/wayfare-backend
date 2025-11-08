@@ -12,11 +12,14 @@ import { OtpModule } from '../otp/otp.module';
 import { UserService } from 'src/application/usecases/users/implementation/users.usecase';
 import { JwtTokenFactory } from 'src/application/usecases/auth/implementation/jwt-token.factory';
 import { AgencyService } from 'src/application/usecases/agency/implementation/agency.usecase';
+import { GoogleLoginUseCase } from 'src/application/usecases/auth/implementation/google-login.usecase';
+import { AgencyModule } from '../agency/agency.module';
 
 @Module({
-  imports: [JwtModule.register({ global: true }), UsersModule, OtpModule],
+  imports: [JwtModule.register({ global: true }), UsersModule, OtpModule,AgencyModule],
   controllers: [AuthController],
   providers: [
+    GoogleLoginUseCase,
     {
       provide: 'IAuthService',
       useClass: AuthService,
@@ -25,10 +28,10 @@ import { AgencyService } from 'src/application/usecases/agency/implementation/ag
       provide: 'IUserService',
       useClass: UserService,
     },
-    {
-      provide: 'IAgencyService',
-      useClass: AgencyService,
-    },
+    // {
+    //   provide: 'IAgencyService',
+    //   useClass: AgencyService,
+    // },
     AccessTokenStrategy,
     RefreshTokenStrategy,
     AccessTokenGuard,

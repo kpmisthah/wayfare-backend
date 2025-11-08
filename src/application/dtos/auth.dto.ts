@@ -31,5 +31,5 @@ export class LoginDto {
 
   refreshToken: string | null;
 
-  role: Role
+  role: Role;
 }

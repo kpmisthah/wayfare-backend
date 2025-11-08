@@ -4,7 +4,7 @@ import { randomInt } from 'crypto';
 import * as nodemailer from 'nodemailer';
 import { INodeMailerService } from 'src/domain/interfaces/nodemailer.interface';
 @Injectable()
-export class NodemailerService implements INodeMailerService{
+export class NodemailerService implements INodeMailerService {
   private readonly emailTransporter;
   constructor(private readonly configService: ConfigService) {
     this.emailTransporter = nodemailer.createTransport({
@@ -16,7 +16,7 @@ export class NodemailerService implements INodeMailerService{
       },
     });
   }
-    private generateOtp(): string {
+  private generateOtp(): string {
     return randomInt(100000, 999999).toString();
   }
 

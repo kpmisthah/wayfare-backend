@@ -3,7 +3,6 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserService } from 'src/application/usecases/users/implementation/users.usecase';
 import * as argon2 from 'argon2';
 import { IUserService } from 'src/application/usecases/users/interfaces/user.usecase.interface';
 @Injectable()
@@ -16,6 +15,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
     @Inject('IUserService')
     private readonly userService: IUserService,
   ) {
+    console.log('refreshToken');
     const refreshSecret = configService.get<string>('JWT_REFRESH_SECRET');
     if (!refreshSecret) {
       throw new Error('JWT_REFRESH_SECRET is not defined');
@@ -30,20 +30,23 @@ export class RefreshTokenStrategy extends PassportStrategy(
   }
 
   async validate(req: Request, payload: any) {
+    console.log(payload, 'paypatti');
+
     const refreshToken = req?.cookies?.refreshToken;
-    console.log(refreshToken,'refreshToken');
-    
+    console.log(refreshToken, 'refreshToken');
+
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token missing');
     }
     const user = await this.userService.findById(payload.sub);
-    console.log(user,'User frk');
+
+    console.log(user, 'User frk access');
     if (!user || user.isBlock) {
       throw new UnauthorizedException('Invalid refresh token or user blocked');
     }
 
     const isRefreshTokenValid = await argon2.verify(
-      user.refreshToken || '',
+      user.refreshToken,
       refreshToken,
     );
     console.log(isRefreshTokenValid, 'REfresh token validation');
@@ -51,6 +54,10 @@ export class RefreshTokenStrategy extends PassportStrategy(
     if (!isRefreshTokenValid) {
       throw new UnauthorizedException('Invalid refresh token');
     }
-    return { ...payload, refreshToken };
+    return {
+      userId: user.id,
+      role: user.role,
+      refreshToken,
+    };
   }
 }
