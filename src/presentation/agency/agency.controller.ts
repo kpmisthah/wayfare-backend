@@ -1,11 +1,13 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Get,
   Inject,
   Param,
   Patch,
   Post,
+  Put,
   Query,
   Req,
   Res,
@@ -16,29 +18,33 @@ import {
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { PackageDto } from 'src/application/dtos/add-package.dto';
 import { UpdateAgencyProfileDto } from 'src/application/dtos/update-agency-profile.dto';
-import { UpdateAgencyStatusDto } from 'src/application/dtos/update-agency.dto';
 import { IAgencyPackageService } from 'src/application/usecases/agency/interfaces/agency-package.interface';
 import { IAgencyProfileService } from 'src/application/usecases/agency/interfaces/agency-profile.service.usecase';
 import { IAgencyService } from 'src/application/usecases/agency/interfaces/agency.usecase.interface';
 import { RequestWithUser } from 'src/application/usecases/auth/interfaces/request-with-user';
-import { ADMIN_TYPE, AGENCY_PACKAGE_TYPE, AGENCY_PROFILE_TYPE } from 'src/domain/types';
+import {
+  ADMIN_TYPE,
+  AGENCY_PACKAGE_TYPE,
+  AGENCY_PROFILE_TYPE,
+} from 'src/domain/types';
 import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
 import { Response } from 'express';
 import { CreateAgencyDto } from 'src/application/dtos/create-agency.dto';
-import { IUserService } from 'src/application/usecases/users/interfaces/user.usecase.interface';
 import { IAdminService } from 'src/application/usecases/admin/interfaces/admin.usecase.interface';
-import { AgencyProfileDto } from 'src/application/dtos/agency-profile.dto';
+import { FilterPackageDto } from 'src/application/dtos/filter-package.dto';
+import { UpdatePackageDto } from 'src/application/dtos/update-package.dto';
+
 @Controller('agency')
 export class AgencyController {
   constructor(
     @Inject('IAgencyService')
-    private readonly agencyService: IAgencyService,
+    private readonly _agencyUsecase: IAgencyService,
     @Inject(AGENCY_PACKAGE_TYPE.IAgencyPackageService)
-    private readonly agencyPackageService: IAgencyPackageService,
+    private readonly _agencyPackageUsecase: IAgencyPackageService,
     @Inject(AGENCY_PROFILE_TYPE.IAgencyProfileService)
-    private readonly agencyProfileService: IAgencyProfileService,
+    private readonly _agencyProfileUsecase: IAgencyProfileService,
     @Inject(ADMIN_TYPE.IAdminService)
-    private readonly adminService:IAdminService
+    private readonly _adminUsecase: IAdminService,
   ) {}
 
   // @Post('/signin')
@@ -61,9 +67,9 @@ export class AgencyController {
     @Req() req: RequestWithUser,
   ) {
     console.log('ee router l thanne aano avruune');
-    let agencyId = req.user['userId'];
+    const agencyId = req.user['userId'];
     console.log(createAgencyDto, 'update agency profile dto');
-    return await this.agencyService.createAgency(createAgencyDto, agencyId);
+    return await this._agencyUsecase.createAgency(createAgencyDto, agencyId);
   }
 
   //update agencyProfiles
@@ -73,8 +79,8 @@ export class AgencyController {
     @Body() updateAgencyProfileDto: UpdateAgencyProfileDto,
     @Req() req: RequestWithUser,
   ) {
-    let agencyId = req.user['userId'];
-    return await this.agencyProfileService.updateProfile(
+    const agencyId = req.user['userId'];
+    return await this._agencyProfileUsecase.updateProfile(
       agencyId,
       updateAgencyProfileDto,
     );
@@ -82,7 +88,7 @@ export class AgencyController {
 
   @Get('/agency-profile')
   async getAgencyProfile() {
-    return await this.agencyProfileService.getAgencyProfile();
+    return await this._agencyProfileUsecase.getAgencyProfile();
   }
 
   @UseGuards(AccessTokenGuard)
@@ -94,59 +100,114 @@ export class AgencyController {
     @Req() req: RequestWithUser,
     @Res({ passthrough: true }) res: Response,
   ) {
-    let userId = req.user['userId'];
+    const userId = req.user['userId'];
 
-      const parsedBody: PackageDto = {
-    ...addPackageDto,
-    itinerary: JSON.parse(addPackageDto.itinerary as unknown as string),
-  };
-    return await this.agencyPackageService.addPackages(
+    const parsedBody: PackageDto = {
+      ...addPackageDto,
+      itinerary: JSON.parse(addPackageDto.itinerary as unknown as string),
+    };
+    return await this._agencyPackageUsecase.addPackages(
       parsedBody,
       userId,
       files,
     );
   }
-  @Get('packages')
-  async getPackages() {
-    return await this.agencyPackageService.getPackages();
-  }
-  
   @UseGuards(AccessTokenGuard)
-  @Get('/agencyPackages')
-  async getPackage(@Req() req:RequestWithUser){
-    let userId = req.user['userId']
-    return await this.agencyPackageService.getAgencyPackages(userId)
-  }
-  @Patch('/profile/:id')
-  updateProfile(
-    @Param('id') id: string,
-    @Body() updateData: UpdateAgencyStatusDto,
-  ) {
-    return this.agencyService.updateProfile(id, updateData);
+  @Get('packages')
+  async getPackages(@Req() req: RequestWithUser,@Query('page') page:string='1',@Query('limit') limit:string='5') {
+    const userId = req.user['userId'];
+    return await this._agencyPackageUsecase.getPackages(userId,+page,+limit);
   }
 
-    @UseGuards(AccessTokenGuard)
-    @Patch() // :id/approval
-    async agencyApproval(
-      @Body() agencyDto:AgencyProfileDto
-    ) {
-      // let id = req.user['userId']
-      return await this.agencyService.agencyApproval(agencyDto);
-    }
+  @UseGuards(AccessTokenGuard)
+  @Get('/agencyPackages')
+  async getPackage(@Req() req: RequestWithUser) {
+    const userId = req.user['userId'];
+    return await this._agencyPackageUsecase.getAgencyPackages(userId);
+  }
+  @Patch('/profile/:id')
+  updateProfile(@Param('id') id: string) {
+    console.log(id, 'from agency');
+
+    return this._agencyUsecase.updateStatus(id);
+  }
+
 
   @Get('/agencies')
   async findAll(
-    @Query('page') page:string = '1',
-    @Query('limit') limit:string = "10",
-    @Query('search') search:string
-  ){
-    return this.adminService.getAllAgencies()
+    @Query('page', new DefaultValuePipe(1)) page: string,
+    @Query('limit', new DefaultValuePipe(10)) limit: string,
+    @Query('search') search: string,
+  ) {
+    return this._adminUsecase.getAllAgencies();
+  }
+    @Get('/filter/packages')
+  async filterPackages(@Query() filterPackageDto:FilterPackageDto){
+    console.log("hello");
+    
+    return this._agencyPackageUsecase.filterPackages(filterPackageDto)
+  }
+  @Put('/package/:id')
+  async updatePackage(@Param('id') id:string,@Body() updatePackageDto:UpdatePackageDto){
+    console.log(id,'id in packageid')
+    return await this._agencyPackageUsecase.updatePackage(id,updatePackageDto)
+  }
+  @Get('/:agencyId/packages')
+  async getAgencyPackages(
+    @Param('agencyId') agencyId:string ,
+    @Query('page') page?:string,
+    @Query('limit') limit?:string
+  ) {
+    console.log("Hellooooooo agecnyId")
+    const pageNumber = page? Number(page):1
+    console.log(pageNumber,'pageNumber');
+    
+    const limitNumber = limit? Number(limit):1
+    console.log(limitNumber,'limitNumber');
+    
+    let data = await this._agencyPackageUsecase.getPackagesByAgencyId(agencyId,pageNumber,limitNumber);
+    console.log(data,'in agencyId/packages');
+    return data
+    
+  }
+
+  @Get('/:packageId/package-details')
+  async getPackageDetails(@Param('packageId') packageId: string) {
+    return this._agencyPackageUsecase.getPackageDetails(packageId);
   }
 
   @UseGuards(AccessTokenGuard)
   @Get('/me')
   async getAgency(@Req() req: RequestWithUser) {
-    let agencyId = req.user['userId']
-    return this.agencyProfileService.findProfile(agencyId)
+    const agencyId = req.user['userId'];
+    return this._agencyProfileUsecase.findProfile(agencyId);
   }
+
+  //   @Get('/search')
+  // async search(@Query('q') query: string) {
+  //   return this._agencyUsecase.searchAgencies(query);
+  // }
+  @Get()
+  async listAgencies(
+  @Query('page') page: string,
+  @Query('limit') limit: string
+  ) {
+    const pageNum = parseInt(page) || 1;
+    const limitNum = parseInt(limit) || 6;
+    return this._agencyUsecase.listAgencies(pageNum,limitNum);
+  }
+  @Get('/:agencyId')
+  async getAgencyById(@Param('agencyId') agencyId: string) {
+    return this._agencyUsecase.findById(agencyId);
+  }
+  @UseGuards(AccessTokenGuard)
+  @Patch(':id') // :id/approval
+  async agencyApproval(@Param('id') id: string) {
+    // let id = req.user['userId']
+    console.log(id, 'id');
+
+    return await this._agencyUsecase.agencyApproval(id);
+  }
+
+
 }

@@ -1,6 +1,4 @@
-import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsString, MinLength } from 'class-validator';
-import { AgencyStatus } from 'src/domain/enums/agency-status.enum';
-import { Role } from 'src/domain/enums/role.enum';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateAgencyDto {
   @IsString()
@@ -8,14 +6,14 @@ export class CreateAgencyDto {
   description: string;
 
   @IsString()
-  address:string
+  address: string;
 
   @IsString()
-  licenseNumber?:string
+  licenseNumber?: string;
 
   @IsString()
-  ownerName?:string
+  ownerName?: string;
 
   @IsString()
-  websiteUrl?:string
+  websiteUrl?: string;
 }

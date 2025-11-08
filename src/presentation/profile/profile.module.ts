@@ -6,18 +6,15 @@ import { UploadProfileUseCase } from 'src/application/usecases/profile/implement
 import { CloudinaryModule } from 'src/infrastructure/cloudinary/cloudinary.module';
 
 @Module({
-  imports:[CloudinaryModule],
+  imports: [CloudinaryModule],
   controllers: [ProfileController],
   providers: [
     {
       provide: PROFILE_TYPE.IProfileService,
       useClass: ProfileService,
     },
-    UploadProfileUseCase
+    UploadProfileUseCase,
   ],
-  exports:[
-    PROFILE_TYPE.IProfileService,
-    UploadProfileUseCase
-  ]
+  exports: [PROFILE_TYPE.IProfileService, UploadProfileUseCase],
 })
 export class ProfileModule {}

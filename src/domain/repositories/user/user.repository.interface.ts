@@ -1,8 +1,8 @@
 import { UserEntity } from 'src/domain/entities/user.entity';
 export interface IUserRepository {
   findByEmail(email: string): Promise<UserEntity | null>;
-  create(userEntity:UserEntity): Promise<UserEntity|null>;
-   findAll(
+  create(userEntity: UserEntity): Promise<UserEntity | null>;
+  findAll(
     page?: number,
     limit?: number,
     search?: string,
@@ -11,10 +11,13 @@ export interface IUserRepository {
     page?: number;
     total?: number;
     totalPages?: number;
-  }> 
+  }>;
 
   findById(id: string): Promise<UserEntity | null>;
-  update(id: string, updateUser:UserEntity): Promise<UserEntity> 
-  remove(userStatus:UserEntity): Promise<UserEntity|null>
+  update(id: string, updateUser: UserEntity): Promise<UserEntity>;
+  updateStatus(id: string, isBlock: boolean): Promise<UserEntity | null>;
+  remove(userStatus: UserEntity): Promise<UserEntity | null>;
   updateRefreshToken(userId: string, refreshToken: string): Promise<UserEntity>;
+  findAllAgencies(): Promise<UserEntity[] | null>;
+  listUsersFromAgencies(): Promise<UserEntity[] | null>;
 }

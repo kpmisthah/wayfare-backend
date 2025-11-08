@@ -1,110 +1,133 @@
 import { Inject, Injectable } from '@nestjs/common';
-// import { Agency } from '@prisma/client';
 import { CreateAgencyDto } from 'src/application/dtos/create-agency.dto';
 import { IAgencyRepository } from 'src/domain/repositories/agency/agency.repository.interface';
 import { IAgencyService } from 'src/application/usecases/agency/interfaces/agency.usecase.interface';
-import { UpdateAgencyStatusDto } from 'src/application/dtos/update-agency.dto';
 import { IOtpService } from 'src/application/usecases/otp/interfaces/otp.usecase.interface';
 import { AgencyEntity } from 'src/domain/entities/agency.entity';
-import { IUserService } from '../../users/interfaces/user.usecase.interface';
-import { AgencyMapper } from '../../mapper/agency.mapper';
+import { IUserService } from 'src/application/usecases/users/interfaces/user.usecase.interface';
+import { AgencyMapper } from 'src/application/usecases/mapper/agency.mapper';
+
 import { AgencyResponseDto } from 'src/application/dtos/agency-response.dto';
 import { IUserRepository } from 'src/domain/repositories/user/user.repository.interface';
 import { AgencyManagementDto } from 'src/application/dtos/agency-management.dto';
 import { AgencyProfileDto } from 'src/application/dtos/agency-profile.dto';
+import { IItineraryRepository } from 'src/domain/repositories/agency/itenerary.repository';
+import { UserMapper } from '../../mapper/user.mapper';
+import { UpdateStatusDto } from 'src/application/dtos/update-status.dto';
+// import { SearchService } from 'src/infrastructure/elastic-search/elastic-search.service';
 
 @Injectable()
 export class AgencyService implements IAgencyService {
   constructor(
     @Inject('IAgencyRepository')
-    private readonly agencyRepo: IAgencyRepository,
+    private readonly _agencyRepo: IAgencyRepository,
     @Inject('IOtpService')
-    private readonly emailService: IOtpService,
+    private readonly _emailService: IOtpService,
     @Inject('IUserService')
-    private readonly userService: IUserService,
+    private readonly _userService: IUserService,
     @Inject('IUserRepository')
-    private readonly userRepo:IUserRepository
+    private readonly _userRepo: IUserRepository,
+    @Inject('IIteneraryRepository')
+    private readonly _IteneraryRepo: IItineraryRepository,
+    // private readonly _searchService:SearchService
   ) {}
 
   async createAgency(
     createAgencyDto: CreateAgencyDto,
     userId: string,
   ): Promise<AgencyResponseDto | null> {
-    const existingUser = await this.userService.findById(userId);
-    console.log(existingUser,'existingUser from agency');
-    if (!existingUser) return null; 
-      let agencyEntity = AgencyEntity.create({
-        ...createAgencyDto,
-        userId: existingUser.id,
-        pendingPayouts: 0,
-        totalEarnings: 0,
-        transactionId: null,
-      });
-      console.log(agencyEntity,'agencyEntity');
-      
-      let agency = await this.agencyRepo.create(agencyEntity);
-      console.log(agency,'agency');
-      
-      if (!agency) {
-        return null;
-      }
-    return AgencyMapper.toAgencyDto(agency);
-  }
-  async agencyApproval(agencyDto:AgencyProfileDto):Promise<AgencyManagementDto|null> {
-   const agencyEntity = await this.agencyRepo.findById(agencyDto.id)
-   console.log(agencyEntity,'agencyEty');
-   
-    if(!agencyEntity) return null
-    const updateUserEntity = await this.userRepo.findById(agencyEntity.userId) 
-    console.log(updateUserEntity,'updateuser');
-    
-    let userUpdate = updateUserEntity?.update({
-      isVerified:true
-    })
-    console.log(userUpdate,'user update id verndo nokknm');
-    
-    if(!userUpdate)return null
-    // let agencyEntity = await this.agencyRepo.findByUserId(userUpdate.id)
-    // if(!agencyEntity)return null
-    let user = await this.userRepo.update(userUpdate.id,userUpdate)
-    // return user
-    return AgencyMapper.toAgencyManagement(agencyEntity,user)
-  }
+    const existingUser = await this._userService.findById(userId);
+    console.log(existingUser, 'existingUser from agency');
+    if (!existingUser) return null;
+    const agencyEntity = AgencyEntity.create({
+      ...createAgencyDto,
+      userId: existingUser.id,
+      pendingPayouts: 0,
+      totalEarnings: 0,
+      transactionId: null,
+    });
+    console.log(agencyEntity, 'agencyEntity');
 
-  async updateProfile(
-    id: string,
-    updateAgencyStatusDto: UpdateAgencyStatusDto,
-  ): Promise<AgencyResponseDto | null> {
-    const existingAgency = await this.agencyRepo.findById(id);
-    if (!existingAgency) {
+    const agency = await this._agencyRepo.create(agencyEntity);
+    console.log(agency, 'agency');
+    // await this._searchService.indexAgency(agency);
+    if (!agency) {
       return null;
     }
-    const agencyStatusUpdate = existingAgency.updateAgency({
-      status: updateAgencyStatusDto.status,
-    });
-    let agency = await this.agencyRepo.updateStatus(id, agencyStatusUpdate);
-    if (!agency) return null;
     return AgencyMapper.toAgencyDto(agency);
+  }
+  async agencyApproval(id: string): Promise<AgencyManagementDto | null> {
+    const agencyEntity = await this._agencyRepo.findById(id);
+    console.log(agencyEntity, 'agencyEty');
+
+    if (!agencyEntity) return null;
+    const updateUserEntity = await this._userRepo.findById(agencyEntity.userId);
+    console.log(updateUserEntity, 'updateuser');
+
+    const userUpdate = updateUserEntity?.update({
+      isVerified: true,
+    });
+    console.log(userUpdate, 'user update id verndo nokknm');
+
+    if (!userUpdate) return null;
+    const user = await this._userRepo.update(userUpdate.id, userUpdate);
+    return AgencyMapper.toAgencyManagement(user, agencyEntity);
   }
 
-  async findById(id: string): Promise<AgencyResponseDto | null> {
-    let agency = await this.agencyRepo.findById(id);
+
+  async findById(id: string): Promise<AgencyProfileDto | null> {
+    const agency = await this._agencyRepo.findById(id);
     if (!agency) return null;
-    return AgencyMapper.toAgencyDto(agency);
+    const user = await this._userRepo.findById(agency.userId);
+    if (!user) return null;
+    return AgencyMapper.toAgencyProfileDto(agency, user);
   }
   async findByEmail(email: string): Promise<AgencyEntity | null> {
-    let agency = await this.agencyRepo.findByEmail(email);
+    const agency = await this._agencyRepo.findByEmail(email);
     if (!agency) {
       return null;
     }
     return agency;
   }
+
   async findAll(): Promise<AgencyManagementDto[] | null> {
-    let agency = await this.agencyRepo.findAll();
-    if(!agency) return null
-    let user = await this.userRepo.findAll()
-    if(!user.data)return null
-    return AgencyMapper.toListAgencies(agency,user?.data)
+    const agency = await this._agencyRepo.findAll();
+    if (!agency) return null;
+    const user = await this._userRepo.findAll();
+    if (!user.data) return null;
+    return AgencyMapper.toListAgencies(user?.data, agency);
+  }
+  async listAgencies(page:number,limit:number): Promise<{data:AgencyManagementDto[],totalPages:number,currentPage:number} | null> {
+    const skip = (page - 1) * limit;
+    const users = await this._userRepo.listUsersFromAgencies();
+    if (!users) return null;
+    const [agencies, total] = await Promise.all([
+    this._agencyRepo.findAlls(skip, limit),
+    this._agencyRepo.count(),
+  ]);
+    let mapped = AgencyMapper.toListAgencies(users, agencies);
+    return {
+      data:mapped,
+      totalPages:Math.ceil(total/limit),
+      currentPage:page
+    }
+  }
+  async updateStatus(id: string): Promise<UpdateStatusDto | null> {
+    const agency = await this._agencyRepo.findById(id);
+    if (!agency) return null;
+    const user = await this._userRepo.findById(agency.userId);
+    if (!user) return null;
+    const updateUserEntity = user.updateUserStatus({ isBlock: !user.isBlock });
+
+    const updateUser = await this._userRepo.updateStatus(
+      user.id,
+      updateUserEntity.isBlock,
+    );
+    if (!updateUser) return null;
+    return UserMapper.toUpdateStatus(updateUser);
   }
 
+  //   async searchAgencies(q: string) {
+  //   return this._searchService.searchAgency(q);
+  // }
 }

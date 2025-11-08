@@ -5,15 +5,15 @@ import { NodemailerService } from 'src/infrastructure/utils/nodemailer.service';
 import { PrismaModule } from 'src/infrastructure/database/prisma/prisma.module';
 
 @Module({
-  imports:[PrismaModule],
+  imports: [PrismaModule],
   providers: [
     {
       provide: 'IOtpService',
       useClass: OtpService,
     },
     {
-      provide:"INodemailerService",
-      useClass:NodemailerService
+      provide: 'INodemailerService',
+      useClass: NodemailerService,
     },
     UserVerificationRepository,
   ],

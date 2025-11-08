@@ -15,9 +15,7 @@ import { ResendOtpDto } from 'src/application/dtos/resendOtp.dto';
 import { ForgotPasswordDto } from 'src/application/dtos/forgotPassword.dto';
 import { VerifyForgotPasswordDto } from 'src/application/dtos/verifyForgotPasswordDto';
 import { ResetPasswordDto } from 'src/application/dtos/resetPassword.dto';
-import { Response } from 'express';
 import { UserEntity } from 'src/domain/entities/user.entity';
-import { RefreshToken } from 'src/domain/entities/refreshToken.entity';
 import { Otp } from 'src/domain/entities/otp.entity';
 import { JwtTokenFactory } from './jwt-token.factory';
 import { IUserService } from 'src/application/usecases/users/interfaces/user.usecase.interface';
@@ -51,7 +49,7 @@ export class AuthService implements IAuthService {
     @Inject('IAgencyService')
     private readonly agencyService: IAgencyService,
     @Inject('IArgonService')
-    private readonly argonService:IArgonService,
+    private readonly argonService: IArgonService,
     private readonly jwtFactory: JwtTokenFactory,
   ) {}
 
@@ -64,15 +62,15 @@ export class AuthService implements IAuthService {
       UserEntity.ensurePasswordMatch(
         signupDto.password,
         signupDto.confirmPassword,
-      );      
-      const hashPassword = await this.hash(signupDto.password)
-      console.log(hashPassword,'hashPassword');
+      );
+      const hashPassword = await this.hash(signupDto.password);
+      console.log(hashPassword, 'hashPassword');
       await this.otpService.sendOtp(
         signupDto.email,
         signupDto.name,
         hashPassword,
         signupDto.role,
-        signupDto.mobile ?? ""
+        signupDto.mobile ?? '',
       );
       this.logger.log('Signup started');
       this.logger.warn('Something unusual');
@@ -85,63 +83,40 @@ export class AuthService implements IAuthService {
   }
 
   async verifyOtp(verifyOtpDto: VerifyOtpDto) {
-    console.log(verifyOtpDto,'otp from front end');
-    
     const record = await this.authRepo.findByOtp(verifyOtpDto.otp);
-    console.log(record,'record in verifyOtp');
-    
+
     if (!record || record?.otp != verifyOtpDto.otp) {
       throw new BadRequestException('Invalid Otp');
     }
     const otp = new Otp(record.otp, record.otp_expiry);
-    console.log(otp,'from verifyOtp');
-    
+
     if (!otp.isValid(verifyOtpDto.otp))
       throw new BadRequestException('Otp expired or invalid');
-    // if (record.role == 'USER' || record.role == 'ADMIN') {
-    // let userEntity = UserEntity.create(record)
-    let createUser = {
-      name:record.name,
-      email:record.email,
-      password:record.password,
-      role:record.role,
-      phone:record.phone
+    const createUser = {
+      name: record.name,
+      email: record.email,
+      password: record.password,
+      role: record.role,
+      phone: record.phone,
+    };
+    const user = await this.userService.create(createUser);
+
+    if (!user) {
+      throw new BadRequestException('User Creation is failed');
     }
-    let user = await this.userService.create(createUser);
-    console.log(user,'user in verify otp');
-    
-      if (!user) {
-        throw new BadRequestException('User Creation is failed');
-      }
-      await this.authRepo.deleteTempUser(record.id);
-      const tokens = await this.jwtFactory.generateTokens(
-        user?.id,
-        user?.name,
-        user.role,
-      );
+    await this.authRepo.deleteTempUser(record.id);
+    const tokens = await this.jwtFactory.generateTokens(
+      user?.id,
+      user?.name,
+      user.role,
+    );
 
-      await this.updateRefreshToken(user?.id, tokens?.refreshToken, user.role);
-      return {
-        accessToken:tokens.accessToken,
-        refreshToken:tokens.refreshToken,
-        user
-      }
-
-    // } else if (record.role == 'AGENCY') {
-    //   user = await this.agencyService.createAgency({
-    //     ...record,
-    //     refreshToken: null,
-    //     name: record.name!,
-    //     password: record.password!,
-    //     phone: record.phone!,
-    //   });
-    //   await this.authRepo.deleteTempUser(record.id);
-    //   res.json({
-    //     message: 'Agency created successfully waiting admin approval',
-    //   });
-    // }
-
-    // await this.authRepo.deleteTempUser(record.id);
+    await this.updateRefreshToken(user?.id, tokens?.refreshToken, user.role);
+    return {
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      user,
+    };
   }
 
   async resendOtp(resendOtpDto: ResendOtpDto) {
@@ -155,29 +130,29 @@ export class AuthService implements IAuthService {
 
       await this.otpService.sendOtp(
         existingUser.email,
-        existingUser.password!,
-        existingUser.name!,
+        existingUser.password,
+        existingUser.name,
         existingUser.role,
       );
-      return 'otp send successfully'
+      return 'otp send successfully';
     } catch (error) {
-      return'resend otp failed'
+      return `resend otp failed,${error}`;
     }
   }
 
   async forgotPassword(forgotPassword: ForgotPasswordDto) {
-    const user = await this.userService.findByEmail(forgotPassword.email)
-    
-    console.log(forgotPassword,'in auth service of forgot password');
-    
-      if (user && user.password) {
-        return this.otpService.sendOtp(
-          user.email,
-          user.name,
-          user.password,
-          user.role,
-        );
-      }
+    const user = await this.userService.findByEmail(forgotPassword.email);
+
+    console.log(forgotPassword, 'in auth service of forgot password');
+
+    if (user && user.password) {
+      return this.otpService.sendOtp(
+        user.email,
+        user.name,
+        user.password,
+        user.role,
+      );
+    }
 
     throw new UnauthorizedException('This email does not exist');
   }
@@ -199,29 +174,18 @@ export class AuthService implements IAuthService {
   }
 
   async resetPassword(resetPassword: ResetPasswordDto) {
-    // const user = await this.userService.findByEmail(resetPassword.email);
-    // const agency = await this.agencyService.findByEmail(resetPassword.email);
-    const user = await this.userService.findByEmail(resetPassword.email)
-  
+    const user = await this.userService.findByEmail(resetPassword.email);
+
     if (!user) {
       throw new UnauthorizedException('User does not exist');
     }
-   
+
     if (!user.password) {
       throw new BadRequestException(
         'Password reset not allowed for this account',
       );
     }
-    // const passwordHandler = new UserEntity(
-    //   resetPassword.email,
-    //   resetPassword.password,
-    //   entity.name,
-    // );
-    // console.log(passwordHandler,'passwordHanldddddddddddd in backend');
-    const hashedPassword = await this.hash(user.password)
-    // const hashedPassword = passwordHandler.getHashedPassword()!;
-    // console.log(hashedPassword,'hashpassword in reset password form');
-    
+    const hashedPassword = await this.hash(user.password);
     await this.authRepo.resetPassword(resetPassword.email, {
       password: hashedPassword,
     });
@@ -231,13 +195,9 @@ export class AuthService implements IAuthService {
       user.name,
       user.role,
     );
-    console.log(tokens,'token in reset password service');
-    
     await this.updateRefreshToken(user.id, tokens.refreshToken, user.role);
 
-    const existingUser = await this.userService.findByEmail(
-      resetPassword.email,
-    );
+    await this.userService.findByEmail(resetPassword.email);
 
     return {
       message: 'Password reset successful',
@@ -247,32 +207,26 @@ export class AuthService implements IAuthService {
         email: user.email,
         role: user.role,
       },
-      accessToken:tokens.accessToken,
-      refreshToken:tokens.refreshToken
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
     };
   }
 
   async signIn(loginDto: LoginDto) {
     try {
-      console.log(loginDto);
-    let userEntity = await this.userService.findByEmail(loginDto.email);
-    console.log(userEntity,'userEntity');
-    console.log("typeof",typeof userEntity?.role);
-    
-    
+      const userEntity = await this.userService.findByEmail(loginDto.email);
       if (!userEntity) {
         throw new BadRequestException('User does not exist');
       }
       if (userEntity.isBlock) {
         throw new ForbiddenException('Your Account has been Blocked by Admin');
       }
-      // const userEntity = new UserEntity(user.email, user.password, user.name);
-      
-      console.log("password is: ",userEntity.password)
+      const isMatch = await this.argonService.comparePassword(
+        userEntity.password,
+        loginDto.password,
+      );
+      console.log(isMatch, 'matching password');
 
-      const isMatch = await this.argonService.comparePassword(loginDto.password,userEntity.password)
-      console.log(isMatch,'matching password');
-      
       if (!isMatch) {
         throw new BadRequestException('Password is incorrect');
       }
@@ -281,14 +235,17 @@ export class AuthService implements IAuthService {
         userEntity.name,
         userEntity.role,
       );
-      if(!tokens) return new BadRequestException("Token not found")
-      await this.updateRefreshToken(userEntity.id, tokens?.refreshToken,userEntity.role as Role);
+      if (!tokens) return new BadRequestException('Token not found');
+      await this.updateRefreshToken(
+        userEntity.id,
+        tokens?.refreshToken,
+        userEntity.role,
+      );
       return {
         userEntity,
-        accessToken:tokens.accessToken,
-        refreshToken:tokens.refreshToken
-      }
-
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+      };
     } catch (error) {
       console.log(error);
       throw error;
@@ -297,7 +254,7 @@ export class AuthService implements IAuthService {
 
   async logout(userId: string) {
     try {
-      const user = await this.authRepo.logout(userId)
+      const user = await this.authRepo.logout(userId);
       return user;
     } catch (err) {
       console.error('Logout service failed:', err);
@@ -305,22 +262,23 @@ export class AuthService implements IAuthService {
     }
   }
 
-  async refreshToken(
-    userId: string,
-    refreshToken: string | null | undefined,
-    res: Response,
-    role: string,
-  ) {
-  
-  
-      let user = await this.userService.findById(userId);
-    
+  async refreshToken(userId: string, refreshToken: string) {
+    const user = await this.userService.findById(userId);
+
     if (!user || !user.refreshToken) {
       throw new ForbiddenException('Access Denied');
     }
+
+    console.log(
+      '__________USER token',
+      user.refreshToken,
+      'another',
+      refreshToken,
+    );
+
     const refreshTokenMatches = await this.argonService.comparePassword(
       user.refreshToken,
-      refreshToken as string,
+      refreshToken,
     );
     if (!refreshTokenMatches) {
       throw new ForbiddenException('Access Denied');
@@ -332,29 +290,27 @@ export class AuthService implements IAuthService {
     );
     await this.updateRefreshToken(user?.id, tokens?.refreshToken, user.role);
 
-    return { message: 'Access token refreshed',accessTokenResponse:tokens.accessToken,refreshTokenResponse:tokens.refreshToken };
+    return {
+      message: 'Access token refreshed',
+      accessTokenResponse: tokens.accessToken,
+      refreshTokenResponse: tokens.refreshToken,
+    };
   }
 
-  async updateRefreshToken(
-    userId: string,
-    refreshToken: string,
-    role: Role
-  ) {
-    const hashRereshToken = await RefreshToken.hash(refreshToken);
-    if (role == Role.User || role == Role.Admin) {
-      await this.userService.update(userId, { refreshToken: hashRereshToken });
-    }
+  async updateRefreshToken(userId: string, refreshToken: string, role: Role) {
+    const hashRereshToken = await this.argonService.hashPassword(refreshToken);
+    await this.userService.update(userId, { refreshToken: hashRereshToken });
   }
 
-  async hash(password:string|null){
-    if(!password){
-      throw new Error("Password cannot be null")
+  async hash(password: string | null) {
+    if (!password) {
+      throw new Error('Password cannot be null');
     }
-    return await this.argonService.hashPassword(password!)
+    return await this.argonService.hashPassword(password);
   }
   //Google Auth
   googleLoginResponse(req, res) {
-    const { user, appAccessToken, appRefreshToken } = req.user;
+    const { appAccessToken, appRefreshToken } = req.user;
     res
       .cookie('accessToken', appAccessToken, {
         httpOnly: true,

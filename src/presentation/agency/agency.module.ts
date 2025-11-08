@@ -9,10 +9,10 @@ import { CloudinaryModule } from 'src/infrastructure/cloudinary/cloudinary.modul
 import { UsersModule } from '../users/users.module';
 import { NodemailerService } from 'src/infrastructure/utils/nodemailer.service';
 import { AdminModule } from '../admin/admin.module';
-
+// import { SearchModule } from 'src/infrastructure/elastic-search/elastic-search.module';
 
 @Module({
-  imports:[CloudinaryModule,UsersModule,AdminModule],
+  imports: [CloudinaryModule, UsersModule, AdminModule],
   controllers: [AgencyController],
   providers: [
     {
@@ -25,23 +25,22 @@ import { AdminModule } from '../admin/admin.module';
     },
     {
       provide: AGENCY_PACKAGE_TYPE.IAgencyPackageService,
-      useClass:AgencyPackageService
+      useClass: AgencyPackageService,
     },
     {
-      provide:AGENCY_PROFILE_TYPE.IAgencyProfileService,
-      useClass:AgencyProfilService
+      provide: AGENCY_PROFILE_TYPE.IAgencyProfileService,
+      useClass: AgencyProfilService,
     },
     {
-      provide:"INodemailerService",
-      useClass:NodemailerService
-    }
+      provide: 'INodemailerService',
+      useClass: NodemailerService,
+    },
   ],
   exports: [
-    'IAgencyService', 
+    'IAgencyService',
     'IOtpService',
     AGENCY_PACKAGE_TYPE.IAgencyPackageService,
-    AGENCY_PROFILE_TYPE.IAgencyProfileService
-
+    AGENCY_PROFILE_TYPE.IAgencyProfileService,
   ],
 })
 export class AgencyModule {}

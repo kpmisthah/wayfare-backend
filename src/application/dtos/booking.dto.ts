@@ -6,7 +6,7 @@ export class BookingDto {
 
     @IsString()
     packageId:string
-    @IsDateString()
+    // @IsDateString()
     travelDate:string
     @IsNumber()
     @Type(()=>Number)

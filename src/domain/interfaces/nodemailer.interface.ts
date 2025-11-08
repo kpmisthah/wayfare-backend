@@ -1,3 +1,3 @@
 export interface INodeMailerService {
-    sendOtpToEmail(email: string): Promise<string>
+  sendOtpToEmail(email: string): Promise<string>;
 }

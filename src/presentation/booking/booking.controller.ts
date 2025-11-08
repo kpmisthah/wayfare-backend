@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
   Res,
   UseGuards,
@@ -32,7 +33,7 @@ export class BookingController {
   ) {
     let userId = req.user['userId'];
     const result = await this._bookingUseCase.createBooking(bookingDto, userId);
-    console.log(result, 'result');
+    console.log(result, 'resultofbooking controllererrrrr');
 
     if (!result) {
       res.status(400);
@@ -49,9 +50,11 @@ export class BookingController {
   }
 
   @Get('/user')
-  async getUserBookings(@Req() req: RequestWithUser) {
+  async getUserBookings(@Req() req: RequestWithUser,@Query('page')page?:string,@Query('limit')limit?:string) {
     let userId = req.user['userId'];
-    return await this._bookingUseCase.getUserBookings(userId);
+    const pageNumber = page? Number(page):1
+    const limitNumber = limit? Number(limit):1
+    return await this._bookingUseCase.getUserBookings(userId,pageNumber,limitNumber);
   }
 
   @Post('/cancel/:id')

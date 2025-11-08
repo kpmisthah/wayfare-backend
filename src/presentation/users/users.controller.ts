@@ -41,10 +41,10 @@ export class UsersController {
     return this.userService.findById(id);
   }
 
-    @Get('email/find')
-    findByEmail(@Query('email') email: string) {
-      return this.userService.findByEmail(email);
-    }
+  @Get('email/find')
+  findByEmail(@Query('email') email: string) {
+    return this.userService.findByEmail(email);
+  }
 
   @UseGuards(AccessTokenGuard)
   @Put(':id')
@@ -52,10 +52,4 @@ export class UsersController {
     return this.userService.update(id, updateUserDto);
   }
 
-  // @UseGuards(AccessTokenGuard)
-  // @Patch(':id')
-  // remove(@Param('id') id: string,@Body() UpdateUserDto:{isBlock:boolean}) {
-
-  //   return this.userService.remove(id,UpdateUserDto.isBlock);
-  // }
 }

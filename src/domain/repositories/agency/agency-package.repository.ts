@@ -1,9 +1,14 @@
-import { Package } from "@prisma/client";
-import { PackageDto } from "src/application/dtos/add-package.dto";
-import { PackageEntity } from "src/domain/entities/package.entity";
+import { PackageEntity } from 'src/domain/entities/package.entity';
+import { IBaseRepository } from '../base.repository';
 
-export interface IAgencyPackageRepository{
-    addPackages(packages:PackageEntity):Promise<PackageEntity>
-    getPackages():Promise<PackageEntity[]>
-    findByAgencyId(agencyId):Promise<PackageEntity[]>   
+export interface IAgencyPackageRepository
+  extends IBaseRepository<PackageEntity | null> {
+  addPackages(packages: PackageEntity): Promise<PackageEntity>;
+  getPackages(id: string): Promise<PackageEntity[]>;
+  findByAgencyId(agencyId): Promise<PackageEntity[]>;
+  findBookedPackage(agencyId:string):Promise<PackageEntity|null>
+  filterPackages(destination:string,duration:number,minBudget:number,maxBudget:number):Promise<PackageEntity[]>
+  getAllPackages():Promise<PackageEntity[]>
+  countPackages(agencyId:string):Promise<number>
+  getPackagesByPage(agencyId:string,page:number,limit:number):Promise<PackageEntity[]>
 }

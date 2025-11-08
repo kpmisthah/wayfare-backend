@@ -108,29 +108,41 @@ export class BookingUseCase implements IBookingUseCase {
 
   async getUserBookings(
     userId: string,
-  ): Promise<(FetchUserBookingDto | undefined)[]> {
+    page: number,
+    limit: number,
+  ): Promise<{ data: (FetchUserBookingDto|undefined)[]; totalPages: number; page: number }> {
+    console.log(page,'pageee',limit,'limitttt')
     let bookingEntity = await this._bookingRepo.findByUserId(userId);
-    console.log(bookingEntity, 'Booking enityt in getUserBookibngs');
-
-    if (!bookingEntity) return [];
+      if (!bookingEntity || bookingEntity.length === 0) {
+    return { data: [], totalPages: 0,page };
+  }
+  console.log(bookingEntity,'boooking entintititi')
+    const totalBookings = bookingEntity.length;
+    console.log(totalBookings,'totaaalalll booking')
+    const totalPages = Math.ceil(totalBookings / limit);
+    console.log(totalPages,'totalllPagess')
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const paginatedBookings = bookingEntity.slice(startIndex, endIndex);
+    console.log(paginatedBookings,'paginated Bokking')
     let packageEntity = await this._packageRepo.getAllPackages();
     console.log(packageEntity, 'in packkage getUserBookings');
 
     let packages = await Promise.all(
-      bookingEntity.map((booking) =>
+      paginatedBookings.map((booking) =>
         packageEntity.find((pkg) => pkg.id == booking.packageId),
       ),
     );
     console.log(packages, 'pakcages in getUserBookingds');
-    //ivde ipo 2 package und but njn pinne find use aakyond oru package filter aayi athinte name
-    //mathre kittnollu
+
     let agencies = await Promise.all(
-      bookingEntity.map((booking) => {
+      paginatedBookings.map((booking) => {
         if (booking) {
           return this._agencyRepo.findById(booking.agencyId);
         }
       }),
     );
+    console.log(agencies,'agencies')
     let filteredAgencies = agencies.filter(
       (agency) => agency !== null && agency !== undefined,
     );
@@ -144,18 +156,24 @@ export class BookingUseCase implements IBookingUseCase {
         return null;
       }),
     );
-
+    console.log(agencyUsers,'agencyUsers')
     let filteredAgencyUsers = agencyUsers.filter(
       (user) => user !== null && user !== undefined,
     );
     console.log(filteredAgencyUsers, 'fitlered Agency Users');
 
-    return BookingMapper.toFetchUserBookingsDto(
-      bookingEntity,
+    let mapped = BookingMapper.toFetchUserBookingsDto(
+      paginatedBookings,
       packages,
       filteredAgencyUsers,
       filteredAgencies,
     );
+    console.log(mapped,'mapped in usecase')
+    return{
+      data:mapped,
+      totalPages,
+      page
+    }
   }
 
   async cancelBooking(id: string): Promise<BookingStatusDto | null> {
@@ -202,9 +220,9 @@ export class BookingUseCase implements IBookingUseCase {
     agencyId: string,
     status: BookingStatus,
   ): Promise<BookingEntity> {
-    console.log(agencyId,'agencyId');
-    console.log(bookingId,'bookingId');
-    
+    console.log(agencyId, 'agencyId');
+    console.log(bookingId, 'bookingId');
+
     return await this._bookingRepo.updateStatus(bookingId, status);
   }
 }

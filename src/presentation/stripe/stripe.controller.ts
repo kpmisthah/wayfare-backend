@@ -20,6 +20,7 @@ export class StripeController {
         @Req() req:Request,
         @Headers('stripe-signature') signature:string
     ){
+        console.log('<...............................>webhook verndooooooo.....................................')
         const rawBody = (req as any).rawBody
         return this._weebhookUseCase.handle(rawBody,signature,this.webhookSecret)
     }

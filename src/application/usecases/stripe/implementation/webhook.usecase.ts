@@ -25,7 +25,7 @@ export class StripeWebhookUsecase {
     switch (event.type) {
       case 'payment_intent.succeeded': {
         const intent = event.data.object as any;
-        console.log(intent,'intent');
+        console.log(intent,'intent...................');
         
         this._logger.log(`Payment succeeded for ${intent.id}`);
         const TransactionEntity = await this._transactionRepo.findByBookingId(intent.metadata.bookingId)
@@ -36,11 +36,13 @@ export class StripeWebhookUsecase {
             status:PaymentStatus.SUCCEEDED
           }
         )
-        
+    console.log(updateTransaction,'updateTransactino');
+    
         const updateTransactionStatus = await this._transactionRepo.update(
           TransactionEntity.id,
           updateTransaction
         );
+      console.log(updateTransactionStatus,'updateTransactionStatus');
       
         if(updateTransactionStatus?.status == PaymentStatus.SUCCEEDED){
          let bookingEntity = await this._bookingRepo.findById(updateTransaction.bookingId)
@@ -49,7 +51,8 @@ export class StripeWebhookUsecase {
          if(!bookingEntity)return null
          let updateBooking = bookingEntity.updateBooking({status:BookingStatus.CONFIRMED})
          const u = await this._bookingRepo.update(bookingEntity.id,updateBooking)
-         
+         console.log(updateBooking,'updateBooking')
+         console.log(u,'uu---')
          //wallet creation for admin
          let agencyWallet = await this._walletUseCase.creditAgency(bookingEntity.agencyId,bookingEntity.agencyEarning)
          console.log(agencyWallet,'agencyWallet in agencyEWsllaer stripe');
@@ -62,6 +65,7 @@ export class StripeWebhookUsecase {
         break;
       }
       case 'payment_intent.payment_failed': {
+        console.log("faieeeeeed aayoooooooooooooo")
         const intent = event.data.object as any;
         this._logger.warn(`Payment failed for ${intent.id}`);
         const TransactionEntity = await this._transactionRepo.findByBookingId(intent.metadata.bookingId)
