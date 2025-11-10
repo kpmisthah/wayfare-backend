@@ -9,6 +9,7 @@ import helmet from 'helmet';
 import { UnauthorizedExceptionFilter } from './infrastructure/filters/unauthorized.filter';
 import { SpelunkerModule } from 'nestjs-spelunker';
 import { json, urlencoded } from 'express';
+import { GlobalExceptionFilter } from './presentation/filters/global-exception.filter';
 const cookieParser = require('cookie-parser');
 const generateAppGraph = (app: INestApplication) => {
   const tree = SpelunkerModule.explore(app);
@@ -32,6 +33,7 @@ async function bootstrap() {
     // });
 
     const app = await NestFactory.create(AppModule);
+    app.useGlobalFilters(new GlobalExceptionFilter());
       app.use(
     json({
       verify: (req: any, res, buf) => {
