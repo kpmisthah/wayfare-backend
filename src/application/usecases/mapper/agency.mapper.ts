@@ -78,7 +78,13 @@ export class AgencyMapper {
     itineraryEntity: (ItineraryEntity | null)[],
     transportationEntity?: TransportationEntity,
   ): PackageDto {
+    console.log(packageEntity,'in application mapper')
+    console.log(itineraryEntity,'in package');
+    console.log(transportationEntity,'transportation in app mapper');
+    
     const validation = itineraryEntity.filter((it) => it != null);
+    console.log(validation,'validaationnn');
+    
     return {
       id: packageEntity.id,
       title: packageEntity.itineraryName,

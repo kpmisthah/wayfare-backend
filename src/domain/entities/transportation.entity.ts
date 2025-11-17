@@ -23,7 +23,20 @@ export class TransportationEntity {
       props.details,
     );
   }
-
+  public update(props:{
+    vehicle?:string,
+    pickup_point?:string,
+    drop_point?:string,
+    details?:string
+  }) {
+    return new TransportationEntity(
+      this._id,
+      props.vehicle ?? this._vehicle,
+      props.pickup_point ?? this._pickup_point,
+      props.drop_point ?? this._drop_point,
+      props.details ?? this._details
+    )
+  }
   //getters
   get id() {
     return this._id;

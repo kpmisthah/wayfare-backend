@@ -18,21 +18,21 @@ import { ResetPasswordDto } from 'src/application/dtos/resetPassword.dto';
 import { UserEntity } from 'src/domain/entities/user.entity';
 import { Otp } from 'src/domain/entities/otp.entity';
 import { JwtTokenFactory } from './jwt-token.factory';
-import { IUserService } from 'src/application/usecases/users/interfaces/user.usecase.interface';
+import {IUserUsecase } from 'src/application/usecases/users/interfaces/user.usecase.interface';
 import { IOtpService } from 'src/application/usecases/otp/interfaces/otp.usecase.interface';
 import { IAuthRepository } from 'src/domain/repositories/auth/auth.repository.interface';
 import { IUserVerification } from 'src/domain/repositories/user/user-verification.repository.interface';
-import { IAuthService } from 'src/application/usecases/auth/interfaces/auth.usecase.interface';
+import { IAuthUsecase } from 'src/application/usecases/auth/interfaces/auth.usecase.interface';
 import { IAgencyService } from 'src/application/usecases/agency/interfaces/agency.usecase.interface';
 import { Role } from 'src/domain/enums/role.enum';
 import { IArgonService } from 'src/domain/interfaces/argon.service.interface';
 @Injectable()
-export class AuthService implements IAuthService {
+export class AuthService implements IAuthUsecase {
   constructor(
     @Inject(WINSTON_MODULE_NEST_PROVIDER)
     private readonly logger: LoggerService,
     @Inject('IUserService')
-    private readonly userService: IUserService,
+    private readonly _userUsecase: IUserUsecase,
 
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
@@ -55,7 +55,7 @@ export class AuthService implements IAuthService {
 
   async signUp(signupDto: SignupDto) {
     try {
-      const existingUser = await this.userService.findByEmail(signupDto.email);
+      const existingUser = await this._userUsecase.findByEmail(signupDto.email);
       if (existingUser) {
         throw new BadRequestException('User already exist');
       }
@@ -63,6 +63,7 @@ export class AuthService implements IAuthService {
         signupDto.password,
         signupDto.confirmPassword,
       );
+      console.log(signupDto.password,'passwordddddd before hashing')
       const hashPassword = await this.hash(signupDto.password);
       console.log(hashPassword, 'hashPassword');
       await this.otpService.sendOtp(
@@ -99,7 +100,7 @@ export class AuthService implements IAuthService {
       role: record.role,
       phone: record.phone,
     };
-    const user = await this.userService.create(createUser);
+    const user = await this._userUsecase.create(createUser);
 
     if (!user) {
       throw new BadRequestException('User Creation is failed');
@@ -141,8 +142,7 @@ export class AuthService implements IAuthService {
   }
 
   async forgotPassword(forgotPassword: ForgotPasswordDto) {
-    const user = await this.userService.findByEmail(forgotPassword.email);
-
+    const user = await this._userUsecase.findByEmail(forgotPassword.email);
     console.log(forgotPassword, 'in auth service of forgot password');
 
     if (user && user.password) {
@@ -154,7 +154,7 @@ export class AuthService implements IAuthService {
       );
     }
 
-    throw new UnauthorizedException('This email does not exist');
+    throw new BadRequestException('This email does not exist');
   }
 
   async verifyForgotPassword(verifyForgotPassword: VerifyForgotPasswordDto) {
@@ -174,7 +174,7 @@ export class AuthService implements IAuthService {
   }
 
   async resetPassword(resetPassword: ResetPasswordDto) {
-    const user = await this.userService.findByEmail(resetPassword.email);
+    const user = await this._userUsecase.findByEmail(resetPassword.email);
 
     if (!user) {
       throw new UnauthorizedException('User does not exist');
@@ -185,6 +185,7 @@ export class AuthService implements IAuthService {
         'Password reset not allowed for this account',
       );
     }
+    console.log(resetPassword,'password resett')
     const hashedPassword = await this.hash(user.password);
     await this.authRepo.resetPassword(resetPassword.email, {
       password: hashedPassword,
@@ -197,7 +198,7 @@ export class AuthService implements IAuthService {
     );
     await this.updateRefreshToken(user.id, tokens.refreshToken, user.role);
 
-    await this.userService.findByEmail(resetPassword.email);
+    await this._userUsecase.findByEmail(resetPassword.email);
 
     return {
       message: 'Password reset successful',
@@ -214,7 +215,9 @@ export class AuthService implements IAuthService {
 
   async signIn(loginDto: LoginDto) {
     try {
-      const userEntity = await this.userService.findByEmail(loginDto.email);
+      console.log(loginDto,'loginDto')
+      const userEntity = await this._userUsecase.findByEmail(loginDto.email);
+      console.log(userEntity,'userEntity')
       if (!userEntity) {
         throw new BadRequestException('User does not exist');
       }
@@ -255,6 +258,7 @@ export class AuthService implements IAuthService {
   async logout(userId: string) {
     try {
       const user = await this.authRepo.logout(userId);
+      console.log(user,'in logout')
       return user;
     } catch (err) {
       console.error('Logout service failed:', err);
@@ -263,7 +267,7 @@ export class AuthService implements IAuthService {
   }
 
   async refreshToken(userId: string, refreshToken: string) {
-    const user = await this.userService.findById(userId);
+    const user = await this._userUsecase.findById(userId);
 
     if (!user || !user.refreshToken) {
       throw new ForbiddenException('Access Denied');
@@ -299,7 +303,7 @@ export class AuthService implements IAuthService {
 
   async updateRefreshToken(userId: string, refreshToken: string, role: Role) {
     const hashRereshToken = await this.argonService.hashPassword(refreshToken);
-    await this.userService.update(userId, { refreshToken: hashRereshToken });
+    await this._userUsecase.update(userId, { refreshToken: hashRereshToken });
   }
 
   async hash(password: string | null) {

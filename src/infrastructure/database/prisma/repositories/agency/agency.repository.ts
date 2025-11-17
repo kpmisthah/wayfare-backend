@@ -74,8 +74,7 @@ export class AgencyRepository
   //   return AgencyMapper.toDomain(agency);
   // }
   async findByUserId(id: string): Promise<AgencyEntity | null> {
-    console.log(id, 'from agency repo findByUserId');
-
+    console.log(id, '---------------------------from agency repo findByUserId------------------------------')
     const agency = await this.prisma.agency.findFirst({
       where: { userId: id },
     });

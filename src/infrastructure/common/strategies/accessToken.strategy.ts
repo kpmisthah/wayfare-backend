@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
-import { IUserService } from 'src/application/usecases/users/interfaces/user.usecase.interface';
+import { IUserUsecase } from 'src/application/usecases/users/interfaces/user.usecase.interface';
 import { IAgencyService } from 'src/application/usecases/agency/interfaces/agency.usecase.interface';
 
 type JwtPayload = {
@@ -16,7 +16,7 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private readonly configService: ConfigService,
     @Inject('IUserService')
-    private readonly userService: IUserService,
+    private readonly userService: IUserUsecase,
     @Inject('IAgencyService')
     private readonly agencyService: IAgencyService,
   ) {

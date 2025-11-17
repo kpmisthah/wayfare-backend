@@ -39,11 +39,15 @@ export class AgencyPackageService implements IAgencyPackageService {
     userId: string,
     files: Express.Multer.File[],
   ): Promise<PackageDto | null> {
+    console.log(addPackageDto,'addPackageDtooo')
+    console.log(files,'filesssss');
     const uploadedUrls: string[] = [];
     for (const file of files) {
       const imageUrl = await this._cloudinaryService.uploadImage(file);
+      console.log('-------------------------------------',imageUrl,'-------------------------------');
       uploadedUrls.push(imageUrl);
     }
+    console.log(uploadedUrls,'---------------------uploadImageUrls--------------------------------')
     const existingAgency = await this.agencyRepo.findByUserId(userId);
     console.log(existingAgency, 'exisitng agency');
 
@@ -56,9 +60,12 @@ export class AgencyPackageService implements IAgencyPackageService {
       drop_point: addPackageDto.drop_point,
       details: addPackageDto.details,
     });
-
+    console.log(createTransport,'---------------createTransporttt---------------------------');
+    
     const transportaionEntity =
       await this._transportationRepo.create(createTransport);
+      console.log(transportaionEntity,'transportationEntityyy');
+      
     if (!transportaionEntity) {
       return null;
     }
@@ -105,11 +112,13 @@ export class AgencyPackageService implements IAgencyPackageService {
     }
     console.log(saveItinerary, 'saveeeItinnerrraaryy');
 
-    return AgencyMapper.toPackageDto(
+    let a = AgencyMapper.toPackageDto(
       savePackage,
       saveItinerary,
       transportaionEntity,
     );
+    console.log(a,'aaaa')
+    return a
   }
 
   async getPackages(userId: string,page:number,limit:number): Promise<{items:PackageDto[],page:number,totalPages:number,total:number}|null> {
@@ -198,20 +207,39 @@ export class AgencyPackageService implements IAgencyPackageService {
 
   async updatePackage(id:string,updatePackageDto:UpdatePackageDto):Promise<UpdatePackageDto|null>{
     let travelpackage = await this._agencyPackageRepo.findById(id)
+    if(!travelpackage) return null
+    let transportation = await this._transportationRepo.findById(travelpackage.transportationId)
+    if(!transportation) return null
     console.log(travelpackage,'travelPackagesss in app');
     
     if(!travelpackage) return null
     let packageUpdate = travelpackage.update({
       name:updatePackageDto.title,
       destination:updatePackageDto.destination,
+      description:updatePackageDto.description,
+      highlights:updatePackageDto.highlights,
       duration:updatePackageDto.duration,
+      picture:updatePackageDto.picture,
+      price:updatePackageDto.price,
+      // vehicle:updatePackageDto.vehicle,
+      // pickup_point:updatePackageDto.pickup_point,
+      // drop_point:updatePackageDto.drop_point,
+      // detail:updatePackageDto.detail,
       status:updatePackageDto.status
     })
     console.log(packageUpdate,'in package updare app')
+    let transportationUpdate = transportation.update({
+      vehicle:updatePackageDto.vehicle,
+      pickup_point:updatePackageDto.pickup_point,
+      drop_point:updatePackageDto.drop_point,
+      details:updatePackageDto.details
+    })
     let updated = await this._agencyPackageRepo.update(id,packageUpdate)
     console.log(updated,'in package Mapper');
-    
     if(!updated) return null
-    return PackageMapper.toPackageDto(updated)
+    let updateTransportation = await this._transportationRepo.update(transportation.id,transportationUpdate)
+    console.log(updateTransportation);
+    if(!updateTransportation) return null
+    return PackageMapper.toPackageDto(updated,updateTransportation)
   }
 }

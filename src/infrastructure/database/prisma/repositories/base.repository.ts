@@ -19,7 +19,6 @@ export class BaseRepository<T> {
 
   async findById(id: string): Promise<T | null> {
     const data = await this.model.findUnique({ where: { id } });
-    console.log(data, 'in use createion');
 
     if (!data) return null;
     return this.mapper.toDomain(data);

@@ -9,8 +9,24 @@ export class UpdatePackageDto {
     title:string
     @IsString()
     destination:string
+    @IsString()
+    description:string
+    highlights:string
     @IsNumber()
     @Type(()=>Number)
     duration:number
+    picture:string[]
+    // @IsString()
+    @IsNumber()
+    @Type(()=>Number)    
+    price:number
+    @IsString()
+    vehicle:string
+    @IsString()
+    pickup_point:string
+    @IsString()
+    drop_point:string
+    @IsString()
+    details:string
     status:PackageStatus
 }

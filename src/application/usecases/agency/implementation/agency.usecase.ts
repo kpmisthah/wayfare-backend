@@ -4,7 +4,7 @@ import { IAgencyRepository } from 'src/domain/repositories/agency/agency.reposit
 import { IAgencyService } from 'src/application/usecases/agency/interfaces/agency.usecase.interface';
 import { IOtpService } from 'src/application/usecases/otp/interfaces/otp.usecase.interface';
 import { AgencyEntity } from 'src/domain/entities/agency.entity';
-import { IUserService } from 'src/application/usecases/users/interfaces/user.usecase.interface';
+import { IUserUsecase } from 'src/application/usecases/users/interfaces/user.usecase.interface';
 import { AgencyMapper } from 'src/application/usecases/mapper/agency.mapper';
 
 import { AgencyResponseDto } from 'src/application/dtos/agency-response.dto';
@@ -24,7 +24,7 @@ export class AgencyService implements IAgencyService {
     @Inject('IOtpService')
     private readonly _emailService: IOtpService,
     @Inject('IUserService')
-    private readonly _userService: IUserService,
+    private readonly _userService: IUserUsecase,
     @Inject('IUserRepository')
     private readonly _userRepo: IUserRepository,
     @Inject('IIteneraryRepository')
@@ -97,15 +97,18 @@ export class AgencyService implements IAgencyService {
     if (!user.data) return null;
     return AgencyMapper.toListAgencies(user?.data, agency);
   }
-  async listAgencies(page:number,limit:number): Promise<{data:AgencyManagementDto[],totalPages:number,currentPage:number} | null> {
+  async searchAgencies(query:string,page:number,limit:number): Promise<{data:AgencyManagementDto[],totalPages:number,currentPage:number} | null> {
     const skip = (page - 1) * limit;
     const users = await this._userRepo.listUsersFromAgencies();
     if (!users) return null;
+    const filteredUsers = users.filter((user)=>
+      user.name.toLocaleLowerCase().includes(query?.toLocaleLowerCase()||'')
+    )
     const [agencies, total] = await Promise.all([
     this._agencyRepo.findAlls(skip, limit),
     this._agencyRepo.count(),
   ]);
-    let mapped = AgencyMapper.toListAgencies(users, agencies);
+    let mapped = AgencyMapper.toListAgencies(filteredUsers, agencies);
     return {
       data:mapped,
       totalPages:Math.ceil(total/limit),
