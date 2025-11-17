@@ -20,6 +20,6 @@ export interface IAgencyService {
   findByEmail(email: string): Promise<AgencyEntity | null>;
   findAll(): Promise<AgencyManagementDto[] | null>;
   agencyApproval(id: string): Promise<AgencyManagementDto | null>;
-  listAgencies(page:number,limit:number): Promise<{data:AgencyManagementDto[],totalPages:number,currentPage:number} | null> 
-  // searchAgencies(q: string)
+  // listAgencies(page:number,limit:number): Promise<{data:AgencyManagementDto[],totalPages:number,currentPage:number} | null> 
+  searchAgencies(query:string,page:number,limit:number): Promise<{data:AgencyManagementDto[],totalPages:number,currentPage:number} | null>
 }

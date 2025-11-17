@@ -4,12 +4,12 @@ import { SafeUser } from 'src/application/dtos/safe-user.dto';
 import { UpdateUserDto } from 'src/application/dtos/update-user.dto';
 import { IAgencyRepository } from 'src/domain/repositories/agency/agency.repository.interface';
 import { IUserRepository } from 'src/domain/repositories/user/user.repository.interface';
-import { IUserService } from 'src/application/usecases/users/interfaces/user.usecase.interface';
+import { IUserUsecase } from 'src/application/usecases/users/interfaces/user.usecase.interface';
 import { UserEntity } from 'src/domain/entities/user.entity';
 import { UserMapper } from 'src/application/usecases/mapper/user.mapper';
 
 @Injectable()
-export class UserService implements IUserService {
+export class UserService implements IUserUsecase {
   constructor(
     @Inject('IUserRepository')
     private readonly _userRepo: IUserRepository,

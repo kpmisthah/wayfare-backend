@@ -13,7 +13,7 @@ interface User {
   name: string;
   role: $Enums.Role;
 }
-export interface IAuthService {
+export interface IAuthUsecase {
   signUp(signupDto: SignupDto): Promise<any>;
   verifyOtp(dto: VerifyOtpDto): Promise<any>;
   resendOtp(dto: ResendOtpDto): Promise<any>;

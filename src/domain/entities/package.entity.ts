@@ -48,20 +48,28 @@ export class PackageEntity {
   public update(props:{
     name?:string,
     destination?:string,
+    description?:string,
+    highlights?:string,
     duration?:number,
+    picture?:string[],
+    price?:number,
+    // vehicle?:string,
+    // pickup_point?:string,
+    // drop_point?:string,
+    // detail?:string,
     status?:PackageStatus
   }):PackageEntity{
     return new PackageEntity(
       this._id,
       this._agencyId,
       props.name ?? '',
-      this._description,
-      this._highlights,
-      this._picture,
+      props.description ?? this._description,
+      props.highlights ?? this._highlights,
+      props.picture ?? this._picture,
       props.duration ?? this._duration,
       props.destination ?? '',
       props.status!,
-      this._price,
+      props.price ?? this._price,
       this._transportationId
     )
   }

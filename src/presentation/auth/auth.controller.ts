@@ -8,6 +8,7 @@ import {
   Res,
   Inject,
   ForbiddenException,
+  NotFoundException,
 } from '@nestjs/common';
 import { LoginDto, SignupDto } from 'src/application/dtos/auth.dto';
 // import { Request } from 'express';
@@ -22,8 +23,8 @@ import { ResetPasswordDto } from 'src/application/dtos/resetPassword.dto';
 // import { GoogleOAuthGuard } from 'src/infrastructure/common/guard/google-oauth.guard';
 import { Request, Response } from 'express';
 // import { GoogleLoginDto } from 'src/application/dtos/googleLogin.dto';
-import { IAuthService } from 'src/application/usecases/auth/interfaces/auth.usecase.interface';
-import { IUserService } from 'src/application/usecases/users/interfaces/user.usecase.interface';
+import { IAuthUsecase } from 'src/application/usecases/auth/interfaces/auth.usecase.interface';
+import { IUserUsecase } from 'src/application/usecases/users/interfaces/user.usecase.interface';
 import { AuthGuard } from '@nestjs/passport';
 import { GoogleLoginUseCase } from 'src/application/usecases/auth/implementation/google-login.usecase';
 // import { Role as userRole } from 'src/domain/enums/role.enum';
@@ -34,9 +35,9 @@ import { GoogleLoginUseCase } from 'src/application/usecases/auth/implementation
 export class AuthController {
   constructor(
     @Inject('IAuthService')
-    private readonly authService: IAuthService,
+    private readonly _authUsecase: IAuthUsecase,
     @Inject('IUserService')
-    private readonly userService: IUserService,
+    private readonly userService: IUserUsecase,
     private readonly _googleLoginUsecase:GoogleLoginUseCase
   ) {}
 
@@ -78,7 +79,8 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const { user, accessToken, refreshToken } =
-      await this.authService.signIn(loginDto);
+      await this._authUsecase.signIn(loginDto);
+      console.log(user,'iuser')
     res
       .cookie('refreshToken', refreshToken, {
         httpOnly: true,
@@ -98,7 +100,7 @@ export class AuthController {
   @Post('signup')
   signup(@Body() singupDto: SignupDto, @Req() req: Request) {
     console.log(singupDto, 'signupDto gooys');
-    return this.authService.signUp(singupDto);
+    return this._authUsecase.signUp(singupDto);
   }
 
   @Post('verify-otp')
@@ -107,7 +109,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const { accessToken, refreshToken, user } =
-      await this.authService.verifyOtp(verifyOtpDto);
+      await this._authUsecase.verifyOtp(verifyOtpDto);
     res
       .cookie('refreshToken', refreshToken, {
         httpOnly: true,
@@ -129,7 +131,7 @@ export class AuthController {
     @Body() resendOtpDto: ResendOtpDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const result = await this.authService.resendOtp(resendOtpDto);
+    const result = await this._authUsecase.resendOtp(resendOtpDto);
     return res.json({ result });
   }
 
@@ -137,14 +139,14 @@ export class AuthController {
   forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
     console.log('forgot password controller l ethunnund');
 
-    return this.authService.forgotPassword(forgotPasswordDto);
+    return this._authUsecase.forgotPassword(forgotPasswordDto);
   }
 
   @Post('verify-forgotPassword')
   verifyForgotPassword(
     @Body() verifyForgotPasswordDto: VerifyForgotPasswordDto,
   ) {
-    return this.authService.verifyForgotPassword(verifyForgotPasswordDto);
+    return this._authUsecase.verifyForgotPassword(verifyForgotPasswordDto);
   }
 
   @Post('reset-password')
@@ -153,7 +155,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const { accessToken, refreshToken, user, message } =
-      await this.authService.resetPassword(resetPasswordDto);
+      await this._authUsecase.resetPassword(resetPasswordDto);
     res
       .cookie('refreshToken', refreshToken, {
         httpOnly: true,
@@ -179,7 +181,7 @@ export class AuthController {
     return user;
   }
 
-  @UseGuards(RefreshTokenGuard)
+  @UseGuards(AccessTokenGuard)
   @Post('/logout')
   async logout(
     @Req() req: RequestWithUser,
@@ -187,7 +189,8 @@ export class AuthController {
   ) {
     res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
-    const result = await this.authService.logout(req.user.userId);
+    const result = await this._authUsecase.logout(req.user.userId);
+    console.log(result,'resultttt')
     return result;
   }
   @UseGuards(RefreshTokenGuard)
@@ -205,7 +208,7 @@ export class AuthController {
       throw new ForbiddenException('Account is Blocked');
     }
     const { accessTokenResponse, refreshTokenResponse, message } =
-      await this.authService.refreshToken(userId, refreshToken, res, role);
+      await this._authUsecase.refreshToken(userId, refreshToken, res, role);
     res
       .cookie('refreshToken', refreshTokenResponse, {
         httpOnly: true,
@@ -219,4 +222,5 @@ export class AuthController {
       })
       .json(message);
   }
+
 }
