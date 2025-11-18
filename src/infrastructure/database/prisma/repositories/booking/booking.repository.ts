@@ -26,6 +26,9 @@ export class BookingRepository
     console.log(agencyId, 'agencyId in booking repo');
     let fetchBooking = await this._prisma.booking.findMany({
       where: { agencyId },
+      include:{
+        package:true
+      }
     });
     console.log(fetchBooking, 'fetchBooking in booking repo');
 
@@ -42,5 +45,18 @@ export class BookingRepository
       data: { status },
     });
     return BookingMapper.toDomain(updateBooking)
+  }
+
+  //customer name
+  //customer email
+  //phone number
+  //people count
+  //totalamount
+  async findByPackageId(packageId:string):Promise<BookingEntity[]>{
+   let bookings = await this._prisma.booking.findMany({
+      where:{packageId},
+      include:{user:true}
+    })
+    return BookingMapper.tobookingDomains(bookings)
   }
 }

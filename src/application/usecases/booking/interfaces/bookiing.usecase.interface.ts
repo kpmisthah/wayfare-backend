@@ -27,4 +27,6 @@ export interface IBookingUseCase {
     agencyId: string,
     status: BookingStatus,
   ): Promise<BookingEntity>;
+
+  execute(packageId: string)
 }

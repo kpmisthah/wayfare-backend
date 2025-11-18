@@ -14,7 +14,9 @@ export class BookingEntity {
         private readonly _commission:number,
         private readonly _platformEarning:number,
         private readonly _agencyEarning:number,
-        private readonly _paymentIndentedId?:string
+        private readonly _customerName?:string,
+        private readonly _customerEmail?:string,
+        private readonly _phone?:string
     ){}
     static create(props:{
         packageId:string,
@@ -62,7 +64,9 @@ export class BookingEntity {
             this._commission,
             this._platformEarning,
             this._agencyEarning,
-            this._paymentIndentedId
+            this._customerName,
+            this._customerEmail,
+            this._phone
         )
     }
 
@@ -92,9 +96,9 @@ export class BookingEntity {
     get travelDate(){
         return this._travelDate
     }
-    get paymentIndentedId(){
-        return this._paymentIndentedId
-    }
+    // get paymentIndentedId(){
+    //     return this._paymentIndentedId
+    // }
     get agencyId(){
         return this._agencyId
     }
@@ -109,5 +113,14 @@ export class BookingEntity {
 
     get agencyEarning(){
         return this._agencyEarning
+    }
+    get customerName(){
+        return this._customerName
+    }
+    get customerEmail(){
+        return this._customerEmail
+    }
+    get phone(){
+        return this._phone
     }
 }

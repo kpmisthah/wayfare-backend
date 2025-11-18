@@ -2,6 +2,10 @@ import { $Enums, Booking, Prisma } from "@prisma/client";
 import { BookingEntity } from "src/domain/entities/booking.entity";
 import { BookingStatus } from "src/domain/enums/booking-status.enum";
 
+
+type BookingWithUser = Prisma.BookingGetPayload<{
+    include:{user:true}
+}>
 export class BookingMapper {
     static toDomain(booking:Booking):BookingEntity{
         return new BookingEntity(
@@ -40,6 +44,32 @@ export class BookingMapper {
     static toDomains(booking:Booking[]):BookingEntity[]{
         return booking.map((booking)=>{
             return BookingMapper.toDomain(booking)
+        })
+    }
+
+    static tobookingDomain(booking:BookingWithUser){
+        return new BookingEntity(
+        booking.id,
+        booking.packageId,
+        booking.userId,
+        booking.peopleCount,
+        booking.totalAmount,
+        booking.isCancellationAllowed,
+        booking.status as BookingStatus,
+        booking.travelDate,
+        booking.agencyId,
+        booking.commissionRate,
+        booking.platformEarning,
+        booking.agencyEarning,
+        booking.user.name,
+        booking.user.email,
+        booking.user.phone ?? ''         
+        )
+    }
+
+    static tobookingDomains(booking:BookingWithUser[]):BookingEntity[]{
+        return booking.map((booking)=>{
+            return BookingMapper.tobookingDomain(booking)
         })
     }
 }

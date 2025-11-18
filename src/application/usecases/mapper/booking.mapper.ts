@@ -2,6 +2,7 @@ import { BookingStatusDto } from "src/application/dtos/booking-status.dto";
 import { CreateBookingDto } from "src/application/dtos/create-booking.dto";
 import { FetchBookingDto } from "src/application/dtos/fetch-booking.dto";
 import { FetchUserBookingDto } from "src/application/dtos/fetch-user-booking.dto";
+import { ResponseBookingDto } from "src/application/dtos/response-booking.dto";
 import { AgencyEntity } from "src/domain/entities/agency.entity";
 import { BookingEntity } from "src/domain/entities/booking.entity";
 import { PackageEntity } from "src/domain/entities/package.entity";
@@ -78,5 +79,21 @@ export class BookingMapper {
         return{
             bookingStatus:bookingEntity.status
         }
+    }
+    static toResponseBookingDto(bookingEntity:BookingEntity):ResponseBookingDto{
+        return{
+            id:bookingEntity.id,
+            customerName:bookingEntity.customerName ?? '',
+            status:bookingEntity.status,
+            email:bookingEntity.customerEmail ?? '',
+            phone:bookingEntity.phone,
+            totalPeople:bookingEntity.peopleCount,
+            totalAmount:bookingEntity.totalAmount
+        }
+    }
+    static toResponseBookingDtoByPackageId(bookingEntity:BookingEntity[]):ResponseBookingDto[]{
+        return bookingEntity.map((booking)=>{
+            return BookingMapper.toResponseBookingDto(booking)
+        })
     }
 }
