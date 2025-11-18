@@ -4,7 +4,7 @@ import { BookingStatus } from "src/domain/enums/booking-status.enum";
 
 
 type BookingWithUser = Prisma.BookingGetPayload<{
-    include:{user:true}
+    include:{user:true,package:true}
 }>
 export class BookingMapper {
     static toDomain(booking:Booking):BookingEntity{
@@ -63,7 +63,8 @@ export class BookingMapper {
         booking.agencyEarning,
         booking.user.name,
         booking.user.email,
-        booking.user.phone ?? ''         
+        booking.user.phone ?? '' ,
+        booking.package.destination ?? ''       
         )
     }
 

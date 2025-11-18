@@ -55,7 +55,7 @@ export class BookingRepository
   async findByPackageId(packageId:string):Promise<BookingEntity[]>{
    let bookings = await this._prisma.booking.findMany({
       where:{packageId},
-      include:{user:true}
+      include:{user:true,package:true}
     })
     return BookingMapper.tobookingDomains(bookings)
   }

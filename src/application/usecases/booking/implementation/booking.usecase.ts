@@ -228,6 +228,6 @@ export class BookingUseCase implements IBookingUseCase {
 
   async execute(packageId: string) {
     let booking = await this._bookingRepo.findByPackageId(packageId);
-    
+    return BookingMapper.toResponseBookingDtoByPackageId(booking);
   }
 }

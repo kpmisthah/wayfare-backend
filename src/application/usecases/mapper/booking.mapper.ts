@@ -88,7 +88,8 @@ export class BookingMapper {
             email:bookingEntity.customerEmail ?? '',
             phone:bookingEntity.phone,
             totalPeople:bookingEntity.peopleCount,
-            totalAmount:bookingEntity.totalAmount
+            totalAmount:bookingEntity.totalAmount,
+            destination:bookingEntity.destination ?? ''
         }
     }
     static toResponseBookingDtoByPackageId(bookingEntity:BookingEntity[]):ResponseBookingDto[]{

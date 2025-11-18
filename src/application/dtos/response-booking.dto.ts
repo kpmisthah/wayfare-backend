@@ -24,4 +24,7 @@ export class ResponseBookingDto {
     @IsNumber()
     @Type(()=>Number)
     totalAmount:number;
+
+    @IsString()
+    destination:string
 }
