@@ -97,18 +97,28 @@ export class AgencyService implements IAgencyService {
     if (!user.data) return null;
     return AgencyMapper.toListAgencies(user?.data, agency);
   }
-  async searchAgencies(query:string,page:number,limit:number): Promise<{data:AgencyManagementDto[],totalPages:number,currentPage:number} | null> {
+  async searchAgencies(query:string,page:number,limit:number,sortBy:string): Promise<{data:AgencyManagementDto[],totalPages:number,currentPage:number} | null> {
     const skip = (page - 1) * limit;
-    const users = await this._userRepo.listUsersFromAgencies();
-    if (!users) return null;
-    const filteredUsers = users.filter((user)=>
-      user.name.toLocaleLowerCase().includes(query?.toLocaleLowerCase()||'')
-    )
+    // const users = await this._userRepo.listUsersFromAgencies();
+    // if (!users) return null;
+    // const filteredUsers = users.filter((user)=>
+    //   user.name.toLocaleLowerCase().includes(query?.toLocaleLowerCase()||'')
+    // )
+    let orderBy
+    if(sortBy==='az'){  
+      orderBy = {user:{name:'asc'}}
+    }
+    if(sortBy==='za'){
+      orderBy = {user:{name:'desc'}}
+    }
+    if(sortBy==='packages'){
+      orderBy={package:{_count:'desc'}}
+    }
     const [agencies, total] = await Promise.all([
-    this._agencyRepo.findAlls(skip, limit),
-    this._agencyRepo.count(),
+    this._agencyRepo.findAlls(query,orderBy,skip, limit),
+    this._agencyRepo.count(query),
   ]);
-    let mapped = AgencyMapper.toListAgencies(filteredUsers, agencies);
+    let mapped = AgencyMapper.toList(agencies);
     return {
       data:mapped,
       totalPages:Math.ceil(total/limit),

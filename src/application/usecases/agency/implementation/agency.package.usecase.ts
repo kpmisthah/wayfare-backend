@@ -242,4 +242,10 @@ export class AgencyPackageService implements IAgencyPackageService {
     if(!updateTransportation) return null
     return PackageMapper.toPackageDto(updated,updateTransportation)
   }
+
+  async trendingPackages(){
+    let fetchTrendingPackages = await this._agencyPackageRepo.trendinPackages()
+    console.log(fetchTrendingPackages,'fetchTrendingPackagessss');
+    return PackageMapper.toTrendingPackageDto(fetchTrendingPackages)
+  }
 }
