@@ -19,6 +19,11 @@ import { IWalletRepository } from 'src/domain/repositories/wallet/wallet.reposit
 import { BookingDto } from 'src/application/dtos/booking.dto';
 import { PaymentRegistry } from '../../payment/implementation/payment.registry';
 import { WalletTransactionEnum } from 'src/domain/enums/wallet-transaction.enum';
+import { IWalletTransactionRepository } from 'src/domain/repositories/wallet/wallet-transaction.repository.interface';
+import { WalletTransactionEntity } from 'src/domain/entities/wallet-transaction.entity';
+import { ref } from 'process';
+import { Transaction } from 'src/domain/enums/transaction.enum';
+import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
 
 @Injectable()
 export class BookingUseCase implements IBookingUseCase {
@@ -38,6 +43,8 @@ export class BookingUseCase implements IBookingUseCase {
     @Inject('IWalletRepository')
     private readonly _walletRepo: IWalletRepository,
     private readonly _paymentRegistry: PaymentRegistry,
+    @Inject('IWalletTransactionRepo')
+    private readonly _walletTransactionRepo: IWalletTransactionRepository,
   ) {}
 
   async createBooking(
@@ -116,25 +123,24 @@ export class BookingUseCase implements IBookingUseCase {
       if (!bookingEntity || bookingEntity.length === 0) {
     return { data: [], totalPages: 0,page };
   }
-  console.log(bookingEntity,'boooking entintititi')
     const totalBookings = bookingEntity.length;
-    console.log(totalBookings,'totaaalalll booking')
+    console.log(totalBookings,'totalbookingss')
     const totalPages = Math.ceil(totalBookings / limit);
-    console.log(totalPages,'totalllPagess')
+    console.log(totalPages,'totalpagesss')
     const startIndex = (page - 1) * limit;
+    console.log(startIndex,'startindexxx')  
     const endIndex = page * limit;
+    console.log(endIndex,'endindexxx')
     const paginatedBookings = bookingEntity.slice(startIndex, endIndex);
-    console.log(paginatedBookings,'paginated Bokking')
+    console.log(paginatedBookings,'paginatedbookingss')
     let packageEntity = await this._packageRepo.getAllPackages();
-    console.log(packageEntity, 'in packkage getUserBookings');
-
+    console.log(packageEntity,'packageentityyyy')
     let packages = await Promise.all(
       paginatedBookings.map((booking) =>
         packageEntity.find((pkg) => pkg.id == booking.packageId),
       ),
     );
-    console.log(packages, 'pakcages in getUserBookingds');
-
+    console.log(packages,'packagesin userbookingsss')
     let agencies = await Promise.all(
       paginatedBookings.map((booking) => {
         if (booking) {
@@ -142,12 +148,12 @@ export class BookingUseCase implements IBookingUseCase {
         }
       }),
     );
-    console.log(agencies,'agencies')
+    console.log(agencies,'agenciesin userbookingss')
     let filteredAgencies = agencies.filter(
       (agency) => agency !== null && agency !== undefined,
     );
-    console.log(filteredAgencies, 'fitlered AGencies');
 
+    console.log(filteredAgencies,'filtered agenciesin userbookingss')
     let agencyUsers = await Promise.all(
       agencies.map((agency) => {
         if (agency) {
@@ -156,12 +162,11 @@ export class BookingUseCase implements IBookingUseCase {
         return null;
       }),
     );
-    console.log(agencyUsers,'agencyUsers')
+    console.log(agencyUsers,'agency usersin userbookingss')
     let filteredAgencyUsers = agencyUsers.filter(
       (user) => user !== null && user !== undefined,
     );
-    console.log(filteredAgencyUsers, 'fitlered Agency Users');
-
+    console.log(filteredAgencyUsers,'filtered agency usersin userbookingss')
     let mapped = BookingMapper.toFetchUserBookingsDto(
       paginatedBookings,
       packages,
@@ -188,7 +193,7 @@ export class BookingUseCase implements IBookingUseCase {
     });
     console.log(updateBookingStatus, 'update Booking Dstatus');
 
-    let update = await this._bookingRepo.update(id, bookingEntity);
+    let update = await this._bookingRepo.update(id, updateBookingStatus);
 
     console.log(update, 'updateeee in cancelt Booking');
 
@@ -196,22 +201,36 @@ export class BookingUseCase implements IBookingUseCase {
     if (refundPercentage > 0) {
       let refundAmount = (bookingEntity.totalAmount * refundPercentage) / 100;
       console.log(refundAmount, 'refund Amount');
-      let existingWallet = await this._walletRepo.findByUserId(
+      let existingWallet = await this._walletUsecase.findByUserId(
         bookingEntity.userId,
       );
-      if (existingWallet) {
+      console.log(existingWallet, 'existing wallet in cancel booking');
+      if (existingWallet?.userId!='') {
         await this._walletUsecase.addBalance(
           refundAmount,
           bookingEntity.userId,
           WalletTransactionEnum.REFUND,
         );
       } else {
-        await this._walletUsecase.createWallet(
+        let newWallet = await this._walletUsecase.createWallet(
           refundAmount,
           bookingEntity.userId,
         );
+        existingWallet = newWallet;
       }
+      const walletTransactionEntity = WalletTransactionEntity.create({
+      walletId:existingWallet?.id ?? '',
+      amount: refundAmount,
+      transactionType: Transaction.Credit,
+      paymentStatus: PaymentStatus.REFUNDED,
+      category:WalletTransactionEnum.REFUND,
+      createdAt:new Date(),
+      bookingId: bookingEntity.id,
+      agencyId:bookingEntity.agencyId,  
+    });
+    await this._walletTransactionRepo.create(walletTransactionEntity);
     }
+
     return BookingMapper.toUpdateBookingStatus(update);
   }
 

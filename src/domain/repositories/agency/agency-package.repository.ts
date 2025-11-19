@@ -11,4 +11,5 @@ export interface IAgencyPackageRepository
   getAllPackages():Promise<PackageEntity[]>
   countPackages(agencyId:string):Promise<number>
   getPackagesByPage(agencyId:string,page:number,limit:number):Promise<PackageEntity[]>
+  trendinPackages()
 }

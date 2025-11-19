@@ -10,4 +10,15 @@ export class WalletTransactionRepository extends BaseRepository<WalletTransactio
     constructor(private readonly _prisma:PrismaService){
         super(_prisma.walletTransaction,WalletTransactionMapper)
     }
+    async getTransactionsByWalletId(walletId: string): Promise<WalletTransactionEntity[]> {
+        const transactions = await this._prisma.walletTransaction.findMany({
+            where:{
+                walletId
+            },
+            orderBy:{
+                createdAt:'desc'
+            }
+        });
+        return transactions.map(txn => WalletTransactionMapper.toEntity(txn));
+    }   
 }

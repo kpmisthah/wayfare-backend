@@ -37,4 +37,7 @@ export class WalletTransactionMapper {
 
     return prismaObj;
 }
+    static toEntity(walletTransaction:WalletTransaction):WalletTransactionEntity{
+        return this.toDomain(walletTransaction)
+    }   
 }

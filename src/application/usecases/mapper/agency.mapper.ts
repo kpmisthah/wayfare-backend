@@ -153,6 +153,29 @@ export class AgencyMapper {
       );
     });
   }
+  static toAgency(domain: AgencyEntity, user: UserEntity) {
+    return {
+      id: domain.id,
+      address: domain.address ?? '',
+      licenseNumber: domain.licenseNumber ?? '',
+      ownerName: domain.ownerName ?? '',
+      websiteUrl: domain.websiteUrl ?? '',
+      description: domain.description ?? '',
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        isVerified: user.isVerified,
+        image: user.profileImage,
+        isBlock: user.isBlock,
+      },
+    };
+  }
 
+  static toList(agencyModels: { domain: AgencyEntity; user: UserEntity }[]) {
+    return agencyModels.map((model) =>
+      AgencyMapper.toAgency(model.domain, model.user)
+    );
+  }
   }
 

@@ -50,4 +50,28 @@ export class AgencyMapper {
       return AgencyMapper.toDomain(agency);
     });
   }
+    static fromPrisma(a: any) {
+    return {
+      domain: new AgencyEntity(
+        a.id,
+        a.description,
+        a.userId,
+        a.address,
+        a.licenseNumber,
+        a.ownerName,
+        a.websiteUrl
+      ),
+
+      user: {
+        id: a.user.id,
+        name: a.user.name,
+        email: a.user.email,
+        isVerified: a.user.verified,
+        image: a.user.profileImage,
+        isBlock: a.user.isBlock,
+      },
+
+      packageCount: a.package.length
+    };
+  }
 }

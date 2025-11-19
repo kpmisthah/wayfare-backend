@@ -26,6 +26,8 @@ import { IAuthUsecase } from 'src/application/usecases/auth/interfaces/auth.usec
 import { IAgencyService } from 'src/application/usecases/agency/interfaces/agency.usecase.interface';
 import { Role } from 'src/domain/enums/role.enum';
 import { IArgonService } from 'src/domain/interfaces/argon.service.interface';
+import { IUserRepository } from 'src/domain/repositories/user/user.repository.interface';
+import { ChangePassword } from 'src/application/dtos/change-password.dto';
 @Injectable()
 export class AuthService implements IAuthUsecase {
   constructor(
@@ -51,6 +53,8 @@ export class AuthService implements IAuthUsecase {
     @Inject('IArgonService')
     private readonly argonService: IArgonService,
     private readonly jwtFactory: JwtTokenFactory,
+    @Inject('IUserRepository')
+    private readonly _userRepo:IUserRepository
   ) {}
 
   async signUp(signupDto: SignupDto) {
@@ -329,46 +333,28 @@ export class AuthService implements IAuthUsecase {
       .redirect('http://localhost:3000');
   }
 
-  // async handleGoogleLogin(
-  //   email: string,
-  //   name: string,
-  //   image: string | null,
-  //   res: Response,
-  // ) {
-  //   let user = await this.userService.findByEmail(email);
-  //   if (!user) {
-  //     user = await this.userService.create({
-  //       name,
-  //       email,
-  //       password: null, // social login
-  //       refreshToken: null,
-  //       role
-  //     });
-  //   }
-  //   if (!user?.name) {
-  //     throw new UnauthorizedException('User not exist');
-  //   }
-  //   const tokens = await this.jwtFactory.generateTokens(
-  //     user.id,
-  //     user.name,
-  //     user.role,
-  //   );
-  //   await this.updateRefreshToken(user.id, tokens.refreshToken, user.role);
-
-  //   res
-  //     .cookie('resfreshToken', tokens.refreshToken, {
-  //       httpOnly: true,
-  //       secure: false,
-  //       expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-  //       path: '/',
-  //     })
-  //     .cookie('accessToken', tokens.accessToken, {
-  //       httpOnly: true,
-  //       secure: false,
-  //       expires: new Date(Date.now() + 5 * 60 * 1000),
-  //       path: '/',
-  //     });
-
-  //   return { message: 'Google Login successful', user };
-  // }
+  async changePassword(userId: string, changePasswordDto: ChangePassword): Promise<{ message: string }>  {
+    const user = await this._userRepo.findById(userId);
+    console.log(user);
+    
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+    const isOldPasswordMatch = await this.argonService.comparePassword(
+      user.password,
+      changePasswordDto.oldPassword,
+    );
+    console.log(isOldPasswordMatch,'oldmatch');
+    
+    if (!isOldPasswordMatch) {
+      throw new BadRequestException('Old password is incorrect');
+    }
+    const hashedNewPassword = await this.hash(changePasswordDto.newPassword);
+    let userEntity = user.update({
+      password:hashedNewPassword
+    })
+    console.log(userEntity,'user entity');
+    await this._userUsecase.update(userId,userEntity);
+    return { message: 'Password changed successfully' };
+  } 
 }

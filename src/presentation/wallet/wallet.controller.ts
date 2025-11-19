@@ -16,4 +16,9 @@ export class WalletController {
         let userId = req.user['userId']
         return this._walletUseCase.getWallet(userId)
     }
+    @Get('transactions')
+    getTransactions(@Req() req:RequestWithUser){
+        let userId = req.user['userId']
+        return this._walletUseCase.getTransactions(userId)
+    }
 }

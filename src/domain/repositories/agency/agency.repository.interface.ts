@@ -9,6 +9,6 @@ export interface IAgencyRepository {
   findAll(): Promise<AgencyEntity[] | null> 
   findById(id: string): Promise<AgencyEntity | null>;
   findByUserId(id: string): Promise<AgencyEntity | null>;
-  count(): Promise<number>
-  findAlls(skip:number, limit:number): Promise<AgencyEntity[] | null>
+  count(query: string): Promise<number>
+  findAlls(query:string,orderBy:any,skip:number, limit:number) 
 }

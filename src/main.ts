@@ -33,7 +33,7 @@ async function bootstrap() {
     // });
 
     const app = await NestFactory.create(AppModule);
-    app.useGlobalFilters(new GlobalExceptionFilter());
+    // app.useGlobalFilters(new GlobalExceptionFilter());
       app.use(
     json({
       verify: (req: any, res, buf) => {

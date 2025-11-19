@@ -9,6 +9,7 @@ import {
   Inject,
   ForbiddenException,
   NotFoundException,
+  Patch,
 } from '@nestjs/common';
 import { LoginDto, SignupDto } from 'src/application/dtos/auth.dto';
 // import { Request } from 'express';
@@ -27,6 +28,7 @@ import { IAuthUsecase } from 'src/application/usecases/auth/interfaces/auth.usec
 import { IUserUsecase } from 'src/application/usecases/users/interfaces/user.usecase.interface';
 import { AuthGuard } from '@nestjs/passport';
 import { GoogleLoginUseCase } from 'src/application/usecases/auth/implementation/google-login.usecase';
+import { ChangePassword } from 'src/application/dtos/change-password.dto';
 // import { Role as userRole } from 'src/domain/enums/role.enum';
 // import { Roles } from '../roles/roles.decorator';
 // import { RolesGuard } from '../roles/auth.guard';
@@ -221,6 +223,15 @@ export class AuthController {
         expires: new Date(Date.now() + 1.5 * 60 * 60 * 1000),
       })
       .json(message);
+  }
+
+  @Patch('change-password')
+  // @UseGuards(AccessTokenGuard)
+  async changePassword(@Body() changePassword:ChangePassword){
+    //@Req() req: RequestWithUser,  
+    // const userId = req.user['userId'];
+    let userId = '07dc31d7-50da-4f8d-b845-c3bc9ed4877b'
+    return this._authUsecase.changePassword(userId,changePassword);
   }
 
 }

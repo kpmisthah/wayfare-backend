@@ -12,6 +12,7 @@ import { Transaction } from 'src/domain/enums/transaction.enum';
 import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
 import { IWalletTransactionRepository } from 'src/domain/repositories/wallet/wallet-transaction.repository.interface';
 import { WalletTransactionEnum } from 'src/domain/enums/wallet-transaction.enum';
+import { WalletTransferDto } from 'src/application/dtos/wallet-tranfer.dto';
 
 @Injectable()
 export class WalletUsecase implements IWalletUseCase {
@@ -117,4 +118,15 @@ export class WalletUsecase implements IWalletUseCase {
     let updateWallet = await this.addBalance(earning, admin.id,WalletTransactionEnum.ADMIN_CREDIT);
     return updateWallet;
   }
+  async getTransactions(userId: string): Promise<WalletTransferDto[]> {
+    let wallet = await this._walletRepo.findByUserId(userId);
+    if(!wallet) throw new Error("Wallet not found")
+    let transactions = await this._walletTransactionRepo.getTransactionsByWalletId(wallet.id);
+    return WalletMapper.toWalletTransactionsDto(transactions);
+  } 
+
+  async findByUserId(userId: string): Promise<WalletDto | null> {
+    let wallet = await this._walletRepo.findByUserId(userId);
+    return WalletMapper.toWalletDto(wallet);
+  } 
 }
