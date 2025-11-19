@@ -225,4 +225,9 @@ export class BookingUseCase implements IBookingUseCase {
 
     return await this._bookingRepo.updateStatus(bookingId, status);
   }
+
+  async execute(packageId: string) {
+    let booking = await this._bookingRepo.findByPackageId(packageId);
+    return BookingMapper.toResponseBookingDtoByPackageId(booking);
+  }
 }

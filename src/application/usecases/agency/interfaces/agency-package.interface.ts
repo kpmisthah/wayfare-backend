@@ -14,4 +14,5 @@ export interface IAgencyPackageService {
   filterPackages(filterPackages:FilterPackageDto)
   getAgencyPackages(userId: string): Promise<PackageDto[] | null> 
   updatePackage(id,updatePackageDto:UpdatePackageDto):Promise<UpdatePackageDto|null>
+  trendingPackages()
 }

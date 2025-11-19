@@ -78,4 +78,9 @@ export class BookingController {
       body.status,
     );
   }
+
+  @Get(":id/bookings")
+  async getBookings(@Param("id") packageId: string) {
+    return this._bookingUseCase.execute(packageId);
+  }
 }
