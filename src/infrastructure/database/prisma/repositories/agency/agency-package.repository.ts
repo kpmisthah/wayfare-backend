@@ -79,4 +79,17 @@ export class AgencyPackageRepository
     return PackageMapper.toPackageEntities(fetchPackages)
   }
 
+  async trendinPackages(){
+    let trending = await this._prisma.package.findMany({
+      take:4,
+      orderBy:{
+        bookings:{
+          _count:'desc' 
+        }
+      },
+      include:{bookings:true}
+    })
+    console.log(trending,'trending in repo');
+    return trending    
+  }
 }

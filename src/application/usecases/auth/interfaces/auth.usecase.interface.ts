@@ -7,6 +7,7 @@ import { ResetPasswordDto } from 'src/application/dtos/resetPassword.dto';
 import { Response } from 'express';
 import { Role } from 'src/domain/enums/role.enum';
 import { $Enums } from '@prisma/client';
+import { ChangePassword } from 'src/application/dtos/change-password.dto';
 
 interface User {
   id: string;
@@ -39,7 +40,7 @@ export interface IAuthUsecase {
     role: Role,
   ): Promise<void>;
   googleLoginResponse(req: any, res: Response): void;
-
+  changePassword(userId: string, changePasswordDto: ChangePassword)
   // handleGoogleLogin(
   //   email: string,
   //   name: string,

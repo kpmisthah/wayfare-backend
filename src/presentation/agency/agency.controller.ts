@@ -95,19 +95,19 @@ export class AgencyController {
   @UseInterceptors(FilesInterceptor('photos'))
   @Post('add/packages')
   async addPackages(
-    @Body() addPackageDto:PackageDto,
+    @Body() addPackageDto: PackageDto,
     @UploadedFiles() files: Express.Multer.File[],
     @Req() req: RequestWithUser,
     @Res({ passthrough: true }) res: Response,
   ) {
-    console.log("post--------------------------adikkndoooo-------------")
+    console.log('post--------------------------adikkndoooo-------------');
     const userId = req.user['userId'];
 
     const parsedBody: PackageDto = {
       ...addPackageDto,
       itinerary: JSON.parse(addPackageDto.itinerary as unknown as string),
     };
-    console.log(parsedBody,'parsedBodyyyyyyyy')
+    console.log(parsedBody, 'parsedBodyyyyyyyy');
     return await this._agencyPackageUsecase.addPackages(
       parsedBody,
       userId,
@@ -116,11 +116,15 @@ export class AgencyController {
   }
   @UseGuards(AccessTokenGuard)
   @Get('get/packages')
-  async getPackages(@Req() req: RequestWithUser,@Query('page') page:string='1',@Query('limit') limit:string='5') {
+  async getPackages(
+    @Req() req: RequestWithUser,
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '5',
+  ) {
     console.log('get adikkndooo-------------------------');
-    
+
     const userId = req.user['userId'];
-    return await this._agencyPackageUsecase.getPackages(userId,+page,+limit);
+    return await this._agencyPackageUsecase.getPackages(userId, +page, +limit);
   }
 
   @UseGuards(AccessTokenGuard)
@@ -136,7 +140,6 @@ export class AgencyController {
     return this._agencyUsecase.updateStatus(id);
   }
 
-
   @Get('/agencies')
   async findAll(
     @Query('page', new DefaultValuePipe(1)) page: string,
@@ -145,18 +148,26 @@ export class AgencyController {
   ) {
     return this._adminUsecase.getAllAgencies();
   }
-    @Get('/filter/packages')
-  async filterPackages(@Query() filterPackageDto:FilterPackageDto){
-    console.log("hello");
-    
-    return this._agencyPackageUsecase.filterPackages(filterPackageDto)
+  @Get('/filter/packages')
+  async filterPackages(@Query() filterPackageDto: FilterPackageDto) {
+    console.log('hello');
+
+    return this._agencyPackageUsecase.filterPackages(filterPackageDto);
   }
   @Put('/package/:id')
-  async updatePackage(@Param('id') id:string,@Body() updatePackageDto:UpdatePackageDto){
-    console.log(id,'id in packageid')
-    return await this._agencyPackageUsecase.updatePackage(id,updatePackageDto)
+  async updatePackage(
+    @Param('id') id: string,
+    @Body() updatePackageDto: UpdatePackageDto,
+  ) {
+    console.log(id, 'id in packageid');
+    return await this._agencyPackageUsecase.updatePackage(id, updatePackageDto);
   }
-
+  @Get('/trending/packages')
+  async trendingPackages() {
+    let result = await this._agencyPackageUsecase.trendingPackages();
+    console.log(result,'result');
+    return result
+  }
   @UseGuards(AccessTokenGuard)
   @Get('/me')
   async getAgency(@Req() req: RequestWithUser) {
@@ -167,12 +178,13 @@ export class AgencyController {
   @Get('/search')
   async search(
     @Query('q') query: string,
-    @Query('page') page:string,
-    @Query('limit') limit:string
+    @Query('page') page: string,
+    @Query('limit') limit: string,
+    @Query('sortBy') sortBy: string,
   ) {
     const pageNum = parseInt(page) || 1;
     const limitNum = parseInt(limit) || 6;
-    return this._agencyUsecase.searchAgencies(query,pageNum,limitNum);
+    return this._agencyUsecase.searchAgencies(query, pageNum, limitNum, sortBy);
   }
   // @Get()
   // async listAgencies(
@@ -183,23 +195,26 @@ export class AgencyController {
   //   const limitNum = parseInt(limit) || 6;
   //   return this._agencyUsecase.listAgencies(pageNum,limitNum);
   // }
-    @Get('/:agencyId/packages')
+  @Get('/:agencyId/packages')
   async getAgencyPackages(
-    @Param('agencyId') agencyId:string ,
-    @Query('page') page?:string,
-    @Query('limit') limit?:string
+    @Param('agencyId') agencyId: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
   ) {
-    console.log("Hellooooooo agecnyId")
-    const pageNumber = page? Number(page):1
-    console.log(pageNumber,'pageNumber');
-    
-    const limitNumber = limit? Number(limit):1
-    console.log(limitNumber,'limitNumber');
-    
-    let data = await this._agencyPackageUsecase.getPackagesByAgencyId(agencyId,pageNumber,limitNumber);
-    console.log(data,'in agencyId/packages');
-    return data
-    
+    console.log('Hellooooooo agecnyId');
+    const pageNumber = page ? Number(page) : 1;
+    console.log(pageNumber, 'pageNumber');
+
+    const limitNumber = limit ? Number(limit) : 1;
+    console.log(limitNumber, 'limitNumber');
+
+    let data = await this._agencyPackageUsecase.getPackagesByAgencyId(
+      agencyId,
+      pageNumber,
+      limitNumber,
+    );
+    console.log(data, 'in agencyId/packages');
+    return data;
   }
 
   @Get('/:packageId/package-details')
@@ -212,13 +227,11 @@ export class AgencyController {
     return this._agencyUsecase.findById(agencyId);
   }
   @UseGuards(AccessTokenGuard)
-  @Patch(':id') 
+  @Patch(':id')
   async agencyApproval(@Param('id') id: string) {
     // let id = req.user['userId']
     console.log(id, 'id');
 
     return await this._agencyUsecase.agencyApproval(id);
   }
-
-
 }

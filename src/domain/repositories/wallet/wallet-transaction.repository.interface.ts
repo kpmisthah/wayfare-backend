@@ -2,5 +2,5 @@ import { WalletTransactionEntity } from "src/domain/entities/wallet-transaction.
 import { IBaseRepository } from "../base.repository";
 
 export interface IWalletTransactionRepository extends IBaseRepository<WalletTransactionEntity>{
-    
+    getTransactionsByWalletId(walletId: string): Promise<WalletTransactionEntity[]>
 }

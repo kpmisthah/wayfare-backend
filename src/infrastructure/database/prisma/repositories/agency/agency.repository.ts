@@ -44,19 +44,46 @@ export class AgencyRepository
     return AgencyMapper.toProfile(agency);
   }
 
-  async findAlls(skip = 0, limit = 6): Promise<AgencyEntity[] | null> {
-    const agency = await this.prisma.agency.findMany({
+  async findAlls(
+    query: string,
+    orderBy: any,
+    skip = 0,
+    limit = 6,
+  ){
+    const agencies = await this.prisma.agency.findMany({
+      where: {
+        user: {
+          name: {
+            contains: query,
+            mode: 'insensitive',
+          },
+        },
+      },
+      include: {
+        user: true,
+        package: true,
+      },
+      orderBy,
       skip,
       take: limit,
     });
-    console.log(agency, 'agency in repo getAllAgencies');
-    if (!agency) {
+    console.log(agencies, 'agency in repo getAllAgencies');
+    if (!agencies) {
       return null;
     }
-    return AgencyMapper.toProfile(agency);
+   return agencies.map(a => AgencyMapper.fromPrisma(a));
   }
-  async count(): Promise<number> {
-    return this.prisma.agency.count();
+  async count(query: string): Promise<number> {
+    return this.prisma.agency.count({
+      where: {
+        user: {
+          name: {
+            contains: query,
+            mode: 'insensitive',
+          },
+        },
+      },
+    });
   }
 
   async updateStatus(id: string, isVerified): Promise<AgencyEntity | null> {
@@ -74,7 +101,10 @@ export class AgencyRepository
   //   return AgencyMapper.toDomain(agency);
   // }
   async findByUserId(id: string): Promise<AgencyEntity | null> {
-    console.log(id, '---------------------------from agency repo findByUserId------------------------------')
+    console.log(
+      id,
+      '---------------------------from agency repo findByUserId------------------------------',
+    );
     const agency = await this.prisma.agency.findFirst({
       where: { userId: id },
     });
