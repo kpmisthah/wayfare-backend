@@ -89,7 +89,8 @@ export class BookingMapper {
             phone:bookingEntity.phone,
             totalPeople:bookingEntity.peopleCount,
             totalAmount:bookingEntity.totalAmount,
-            destination:bookingEntity.destination ?? ''
+            destination:bookingEntity.destination ?? '',
+            travelDate:bookingEntity.travelDate,
         }
     }
     static toResponseBookingDtoByPackageId(bookingEntity:BookingEntity[]):ResponseBookingDto[]{

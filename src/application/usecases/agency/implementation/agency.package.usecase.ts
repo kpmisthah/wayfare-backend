@@ -78,7 +78,7 @@ export class AgencyPackageService implements IAgencyPackageService {
       picture: uploadedUrls,
       duration: Number(addPackageDto.duration),
       destination: addPackageDto.destination,
-      status: PackageStatus.INACTIVE,
+      status: PackageStatus.ACTIVE,
       price: Number(addPackageDto.price),
       transportationId: transportaionEntity.id
       // transportationEntity:transportaionEntity
@@ -123,12 +123,15 @@ export class AgencyPackageService implements IAgencyPackageService {
 
   async getPackages(userId: string,page:number,limit:number): Promise<{items:PackageDto[],page:number,totalPages:number,total:number}|null> {
     const agency = await this.agencyRepo.findByUserId(userId);
+    console.log(agency,'agency')
     if (!agency) return {items:[],page:1,totalPages:1,total:0};
     const total = await this._agencyPackageRepo.countPackages(agency.id)
     const packages = await this._agencyPackageRepo.getPackagesByPage(agency.id,page,limit);
+    console.log(packages,'packages');
     const iteneraries = await this._iteneraryRepo.getIteneraries();
     if (!iteneraries) return null;
     let items = AgencyMapper.toListPackages(packages, iteneraries);
+    console.log(items,'itemssss')
     return{
       items,
       page,
@@ -248,4 +251,16 @@ export class AgencyPackageService implements IAgencyPackageService {
     console.log(fetchTrendingPackages,'fetchTrendingPackagessss');
     return PackageMapper.toTrendingPackageDto(fetchTrendingPackages)
   }
+  async updatePackageStatus(id: string, status: PackageStatus):Promise<UpdatePackageDto|null> {
+  const pkg = await this._agencyPackageRepo.findById(id);
+  if (!pkg) return null;
+   let transportation = await this._transportationRepo.findById(pkg.transportationId)
+   if(!transportation) return null
+  const updated = pkg.update({ status });
+  console.log(updated,'updateeddd paackage status')
+  let updatedPackage = await this._agencyPackageRepo.update(id, updated);
+  if(!updatedPackage) return null
+  return PackageMapper.toPackageDto(updatedPackage,transportation)
+}
+
 }

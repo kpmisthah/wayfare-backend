@@ -3,7 +3,8 @@ import { AgencyProfileDto } from 'src/application/dtos/agency-profile.dto';
 
 import { AgencyEntity } from 'src/domain/entities/agency.entity';
 import { AgencyListItem } from 'src/domain/interfaces/agency-list-items.interface';
-export interface IAgencyRepository {
+import { IBaseRepository } from '../base.repository';
+export interface IAgencyRepository extends IBaseRepository<AgencyEntity> {
   findByEmail(email: string): Promise<AgencyEntity | null>;
   create(agency: AgencyEntity): Promise<AgencyEntity | null>;
   findAll(): Promise<AgencyEntity[] | null> 

@@ -190,7 +190,7 @@ export class AuthService implements IAuthUsecase {
       );
     }
     console.log(resetPassword,'password resett')
-    const hashedPassword = await this.hash(user.password);
+    const hashedPassword = await this.hash(resetPassword.password);
     await this.authRepo.resetPassword(resetPassword.email, {
       password: hashedPassword,
     });

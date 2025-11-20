@@ -33,6 +33,7 @@ import { CreateAgencyDto } from 'src/application/dtos/create-agency.dto';
 import { IAdminService } from 'src/application/usecases/admin/interfaces/admin.usecase.interface';
 import { FilterPackageDto } from 'src/application/dtos/filter-package.dto';
 import { UpdatePackageDto } from 'src/application/dtos/update-package.dto';
+import { PackageStatus } from 'src/domain/enums/package-status.enum';
 
 @Controller('agency')
 export class AgencyController {
@@ -162,6 +163,14 @@ export class AgencyController {
     console.log(id, 'id in packageid');
     return await this._agencyPackageUsecase.updatePackage(id, updatePackageDto);
   }
+  @Patch('/package/status/:id')
+  async updateStatus(
+  @Param('id') id: string,
+  @Body('status') status: PackageStatus
+) {
+  return this._agencyPackageUsecase.updatePackageStatus(id, status);
+}
+
   @Get('/trending/packages')
   async trendingPackages() {
     let result = await this._agencyPackageUsecase.trendingPackages();
@@ -228,10 +237,12 @@ export class AgencyController {
   }
   @UseGuards(AccessTokenGuard)
   @Patch(':id')
-  async agencyApproval(@Param('id') id: string) {
+  async agencyApproval(@Param('id') id: string,@Body() body:{action:'accept'|'reject',reason?:string}) {
     // let id = req.user['userId']
     console.log(id, 'id');
-
-    return await this._agencyUsecase.agencyApproval(id);
+    const {action,reason} = body
+    console.log(action, 'action');
+    console.log(reason, 'reason');
+    return await this._agencyUsecase.agencyApproval(id,action,reason);
   }
 }

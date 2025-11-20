@@ -53,6 +53,7 @@ export class AgencyMapper {
       websiteUrl: agencyEntity?.websiteUrl ?? '',
       description: agencyEntity?.description ?? '',
       // transportationId:agencyEntity?.transactionId,
+      reason:agencyEntity?.reason ?? '',
       user: {
         id: userEntity.id,
         name: userEntity.name,
@@ -154,6 +155,7 @@ export class AgencyMapper {
     });
   }
   static toAgency(domain: AgencyEntity, user: UserEntity) {
+    console.log(user)
     return {
       id: domain.id,
       address: domain.address ?? '',

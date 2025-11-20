@@ -19,7 +19,8 @@ export interface IAgencyService {
   updateStatus(id: string): Promise<UpdateStatusDto | null>;
   findByEmail(email: string): Promise<AgencyEntity | null>;
   findAll(): Promise<AgencyManagementDto[] | null>;
-  agencyApproval(id: string): Promise<AgencyManagementDto | null>;
+  agencyApproval(id: string,action:string,reason?:string): Promise<AgencyManagementDto | null>
   // listAgencies(page:number,limit:number): Promise<{data:AgencyManagementDto[],totalPages:number,currentPage:number} | null> 
   searchAgencies(query:string,page:number,limit:number,sortBy:string): Promise<{data:AgencyManagementDto[],totalPages:number,currentPage:number} | null>
+  
 }

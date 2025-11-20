@@ -107,6 +107,7 @@ model Agency {
   ownerName         String?
   websiteUrl        String?
   user              User                @relation(fields: [userId], references: [id])
+  rejectionReason   String? @default("null")
   booking           Booking[]
   package           Package[]
   transaction       Transaction[]

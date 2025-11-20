@@ -18,6 +18,7 @@ export class AgencyMapper {
       agency.ownerName ?? '',
       agency.websiteUrl ?? '',
       agency.transactionId ?? '',
+      agency.rejectionReason
     );
   }
 
@@ -43,6 +44,7 @@ export class AgencyMapper {
       user: {
         connect: { id: agency.userId },
       },
+      rejectionReason:agency.reason
     };
   }
   static toProfile(agencies: Agency[]): AgencyEntity[] {
@@ -51,6 +53,7 @@ export class AgencyMapper {
     });
   }
     static fromPrisma(a: any) {
+      console.log(a.user,'in frompirsma')
     return {
       domain: new AgencyEntity(
         a.id,
@@ -66,8 +69,8 @@ export class AgencyMapper {
         id: a.user.id,
         name: a.user.name,
         email: a.user.email,
-        isVerified: a.user.verified,
-        image: a.user.profileImage,
+        isVerified: a.user.isVerified ?? false,
+        profileImage: a.user.profileImage||'',
         isBlock: a.user.isBlock,
       },
 

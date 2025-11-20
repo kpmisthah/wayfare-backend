@@ -56,24 +56,37 @@ export class AgencyService implements IAgencyService {
     }
     return AgencyMapper.toAgencyDto(agency);
   }
-  async agencyApproval(id: string): Promise<AgencyManagementDto | null> {
+  async agencyApproval(
+    id: string,
+    action: 'accept' | 'reject',
+    reason?: string,
+  ): Promise<AgencyManagementDto | null> {
+    console.log(action, 'action in usecase',reason,'reason in usecase');  
     const agencyEntity = await this._agencyRepo.findById(id);
-    console.log(agencyEntity, 'agencyEty');
-
     if (!agencyEntity) return null;
-    const updateUserEntity = await this._userRepo.findById(agencyEntity.userId);
-    console.log(updateUserEntity, 'updateuser');
+    const userEntity = await this._userRepo.findById(agencyEntity.userId);
+    if (!userEntity) return null;
+    let updatedUser;
+    let updatedAgency: AgencyEntity;
+    if (action === 'accept') {
+      console.log("reject aakumbo accept l verndo")
+      const userUpdate = userEntity.update({ isVerified: true });
+      updatedUser = await this._userRepo.update(userUpdate.id, userUpdate);
+      updatedAgency = agencyEntity.updateAgency({ reason: null });
+      let u = await this._agencyRepo.update(updatedAgency.id, updatedAgency);
+      console.log(u, 'updated agency');
+    } else {
+      console.log('reject aakumbo ivide alle verunne')
+      const userUpdate = userEntity.update({ isVerified: false });
+      updatedUser = await this._userRepo.update(userUpdate.id, userUpdate);
 
-    const userUpdate = updateUserEntity?.update({
-      isVerified: true,
-    });
-    console.log(userUpdate, 'user update id verndo nokknm');
-
-    if (!userUpdate) return null;
-    const user = await this._userRepo.update(userUpdate.id, userUpdate);
-    return AgencyMapper.toAgencyManagement(user, agencyEntity);
+      updatedAgency = agencyEntity.updateAgency({ reason });
+      console.log(updatedAgency,'updateagency after rejection')
+      let v = await this._agencyRepo.update(updatedAgency.id, updatedAgency);
+      console.log(v, 'updated agency');
+    }
+    return AgencyMapper.toAgencyManagement(updatedUser, updatedAgency);
   }
-
 
   async findById(id: string): Promise<AgencyProfileDto | null> {
     const agency = await this._agencyRepo.findById(id);
@@ -97,36 +110,46 @@ export class AgencyService implements IAgencyService {
     if (!user.data) return null;
     return AgencyMapper.toListAgencies(user?.data, agency);
   }
-  async searchAgencies(query:string,page:number,limit:number,sortBy:string): Promise<{data:AgencyManagementDto[],totalPages:number,currentPage:number} | null> {
+  async searchAgencies(
+    query: string,
+    page: number,
+    limit: number,
+    sortBy: string,
+  ): Promise<{
+    data: AgencyManagementDto[];
+    totalPages: number;
+    currentPage: number;
+  } | null> {
     const skip = (page - 1) * limit;
     // const users = await this._userRepo.listUsersFromAgencies();
     // if (!users) return null;
     // const filteredUsers = users.filter((user)=>
     //   user.name.toLocaleLowerCase().includes(query?.toLocaleLowerCase()||'')
     // )
-    let orderBy
-    if(sortBy==='az'){  
-      orderBy = {user:{name:'asc'}}
+    let orderBy;
+    if (sortBy === 'az') {
+      orderBy = { user: { name: 'asc' } };
     }
-    if(sortBy==='za'){
-      orderBy = {user:{name:'desc'}}
+    if (sortBy === 'za') {
+      orderBy = { user: { name: 'desc' } };
     }
-    if(sortBy==='packages'){
-      orderBy={package:{_count:'desc'}}
+    if (sortBy === 'packages') {
+      orderBy = { package: { _count: 'desc' } };
     }
     const [agencies, total] = await Promise.all([
-    this._agencyRepo.findAlls(query,orderBy,skip, limit),
-    this._agencyRepo.count(query),
-  ]);
+      this._agencyRepo.findAlls(query, orderBy, skip, limit),
+      this._agencyRepo.count(query),
+    ]);
     let mapped = AgencyMapper.toList(agencies);
+    console.log(mapped,'mapped agenciessss')
     return {
-      data:mapped,
-      totalPages:Math.ceil(total/limit),
-      currentPage:page
-    }
+      data: mapped,
+      totalPages: Math.ceil(total / limit),
+      currentPage: page,
+    };
   }
   async updateStatus(id: string): Promise<UpdateStatusDto | null> {
-    const agency = await this._agencyRepo.findById(id);
+    const agency = await this._agencyRepo.findById(id)
     if (!agency) return null;
     const user = await this._userRepo.findById(agency.userId);
     if (!user) return null;

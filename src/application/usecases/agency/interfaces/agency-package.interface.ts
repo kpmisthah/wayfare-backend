@@ -1,6 +1,7 @@
 import { PackageDto } from 'src/application/dtos/add-package.dto';
 import { FilterPackageDto } from 'src/application/dtos/filter-package.dto';
 import { UpdatePackageDto } from 'src/application/dtos/update-package.dto';
+import { PackageStatus } from 'src/domain/enums/package-status.enum';
 
 export interface IAgencyPackageService {
   addPackages(
@@ -15,4 +16,5 @@ export interface IAgencyPackageService {
   getAgencyPackages(userId: string): Promise<PackageDto[] | null> 
   updatePackage(id,updatePackageDto:UpdatePackageDto):Promise<UpdatePackageDto|null>
   trendingPackages()
+  updatePackageStatus(id: string, status: PackageStatus)
 }

@@ -83,6 +83,7 @@ export class UserService implements IUserUsecase {
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<SafeUser | null> {
+    console.log(updateUserDto,'update dto in usecase')
     const updateUserEntity = await this._userRepo.findById(id);
     if (!updateUserEntity) return null;
     const userUpdate = updateUserEntity.update({
@@ -90,8 +91,11 @@ export class UserService implements IUserUsecase {
       email: updateUserDto.email,
       password: updateUserDto.password,
       refreshToken: updateUserDto.refreshToken,
+      isBlock:updateUserDto.isBlock
     });
     const user = await this._userRepo.update(id, userUpdate);
+    console.log(user,'updated user in usecase')
+    if (!user) return null;
     return UserMapper.toSafeUserDto(user);
   }
   async remove(id: string, isBlock: boolean): Promise<SafeUser | null> {

@@ -25,6 +25,7 @@ export class BaseRepository<T> {
   }
 
   async update(id: string, update: T): Promise<T> {
+    console.log(id,'iddd in base repo and update',update)
     const data = await this.model.update({
       where: { id },
       data: this.mapper.toPrisma(update),

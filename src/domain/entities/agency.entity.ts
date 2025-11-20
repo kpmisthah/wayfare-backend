@@ -17,6 +17,7 @@ export class AgencyEntity {
     private readonly _ownerName?: string,
     private readonly _websiteUrl?: string,
     private readonly _transactionId?: string | null,
+    private readonly _reason?:string|null
   ) {}
 
   static create(props: {
@@ -59,10 +60,8 @@ export class AgencyEntity {
     );
   }
 
-  public updateAgency(props: { status?: AgencyStatus }) {
-    if (!props.status) {
-      throw new Error('status is not defined');
-    }
+  public updateAgency(props: { status?: AgencyStatus,reason?:string|null }) {
+    console.log(props.reason,'reaaspm')
     return new AgencyEntity(
       this._id,
       this._description,
@@ -78,6 +77,7 @@ export class AgencyEntity {
       this._ownerName,
       this._websiteUrl,
       this._transactionId,
+      props.reason ?? this._reason,
     );
   }
   public updateAgencyProfile(props: {
@@ -150,4 +150,7 @@ export class AgencyEntity {
   get websiteUrl() {
     return this._websiteUrl;
   }
+  get reason() {
+    return this._reason;
+  } 
 }

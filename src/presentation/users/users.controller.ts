@@ -8,6 +8,7 @@ import {
   Query,
   UseGuards,
   Inject,
+  Patch,
 } from '@nestjs/common';
 
 import { CreateUserDto } from 'src/application/dtos/create-user.dto';
@@ -47,8 +48,9 @@ export class UsersController {
   }
 
   @UseGuards(AccessTokenGuard)
-  @Put(':id')
+  @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    console.log(updateUserDto,'update dto in controller')
     return this.userService.update(id, updateUserDto);
   }
 

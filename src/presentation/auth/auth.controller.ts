@@ -151,7 +151,7 @@ export class AuthController {
     return this._authUsecase.verifyForgotPassword(verifyForgotPasswordDto);
   }
 
-  @Post('reset-password')
+  @Patch('reset-password')
   async resetPassword(
     @Body() resetPasswordDto: ResetPasswordDto,
     @Res({ passthrough: true }) res: Response,
@@ -226,11 +226,9 @@ export class AuthController {
   }
 
   @Patch('change-password')
-  // @UseGuards(AccessTokenGuard)
-  async changePassword(@Body() changePassword:ChangePassword){
-    //@Req() req: RequestWithUser,  
-    // const userId = req.user['userId'];
-    let userId = '07dc31d7-50da-4f8d-b845-c3bc9ed4877b'
+  @UseGuards(AccessTokenGuard)
+  async changePassword(@Req() req: RequestWithUser,@Body() changePassword:ChangePassword){
+    const userId = req.user['userId'];
     return this._authUsecase.changePassword(userId,changePassword);
   }
 

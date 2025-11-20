@@ -27,4 +27,6 @@ export class ResponseBookingDto {
 
     @IsString()
     destination:string
+
+    travelDate:string
 }
