@@ -23,6 +23,7 @@ import { ChatGateway } from './presentation/chat/chat.gateway';
 import { ChatModule } from './presentation/chat/chat.module';
 import { ConversationModule } from './presentation/conversation/conversation.module';
 import { ConnectionModule } from './presentation/connection/connection.module';
+import { PaymentModule } from './presentation/payment/payment.module';
 
 const customLogger = new Logging();
 @Module({
@@ -44,7 +45,8 @@ const customLogger = new Logging();
     TravellersModule,
     ChatModule,
     ConversationModule,
-    ConnectionModule
+    ConnectionModule,
+    PaymentModule
     // ElasticsearchModule
   ],
   controllers: [AppController],

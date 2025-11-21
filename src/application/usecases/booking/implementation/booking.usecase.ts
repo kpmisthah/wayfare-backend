@@ -21,7 +21,6 @@ import { PaymentRegistry } from '../../payment/implementation/payment.registry';
 import { WalletTransactionEnum } from 'src/domain/enums/wallet-transaction.enum';
 import { IWalletTransactionRepository } from 'src/domain/repositories/wallet/wallet-transaction.repository.interface';
 import { WalletTransactionEntity } from 'src/domain/entities/wallet-transaction.entity';
-import { ref } from 'process';
 import { Transaction } from 'src/domain/enums/transaction.enum';
 import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
 
@@ -78,6 +77,7 @@ export class BookingUseCase implements IBookingUseCase {
     if (!booking) return null;
 
     const handler = this._paymentRegistry.get(createBookingDto.paymentType!);
+    console.log(handler,'handlerrr l enthaa kittne nokknmmmm')
     const paymentResult = await handler.payment(booking, booking.agencyId);
     return {
       booking: BookingMapper.toBookDto(booking),
@@ -245,8 +245,16 @@ export class BookingUseCase implements IBookingUseCase {
     return await this._bookingRepo.updateStatus(bookingId, status);
   }
 
-  async execute(packageId: string) {
+  async execute(packageId: string){
     let booking = await this._bookingRepo.findByPackageId(packageId);
     return BookingMapper.toResponseBookingDtoByPackageId(booking);
+  }
+
+  async paymentVerification(paymentIntentId:string){
+    let transaction = await this._transactionRepo.findByPaymentIntent(paymentIntentId)
+    if(!transaction) return null
+    return {
+      status:transaction.status as PaymentStatus
+    }
   }
 }

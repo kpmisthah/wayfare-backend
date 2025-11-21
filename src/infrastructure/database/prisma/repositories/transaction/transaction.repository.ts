@@ -17,4 +17,12 @@ export class TransactionRepository extends BaseRepository<TransactionEntity> imp
         if(!booking)return null
         return TransactionMapper.toDomain(booking)
     }
+    async findByPaymentIntent(paymentIntentId:string):Promise<TransactionEntity|null>{
+        let paymentVerification = await this._prisma.transaction.findFirst({
+            where:{paymentIntentId}
+        })
+        if(!paymentVerification) return null
+        console.log(paymentVerification,'patyment verifcatoin')
+        return TransactionMapper.toDomain(paymentVerification)
+    }
 }

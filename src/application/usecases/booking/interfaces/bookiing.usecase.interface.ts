@@ -29,4 +29,6 @@ export interface IBookingUseCase {
   ): Promise<BookingEntity>;
 
   execute(packageId: string)
+  paymentVerification(paymentIntentId:string)
+  
 }
