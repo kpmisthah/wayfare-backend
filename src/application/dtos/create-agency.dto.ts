@@ -1,26 +1,19 @@
-import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsString, MinLength } from 'class-validator';
-import { AgencyStatus } from 'src/domain/enums/agency-status.enum';
-import { Role } from 'src/domain/enums/role.enum';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateAgencyDto {
   @IsString()
   @IsNotEmpty()
   description: string;
-  
-  @IsEnum(AgencyStatus)
-  status: AgencyStatus;
 
-  @IsArray()
-  specialization: string[];
-  
   @IsString()
-  @IsNotEmpty()
-  phone: string;
+  address: string;
 
-  @IsEnum(Role)
-  role: Role;
+  @IsString()
+  licenseNumber?: string;
 
-  @IsEmail()
-  email:string
+  @IsString()
+  ownerName?: string;
 
+  @IsString()
+  websiteUrl?: string;
 }

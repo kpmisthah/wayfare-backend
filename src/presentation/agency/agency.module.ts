@@ -1,17 +1,18 @@
 import { Module } from '@nestjs/common';
 import { AgencyController } from './agency.controller';
-import { AgencyService } from 'src/application/usecases/agency/implementation/agency.service';
-import { OtpService } from 'src/application/usecases/otp/implementation/otp.service';
-import { AgencyPackageService } from 'src/application/usecases/agency/implementation/agency.package.service';
+import { AgencyService } from 'src/application/usecases/agency/implementation/agency.usecase';
+import { OtpService } from 'src/application/usecases/otp/implementation/otp.usecase';
+import { AgencyPackageService } from 'src/application/usecases/agency/implementation/agency.package.usecase';
 import { AGENCY_PACKAGE_TYPE, AGENCY_PROFILE_TYPE } from 'src/domain/types';
-import { AgencyProfilService } from 'src/application/usecases/agency/implementation/agency-profile.service';
+import { AgencyProfilService } from 'src/application/usecases/agency/implementation/agency-profile.usecase';
 import { CloudinaryModule } from 'src/infrastructure/cloudinary/cloudinary.module';
 import { UsersModule } from '../users/users.module';
 import { NodemailerService } from 'src/infrastructure/utils/nodemailer.service';
-
+import { AdminModule } from '../admin/admin.module';
+// import { SearchModule } from 'src/infrastructure/elastic-search/elastic-search.module';
 
 @Module({
-  imports:[CloudinaryModule,UsersModule],
+  imports: [CloudinaryModule, UsersModule, AdminModule],
   controllers: [AgencyController],
   providers: [
     {
@@ -24,23 +25,22 @@ import { NodemailerService } from 'src/infrastructure/utils/nodemailer.service';
     },
     {
       provide: AGENCY_PACKAGE_TYPE.IAgencyPackageService,
-      useClass:AgencyPackageService
+      useClass: AgencyPackageService,
     },
     {
-      provide:AGENCY_PROFILE_TYPE.IAgencyProfileService,
-      useClass:AgencyProfilService
+      provide: AGENCY_PROFILE_TYPE.IAgencyProfileService,
+      useClass: AgencyProfilService,
     },
     {
-      provide:"INodemailerService",
-      useClass:NodemailerService
-    }
+      provide: 'INodemailerService',
+      useClass: NodemailerService,
+    },
   ],
   exports: [
-    'IAgencyService', 
+    'IAgencyService',
     'IOtpService',
     AGENCY_PACKAGE_TYPE.IAgencyPackageService,
-    AGENCY_PROFILE_TYPE.IAgencyProfileService
-
+    AGENCY_PROFILE_TYPE.IAgencyProfileService,
   ],
 })
 export class AgencyModule {}

@@ -1,13 +1,13 @@
-import { IsArray, IsEmail, IsString } from 'class-validator';
+import { IsEmail, IsString } from 'class-validator';
 
 export class CreateProfileDto {
   @IsString()
-  name?:string
+  name?: string;
 
   @IsEmail()
-  email?:string
+  email?: string;
 
-  password?:string
+  password?: string;
 
   @IsString()
   profile?: string;
@@ -21,5 +21,5 @@ export class CreateProfileDto {
   @IsString()
   phone?: string;
 
-  preferences:{id:string,name:string}[]
+  preferences: { id: string; name: string }[];
 }

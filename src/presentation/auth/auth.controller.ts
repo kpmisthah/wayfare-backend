@@ -8,6 +8,8 @@ import {
   Res,
   Inject,
   ForbiddenException,
+  NotFoundException,
+  Patch,
 } from '@nestjs/common';
 import { LoginDto, SignupDto } from 'src/application/dtos/auth.dto';
 // import { Request } from 'express';
@@ -19,59 +21,68 @@ import { ResendOtpDto } from 'src/application/dtos/resendOtp.dto';
 import { ForgotPasswordDto } from 'src/application/dtos/forgotPassword.dto';
 import { VerifyForgotPasswordDto } from 'src/application/dtos/verifyForgotPasswordDto';
 import { ResetPasswordDto } from 'src/application/dtos/resetPassword.dto';
-import { GoogleOAuthGuard } from 'src/infrastructure/common/guard/google-oauth.guard';
+// import { GoogleOAuthGuard } from 'src/infrastructure/common/guard/google-oauth.guard';
 import { Request, Response } from 'express';
-import { GoogleLoginDto } from 'src/application/dtos/googleLogin.dto';
-import { IAuthService } from 'src/application/usecases/auth/interfaces/auth.service.interface';
-import { IUserService } from 'src/application/usecases/users/interfaces/user.service.interface';
-import { Role as userRole} from 'src/domain/enums/role.enum';
-import { Roles} from '../roles/roles.decorator';
-import { RolesGuard } from '../roles/auth.guard';
+// import { GoogleLoginDto } from 'src/application/dtos/googleLogin.dto';
+import { IAuthUsecase } from 'src/application/usecases/auth/interfaces/auth.usecase.interface';
+import { IUserUsecase } from 'src/application/usecases/users/interfaces/user.usecase.interface';
+import { AuthGuard } from '@nestjs/passport';
+import { GoogleLoginUseCase } from 'src/application/usecases/auth/implementation/google-login.usecase';
+import { ChangePassword } from 'src/application/dtos/change-password.dto';
+// import { Role as userRole } from 'src/domain/enums/role.enum';
+// import { Roles } from '../roles/roles.decorator';
+// import { RolesGuard } from '../roles/auth.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     @Inject('IAuthService')
-    private readonly authService: IAuthService,
+    private readonly _authUsecase: IAuthUsecase,
     @Inject('IUserService')
-    private readonly userService: IUserService,
+    private readonly userService: IUserUsecase,
+    private readonly _googleLoginUsecase:GoogleLoginUseCase
   ) {}
 
-  // @Get('/google')
-  // @UseGuards(GoogleOAuthGuard)
-  // async googleAuth(@Request() req) {}
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  async googleAuth(@Req() req) {}
 
-  // @Get('google/callback')
-  // @UseGuards(GoogleOAuthGuard)
-  // googleAuthRedirect(
-  //   @Request() req,
-  //   @Res({ passthrough: true }) res: Response,
-  // ) {
-  //   return this.authService.googleLoginResponse(req, res);
-  // }
-  // @Post('google-login')
-  // async googleLogin(
-  //   @Body() body: GoogleLoginDto,
-  //   @Res({ passthrough: true }) res: Response,
-  // ) {
-  //   return await this.authService.handleGoogleLogin(
-  //     body.email,
-  //     body.name,
-  //     body.image ?? null,
-  //     res,
-  //   );
-  // }
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  async googleAuthRedirect(
+    @Req() req,
+    @Res() res:Response
+  ) {
+    const result = await this._googleLoginUsecase.execute(req.user)
+      res
+    .cookie('accessToken', result.accessToken, {
+      httpOnly: true,
+      sameSite: 'lax',
+      maxAge: 2 * 60 * 60 * 1000,
+      path: '/',
+      secure: false, 
+    })
+    .cookie('refreshToken', result.refreshToken, {
+      httpOnly: true,
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000, 
+      path: '/',
+      secure: false, 
+    });
+     res.redirect('http://localhost:3000/');
+  }
+
 
   @Post('signin')
   // @Roles(userRole.User,userRole.Agency)
-  // @UseGuards(RolesGuard) 
+  // @UseGuards(RolesGuard)
   async signin(
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { user, accessToken, refreshToken } = await this.authService.signIn(
-      loginDto
-    );
+    const { user, accessToken, refreshToken } =
+      await this._authUsecase.signIn(loginDto);
+      console.log(user,'iuser')
     res
       .cookie('refreshToken', refreshToken, {
         httpOnly: true,
@@ -82,7 +93,7 @@ export class AuthController {
       .cookie('accessToken', accessToken, {
         httpOnly: true,
         secure: false,
-        expires: new Date(Date.now() + 1.5 * 60 * 60 * 1000),
+        expires: new Date(Date.now() + 2 * 60 * 60 * 1000),
         path: '/',
       })
       .json({ message: 'Login Successfully', user });
@@ -90,8 +101,8 @@ export class AuthController {
 
   @Post('signup')
   signup(@Body() singupDto: SignupDto, @Req() req: Request) {
-    console.log(singupDto,'signupDto gooys');
-    return this.authService.signUp(singupDto);
+    console.log(singupDto, 'signupDto gooys');
+    return this._authUsecase.signUp(singupDto);
   }
 
   @Post('verify-otp')
@@ -99,9 +110,8 @@ export class AuthController {
     @Body() verifyOtpDto: VerifyOtpDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { accessToken, refreshToken,user } = await this.authService.verifyOtp(
-      verifyOtpDto
-    );
+    const { accessToken, refreshToken, user } =
+      await this._authUsecase.verifyOtp(verifyOtpDto);
     res
       .cookie('refreshToken', refreshToken, {
         httpOnly: true,
@@ -112,10 +122,10 @@ export class AuthController {
       .cookie('accessToken', accessToken, {
         httpOnly: true,
         secure: false,
-        expires: new Date(Date.now() + 1.5 * 60 * 60 * 1000),
+        expires: new Date(Date.now() + 2 * 60 * 60 * 1000),
         path: '/',
       })
-      .json({ message: 'Signup verified successfully',user });
+      .json({ message: 'Signup verified successfully', user });
   }
 
   @Post('resend-otp')
@@ -123,31 +133,32 @@ export class AuthController {
     @Body() resendOtpDto: ResendOtpDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    let result = await this.authService.resendOtp(resendOtpDto);
+    const result = await this._authUsecase.resendOtp(resendOtpDto);
     return res.json({ result });
   }
 
   @Post('forgot-password')
   forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
-    console.log("forgot password controller l ethunnund");
-    
-    return this.authService.forgotPassword(forgotPasswordDto);
+    console.log('forgot password controller l ethunnund');
+
+    return this._authUsecase.forgotPassword(forgotPasswordDto);
   }
 
   @Post('verify-forgotPassword')
   verifyForgotPassword(
     @Body() verifyForgotPasswordDto: VerifyForgotPasswordDto,
   ) {
-    return this.authService.verifyForgotPassword(verifyForgotPasswordDto);
+    return this._authUsecase.verifyForgotPassword(verifyForgotPasswordDto);
   }
 
-  @Post('reset-password')
+  @Patch('reset-password')
   async resetPassword(
     @Body() resetPasswordDto: ResetPasswordDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    let { accessToken, refreshToken, user, message } = await this.authService.resetPassword(resetPasswordDto);
-   res
+    const { accessToken, refreshToken, user, message } =
+      await this._authUsecase.resetPassword(resetPasswordDto);
+    res
       .cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: false,
@@ -157,22 +168,22 @@ export class AuthController {
       .cookie('accessToken', accessToken, {
         httpOnly: true,
         secure: false,
-        expires: new Date(Date.now() + 1.5 * 60 * 60 * 1000),
+        expires: new Date(Date.now() + 2 * 60 * 60 * 1000),
         path: '/',
       })
-      .json({message,user});
-      
+      .json({ message, user });
   }
 
   @UseGuards(AccessTokenGuard)
   @Get('me')
-  getMe(@Req() req: RequestWithUser) {
-    console.log("Ivide verundoo /meeee in backend porifiel");
-    
-    return this.userService.findById(req.user.userId);
+  async getMe(@Req() req: RequestWithUser) {
+    const userId = req.user['userId'];
+    const user = await this.userService.findById(userId);
+    console.log(user, 'user in /me');
+    return user;
   }
 
-  @UseGuards(RefreshTokenGuard)
+  @UseGuards(AccessTokenGuard)
   @Post('/logout')
   async logout(
     @Req() req: RequestWithUser,
@@ -180,7 +191,8 @@ export class AuthController {
   ) {
     res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
-    const result = await this.authService.logout(req.user.userId);
+    const result = await this._authUsecase.logout(req.user.userId);
+    console.log(result,'resultttt')
     return result;
   }
   @UseGuards(RefreshTokenGuard)
@@ -189,25 +201,35 @@ export class AuthController {
     @Req() req: RequestWithUser,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const userId = req.user['sub'];
+    const userId = req.user['userId'];
     const role = req.user['role'];
     const refreshToken = req.user['refreshToken'];
+    console.log('user id is there', userId);
     const user = await this.userService.findById(userId);
-    if (user.isBlock) {
+    if (user?.isBlock) {
       throw new ForbiddenException('Account is Blocked');
     }
     const { accessTokenResponse, refreshTokenResponse, message } =
-      await this.authService.refreshToken(userId, refreshToken, res, role);
+      await this._authUsecase.refreshToken(userId, refreshToken, res, role);
     res
       .cookie('refreshToken', refreshTokenResponse, {
         httpOnly: true,
         secure: false,
         expires: new Date(Date.now() + 5 * 60 * 1000),
       })
-      .cookie('accessToken',accessTokenResponse, {
+      .cookie('accessToken', accessTokenResponse, {
         httpOnly: true,
         secure: false,
         expires: new Date(Date.now() + 1.5 * 60 * 60 * 1000),
-      }).json(message)
+      })
+      .json(message);
   }
+
+  @Patch('change-password')
+  @UseGuards(AccessTokenGuard)
+  async changePassword(@Req() req: RequestWithUser,@Body() changePassword:ChangePassword){
+    const userId = req.user['userId'];
+    return this._authUsecase.changePassword(userId,changePassword);
+  }
+
 }

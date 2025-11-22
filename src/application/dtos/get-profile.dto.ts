@@ -1,23 +1,23 @@
-import { IsString } from "class-validator"
+import { IsString } from 'class-validator';
 
 export class GetProfileDto {
-    id:string
+  id: string;
 
-    @IsString()
-    name:string
+  @IsString()
+  name: string;
 
-    @IsString()
-    email:string
+  @IsString()
+  email: string;
 
-    @IsString()
-    phone:string
-    
-    @IsString()
-    location:string
+  @IsString()
+  phone: string;
 
-    @IsString()
-    profileImage:string
+  @IsString()
+  location: string;
 
-    @IsString()
-    bannerImage:string
+  @IsString()
+  profileImage: string;
+
+  @IsString()
+  bannerImage: string;
 }
