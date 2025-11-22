@@ -7,4 +7,5 @@ export interface IBookingRepository extends IBaseRepository<BookingEntity|null>{
     findByPaymentIntentId(paymentIntentId: string): Promise<BookingEntity | null>;
     fetchBookingDetails(agencyId:string):Promise<BookingEntity[]>
     updateStatus(bookingId: string, status: BookingStatus):Promise<BookingEntity>
+    findByPackageId(packageId:string):Promise<BookingEntity[]>
 }

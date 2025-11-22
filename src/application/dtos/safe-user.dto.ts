@@ -1,11 +1,12 @@
-import { Role } from "src/domain/enums/role.enum";
+import { Role } from 'src/domain/enums/role.enum';
 
 export type SafeUser = {
   id: string;
   name: string;
   email: string;
   isBlock: boolean;
-  role:Role
-  isVerified:boolean
-  phone?:string
+  role: Role;
+  isVerified: boolean;
+  phone?: string;
+  readonly refreshToken: string;
 };

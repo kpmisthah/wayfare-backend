@@ -16,7 +16,7 @@ export class JwtTokenFactory {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         { sub: userId, username, role },
-        { secret: accessSecret, expiresIn: '5m' },
+        { secret: accessSecret, expiresIn: '2h' },
       ),
       this.jwtService.signAsync(
         { sub: userId, username, role },

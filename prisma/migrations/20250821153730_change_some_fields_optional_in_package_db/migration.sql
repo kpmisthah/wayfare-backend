@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "Package" ALTER COLUMN "description" DROP NOT NULL,
+ALTER COLUMN "destination" DROP NOT NULL,
+ALTER COLUMN "itineraryName" DROP NOT NULL,
+ALTER COLUMN "duration" DROP NOT NULL,
+ALTER COLUMN "highlights" DROP NOT NULL;

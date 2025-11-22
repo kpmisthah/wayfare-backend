@@ -1,0 +1,18 @@
+[33ma92dfb7[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Reapply "Merge pull request #1 from kpmisthah/feature/auth"
+[33m1373223[m Revert "Merge pull request #1 from kpmisthah/feature/auth"
+[33m25b08cb[m[33m ([m[1;31morigin/main[m[33m)[m Merge pull request #1 from kpmisthah/feature/auth
+[33m8a330f7[m[33m ([m[1;31morigin/feature/auth[m[33m, [m[1;32mfeature/auth[m[33m)[m feat(auth):entity for otp
+[33mfb05a6f[m feat(auth):implement dto for otp verification
+[33m2ae99a9[m feat(auth):implement interface for otp.service
+[33mb283d84[m feat(auth):implement otp service
+[33m2ecc34e[m feat(auth):implement interface for auth repositories
+[33mf19d216[m feat:(auth) implement argon for hashing password and nodemailer for generate otp and send that otp to appropriate mail
+[33m51b32af[m feat(auth):implement strategies for accessToken,refreshToken
+[33m507593a[m implement guards for authentication which contain accessToken guard,refreshToken guard
+[33md306733[m feat(auth):implement repository for authentication which contain find otp,reset-password,logout
+[33mf084b63[m feat(auth):implement interfaces for auth.service and also requests
+[33mfa11793[m feat(auth):implement accessToken and refreshToken
+[33mbded3ef[m feat(auth):implement authentication service
+[33m034e852[m feat(auth):add dtos for auth,forgot-password,resend-otp,reset-password,verify-forgot-password
+[33mc382a8e[m feat(auth):implement auth controller for authentication
+[33me669ae7[m[33m ([m[1;31morigin/dev[m[33m, [m[1;32mdev[m[33m)[m chore:initial commit with existing code

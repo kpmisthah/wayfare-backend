@@ -60,8 +60,8 @@ export class StripeWebhookUsecase {
          let platformWallet = await this._walletUseCase.creditAdmin(bookingEntity.platformEarning)
          console.log(platformWallet,'platform wallet in stripe');
          
-        }
-      
+        }      
+        
         break;
       }
       case 'payment_intent.payment_failed': {

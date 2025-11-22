@@ -5,31 +5,39 @@ import { IUserRepository } from 'src/domain/repositories/user/user.repository.in
 import { IProfileRepository } from 'src/domain/repositories/user/profile.repository.interface';
 
 @Injectable()
-export class UploadProfileUseCase{
+export class UploadProfileUseCase {
   constructor(
     @Inject('ICloudinaryService')
     private readonly cloudinaryService: ICloudinaryService,
     @Inject('IUserRepository')
-    private readonly userRepo:IUserRepository,
+    private readonly userRepo: IUserRepository,
     @Inject(PROFILE_TYPE.IProfileRepository)
-    private readonly profileRepo:IProfileRepository
+    private readonly profileRepo: IProfileRepository,
   ) {}
 
-  async execute(userId:string,file: Express.Multer.File,type:'profile'|'banner'): Promise<string> {
-    console.log(file,'file in service and userId',userId)
-    const user = await this.userRepo.findById(userId)
-    if(!user){
-      throw new Error('User not found')
+  async execute(
+    userId: string,
+    file: Express.Multer.File,
+    type: 'profile' | 'banner',
+  ): Promise<string> {
+    console.log(file, 'file in service and userId', userId);
+    const user = await this.userRepo.findById(userId);
+    if (!user) {
+      throw new Error('User not found');
     }
     console.log(user);
-    
-    let imageUrl = await this.cloudinaryService.uploadImage(file);
-    if(type == 'profile'){
-       await this.profileRepo.updateProfileImage(userId,{profileImage:imageUrl})
-    }else{
-      await this.profileRepo.updateProfileImage(userId,{bannerImage:imageUrl})
+
+    const imageUrl = await this.cloudinaryService.uploadImage(file);
+    if (type == 'profile') {
+      await this.profileRepo.updateProfileImage(userId, {
+        profileImage: imageUrl,
+      });
+    } else {
+      await this.profileRepo.updateProfileImage(userId, {
+        bannerImage: imageUrl,
+      });
     }
-   
-    return imageUrl
+
+    return imageUrl;
   }
 }

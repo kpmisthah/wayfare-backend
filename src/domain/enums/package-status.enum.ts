@@ -1,4 +1,4 @@
 export enum PackageStatus {
-    ACTIVE='ACTIVE',
-    INACTIVE='INACTIVE'
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
 }
