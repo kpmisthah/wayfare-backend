@@ -193,6 +193,20 @@ export class BookingUseCase implements IBookingUseCase {
           bookingEntity.userId,
         );
       }
+<<<<<<< Updated upstream
+=======
+      const walletTransactionEntity = WalletTransactionEntity.create({
+      walletId:existingWallet?.id ?? '',
+      amount: refundAmount,
+      transactionType: Transaction.Credit,
+      paymentStatus: PaymentStatus.REFUNDED,
+      category:WalletTransactionEnum.REFUND,
+      createdAt:new Date(),
+      bookingId: bookingEntity.id,
+      agencyId:bookingEntity.agencyId,
+    });
+    await this._walletTransactionRepo.create(walletTransactionEntity);
+>>>>>>> Stashed changes
     }
     return BookingMapper.toUpdateBookingStatus(update);
   }
@@ -207,4 +221,22 @@ export class BookingUseCase implements IBookingUseCase {
     
     return await this._bookingRepo.updateStatus(bookingId, status);
   }
+<<<<<<< Updated upstream
+=======
+
+  async execute(packageId: string){
+    let booking = await this._bookingRepo.findByPackageId(packageId);
+    return BookingMapper.toResponseBookingDtoByPackageId(booking);
+  }
+
+  async paymentVerification(paymentIntentId:string){
+    let transaction = await this._transactionRepo.findByPaymentIntent(paymentIntentId)
+    console.log("Reached Payment Controller at:", new Date().toISOString());
+    console.log(transaction,'-----trnasaction----')
+    if(!transaction) return null
+    return {
+      status:transaction.status as PaymentStatus
+    }
+  }
+>>>>>>> Stashed changes
 }
