@@ -192,9 +192,8 @@ export class BookingUseCase implements IBookingUseCase {
           refundAmount,
           bookingEntity.userId,
         );
+        existingWallet = newWallet;
       }
-<<<<<<< Updated upstream
-=======
       const walletTransactionEntity = WalletTransactionEntity.create({
       walletId:existingWallet?.id ?? '',
       amount: refundAmount,
@@ -206,8 +205,8 @@ export class BookingUseCase implements IBookingUseCase {
       agencyId:bookingEntity.agencyId,
     });
     await this._walletTransactionRepo.create(walletTransactionEntity);
->>>>>>> Stashed changes
     }
+
     return BookingMapper.toUpdateBookingStatus(update);
   }
 
@@ -221,8 +220,6 @@ export class BookingUseCase implements IBookingUseCase {
     
     return await this._bookingRepo.updateStatus(bookingId, status);
   }
-<<<<<<< Updated upstream
-=======
 
   async execute(packageId: string){
     let booking = await this._bookingRepo.findByPackageId(packageId);
@@ -238,5 +235,4 @@ export class BookingUseCase implements IBookingUseCase {
       status:transaction.status as PaymentStatus
     }
   }
->>>>>>> Stashed changes
 }
