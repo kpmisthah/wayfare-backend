@@ -226,7 +226,7 @@ export class BookingUseCase implements IBookingUseCase {
       category:WalletTransactionEnum.REFUND,
       createdAt:new Date(),
       bookingId: bookingEntity.id,
-      agencyId:bookingEntity.agencyId,  
+      agencyId:bookingEntity.agencyId,
     });
     await this._walletTransactionRepo.create(walletTransactionEntity);
     }
@@ -245,8 +245,18 @@ export class BookingUseCase implements IBookingUseCase {
     return await this._bookingRepo.updateStatus(bookingId, status);
   }
 
-  async execute(packageId: string) {
+  async execute(packageId: string){
     let booking = await this._bookingRepo.findByPackageId(packageId);
     return BookingMapper.toResponseBookingDtoByPackageId(booking);
+  }
+
+  async paymentVerification(paymentIntentId:string){
+    let transaction = await this._transactionRepo.findByPaymentIntent(paymentIntentId)
+    console.log("Reached Payment Controller at:", new Date().toISOString());
+    console.log(transaction,'-----trnasaction----')
+    if(!transaction) return null
+    return {
+      status:transaction.status as PaymentStatus
+    }
   }
 }
