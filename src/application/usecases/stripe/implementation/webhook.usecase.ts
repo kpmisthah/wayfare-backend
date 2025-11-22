@@ -61,7 +61,6 @@ export class StripeWebhookUsecase {
          console.log(platformWallet,'platform wallet in stripe');
          
         }        
-      
         break;
       }
       case 'payment_intent.payment_failed': {
