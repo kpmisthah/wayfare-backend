@@ -10,11 +10,7 @@ export class PaymentController {
     private readonly _bookingUsecase:IBookingUseCase
   ) {}
 
-<<<<<<< HEAD
-  @Get()
-=======
   @Get(':id')
->>>>>>> feature/booking
   async paymentVerification(@Param('id') id: string) {
     console.log(id,'id')
     return await this._bookingUsecase.paymentVerification(id)
