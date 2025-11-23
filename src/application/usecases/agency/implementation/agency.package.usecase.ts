@@ -248,7 +248,6 @@ export class AgencyPackageService implements IAgencyPackageService {
 
   async trendingPackages(){
     let fetchTrendingPackages = await this._agencyPackageRepo.trendinPackages()
-    console.log(fetchTrendingPackages,'fetchTrendingPackagessss');
     return PackageMapper.toTrendingPackageDto(fetchTrendingPackages)
   }
   async updatePackageStatus(id: string, status: PackageStatus):Promise<UpdatePackageDto|null> {

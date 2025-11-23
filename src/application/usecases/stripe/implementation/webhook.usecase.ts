@@ -69,8 +69,7 @@ export class StripeWebhookUsecase {
          let platformWallet = await this._walletUseCase.creditAdmin(bookingEntity.platformEarning)
          console.log(platformWallet,'platform wallet in stripe');
          
-        }      
-        
+        }        
         break;
       }
       case 'checkout.session.expired': {
