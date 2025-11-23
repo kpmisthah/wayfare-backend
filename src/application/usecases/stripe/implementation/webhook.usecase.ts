@@ -5,6 +5,7 @@ import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
 import { IBookingRepository } from 'src/domain/repositories/booking/booking.repository';
 import { BookingStatus } from 'src/domain/enums/booking-status.enum';
 import { IWalletUseCase } from '../../wallet/interfaces/wallet.usecase.interface';
+import Stripe from 'stripe';
 
 @Injectable()
 export class StripeWebhookUsecase {
@@ -23,16 +24,24 @@ export class StripeWebhookUsecase {
     const event = this._paymentProvider.constructEvent(rawBody, sig, secret);
     
     switch (event.type) {
-      case 'payment_intent.succeeded': {
-        const intent = event.data.object as any;
-        console.log(intent,'intent...................');
-        
-        this._logger.log(`Payment succeeded for ${intent.id}`);
-        const TransactionEntity = await this._transactionRepo.findByBookingId(intent.metadata.bookingId)
+      case 'checkout.session.completed': {
+       const session = event.data.object as Stripe.Checkout.Session;
+        // console.log(intent,'intent...................');
+        if (session.payment_status !== 'paid') {
+          this._logger.warn(`Session completed but not paid: ${session.id}`);
+          break;
+        }
+        // this._logger.log(`Payment succeeded for ${intent.id}`);
+        const bookingId = session.metadata?.bookingId;
+        if (!bookingId) {
+          this._logger.warn('No bookingId in metadata');
+          break;
+        }
+        const TransactionEntity = await this._transactionRepo.findByBookingId(bookingId)
         if(!TransactionEntity) return null
         const updateTransaction = TransactionEntity.update(
           {
-            bookingId:intent.metadata.bookingId,
+            bookingId:bookingId,
             status:PaymentStatus.SUCCEEDED
           }
         )
@@ -63,18 +72,22 @@ export class StripeWebhookUsecase {
         }        
         break;
       }
-      case 'payment_intent.payment_failed': {
+      case 'checkout.session.expired': {
         console.log("faieeeeeed aayoooooooooooooo")
-        const intent = event.data.object as any;
-        this._logger.warn(`Payment failed for ${intent.id}`);
-        const TransactionEntity = await this._transactionRepo.findByBookingId(intent.metadata.bookingId)
+        const session = event.data.object as Stripe.Checkout.Session;
+        const bookingId = session.metadata?.bookingId;
+        if (!bookingId) {
+          this._logger.warn('No bookingId in metadata');
+          break;
+        }
+        const TransactionEntity = await this._transactionRepo.findByBookingId(bookingId)
         if(!TransactionEntity) return null
         const updateTransaction = TransactionEntity.update({
-          bookingId:intent.metadata.bookingId,
+          bookingId,
           status:PaymentStatus.FAILED
         })
         await this._transactionRepo.update(
-          intent.metadata.bookingId,
+          bookingId,
           updateTransaction
         );
         break;

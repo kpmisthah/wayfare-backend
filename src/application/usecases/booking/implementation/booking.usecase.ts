@@ -1,4 +1,4 @@
-import { Inject, Injectable, UseGuards } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException, UseGuards } from '@nestjs/common';
 import { IBookingUseCase } from '../interfaces/bookiing.usecase.interface';
 import { CreateBookingDto } from 'src/application/dtos/create-booking.dto';
 import { IBookingRepository } from 'src/domain/repositories/booking/booking.repository';
@@ -23,6 +23,7 @@ import { IWalletTransactionRepository } from 'src/domain/repositories/wallet/wal
 import { WalletTransactionEntity } from 'src/domain/entities/wallet-transaction.entity';
 import { Transaction } from 'src/domain/enums/transaction.enum';
 import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
+import { BookingResponseDto } from 'src/application/dtos/booking-details-response.dto';
 
 @Injectable()
 export class BookingUseCase implements IBookingUseCase {
@@ -49,7 +50,7 @@ export class BookingUseCase implements IBookingUseCase {
   async createBooking(
     createBookingDto: BookingDto,
     userId: string,
-  ): Promise<{ booking: CreateBookingDto; clientSecret: string } | null> {
+  ): Promise<{ booking: CreateBookingDto; checkoutUrl: string } | null> {
     const bookingPackage = await this._packageRepo.findById(
       createBookingDto.packageId,
     );
@@ -81,7 +82,7 @@ export class BookingUseCase implements IBookingUseCase {
     const paymentResult = await handler.payment(booking, booking.agencyId);
     return {
       booking: BookingMapper.toBookDto(booking),
-      clientSecret: paymentResult.clientSecret || '',
+      checkoutUrl: paymentResult.checkoutUrl || '',
     };
   }
 
@@ -258,5 +259,31 @@ export class BookingUseCase implements IBookingUseCase {
     return {
       status:transaction.status as PaymentStatus
     }
+  }
+
+  async getUserBookingDetails(id:string):Promise<BookingResponseDto|null>{
+    let getBookingDetails = await this._bookingRepo.fetchUserBookingDetails(id)
+    console.log(getBookingDetails,'getBookingdetailss')
+    if(!getBookingDetails){
+      return null
+    }
+    return BookingMapper.toBookingResponseDto(getBookingDetails)
+  }
+
+  async retryPayment(bookingId:string,userId:string):Promise<{url:string}>{
+    const booking = await this._bookingRepo.findById(bookingId);
+    if (!booking || booking.userId !== userId) {
+    throw new NotFoundException('Booking not found');
+  }
+
+  if(booking.status != BookingStatus.PENDING){
+    throw new BadRequestException("cannot retry payment")
+  }
+  const handler = this._paymentRegistry.get('card');
+  const result = await handler.payment(booking, booking.agencyId);
+  if(!result.checkoutUrl){
+    throw new BadRequestException("checkoutUrl is not found")
+  }
+  return { url: result.checkoutUrl };
   }
 }

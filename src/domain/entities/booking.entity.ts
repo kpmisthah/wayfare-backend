@@ -17,7 +17,9 @@ export class BookingEntity {
         private readonly _customerName?:string,
         private readonly _customerEmail?:string,
         private readonly _phone?:string,
-        private readonly _destination?:string
+        private readonly _destination?:string,
+        private readonly _title?:string,
+        private readonly _duration?:number
     ){}
     static create(props:{
         packageId:string,
@@ -126,5 +128,11 @@ export class BookingEntity {
     }
     get destination(){
         return this._destination
+    }
+    get title(){
+        return this._title
+    }
+    get duration(){
+        return this._duration
     }
 }
