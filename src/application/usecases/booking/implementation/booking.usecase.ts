@@ -251,8 +251,8 @@ export class BookingUseCase implements IBookingUseCase {
     return BookingMapper.toResponseBookingDtoByPackageId(booking);
   }
 
-  async paymentVerification(paymentIntentId:string){
-    let transaction = await this._transactionRepo.findByPaymentIntent(paymentIntentId)
+  async paymentVerification(bookingId:string){
+    let transaction = await this._transactionRepo.findByBookingId(bookingId)
     console.log("Reached Payment Controller at:", new Date().toISOString());
     console.log(transaction,'-----trnasaction----')
     if(!transaction) return null
