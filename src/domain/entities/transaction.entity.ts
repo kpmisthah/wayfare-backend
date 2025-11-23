@@ -7,7 +7,6 @@ export class TransactionEntity {
         private readonly _bookingId:string,
         private readonly _agencyId:string,
         private readonly _paymentIntentId:string,
-        private readonly _checkoutSessionId:string,
         private readonly _currency:string,
         private readonly _status:PaymentStatus,
         private readonly _amount:number,
@@ -18,13 +17,12 @@ export class TransactionEntity {
         bookingId:string,
         agencyId:string,
         paymentIntentId:string,
-        checkoutSessionId:string,
         currency:string,
         status:PaymentStatus,
         amount:number,
         initiatedBy:Role
     }){
-        return new TransactionEntity('',props.bookingId,props.agencyId,props.paymentIntentId,props.checkoutSessionId,props.currency,props.status,props.amount,props.initiatedBy)
+        return new TransactionEntity('',props.bookingId,props.agencyId,props.paymentIntentId,props.currency,props.status,props.amount,props.initiatedBy)
     }
     
     public update(props:{
@@ -36,7 +34,6 @@ export class TransactionEntity {
             props.bookingId,
             this._agencyId,
             this._paymentIntentId,
-            this._checkoutSessionId,
             this._currency,
             props.status,
             this._amount,
@@ -69,9 +66,6 @@ export class TransactionEntity {
     }
     get initiatedBy(){
         return this._initiatedBy
-    }
-    get checkoutSessionId(){
-        return this._checkoutSessionId
     }
 }
 

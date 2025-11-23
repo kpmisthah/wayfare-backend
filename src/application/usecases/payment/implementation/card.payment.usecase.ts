@@ -46,7 +46,6 @@ export class CardPaymentUsecase implements IPayment {
       bookingId: booking.id,
       agencyId,
       paymentIntentId: '',
-      checkoutSessionId: checkoutUrl.split('/').pop() ?? '',
       amount: booking.totalAmount,
       status: PaymentStatus.PENDING,
       currency: 'inr',
