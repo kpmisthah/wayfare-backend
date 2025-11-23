@@ -5,6 +5,7 @@ import { CardPaymentUsecase } from "src/application/usecases/payment/implementat
 import { WalletPaymentUsecase } from "src/application/usecases/payment/implementation/wallet.payment.usecase";
 import { PaymentRegistry } from "src/application/usecases/payment/implementation/payment.registry";
 import { BookingUseCase } from "src/application/usecases/booking/implementation/booking.usecase";
+import { CreateCheckoutSessionUseCase } from "src/application/usecases/booking/implementation/create-checkout-session.usecase";
 
 
 @Module({
@@ -18,6 +19,10 @@ import { BookingUseCase } from "src/application/usecases/booking/implementation/
             provide: "IBookingUseCase",
             useClass: BookingUseCase,
         },
+        {
+            provide:"ICreateCheckoutSessionUseCase",
+            useClass:CreateCheckoutSessionUseCase
+        }
     ],
     exports: ["IBookingUseCase"],
 })

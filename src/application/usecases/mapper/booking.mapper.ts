@@ -1,3 +1,4 @@
+import { BookingResponseDto } from "src/application/dtos/booking-details-response.dto";
 import { BookingStatusDto } from "src/application/dtos/booking-status.dto";
 import { CreateBookingDto } from "src/application/dtos/create-booking.dto";
 import { FetchBookingDto } from "src/application/dtos/fetch-booking.dto";
@@ -97,5 +98,18 @@ export class BookingMapper {
         return bookingEntity.map((booking)=>{
             return BookingMapper.toResponseBookingDto(booking)
         })
+    }
+
+    static toBookingResponseDto(bookingEntity:BookingEntity):BookingResponseDto{
+        return {
+            id:bookingEntity.id,
+            startDate:bookingEntity.travelDate,
+            duration:bookingEntity.duration ?? 0,
+            title:bookingEntity.title ?? '',
+            destination:bookingEntity.destination ?? '',
+            travelers:bookingEntity.peopleCount,
+            totalAmount:bookingEntity.totalAmount,
+            email:bookingEntity.customerEmail ?? ''
+        }
     }
 }

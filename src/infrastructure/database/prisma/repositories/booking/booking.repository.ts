@@ -59,4 +59,13 @@ export class BookingRepository
     })
     return BookingMapper.tobookingDomains(bookings)
   }
+
+  async fetchUserBookingDetails(id:string):Promise<BookingEntity|null>{
+    let booking = await this._prisma.booking.findFirst({
+      where:{id},
+      include:{user:true,package:true}
+    })
+    if(!booking) return null
+    return BookingMapper.tobookingDomain(booking)
+  }
 }

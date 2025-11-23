@@ -64,7 +64,9 @@ export class BookingMapper {
         booking.user.name,
         booking.user.email,
         booking.user.phone ?? '' ,
-        booking.package.destination ?? ''       
+        booking.package.destination ?? '',
+        booking.package.itineraryName ?? '',
+        booking.package.duration ?? 0     
         )
     }
 
