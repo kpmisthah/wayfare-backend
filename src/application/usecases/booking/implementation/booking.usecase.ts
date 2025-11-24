@@ -78,7 +78,6 @@ export class BookingUseCase implements IBookingUseCase {
     if (!booking) return null;
 
     const handler = this._paymentRegistry.get(createBookingDto.paymentType!);
-    console.log(handler,'handlerrr l enthaa kittne nokknmmmm')
     const paymentResult = await handler.payment(booking, booking.agencyId);
     return {
       booking: BookingMapper.toBookDto(booking),
