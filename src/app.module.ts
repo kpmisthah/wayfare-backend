@@ -19,7 +19,6 @@ import { StripeModule } from './presentation/stripe/stripe.module';
 import { WalletModule } from './presentation/wallet/wallet.module';
 import { TravellersModule } from './presentation/travellers/travellers.module';
 // import { ElasticsearchModule } from '@nestjs/elasticsearch';
-import { ChatGateway } from './presentation/chat/chat.gateway';
 import { ChatModule } from './presentation/chat/chat.module';
 import { ConversationModule } from './presentation/conversation/conversation.module';
 import { ConnectionModule } from './presentation/connection/connection.module';
@@ -56,7 +55,6 @@ const customLogger = new Logging();
       provide: WINSTON_MODULE_NEST_PROVIDER,
       useValue: WinstonModule.createLogger(customLogger.createLoggerConfig),
     },
-    ChatGateway,
   ],
   exports: [WINSTON_MODULE_NEST_PROVIDER],
 })
