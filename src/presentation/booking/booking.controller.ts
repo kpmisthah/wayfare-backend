@@ -36,7 +36,7 @@ export class BookingController {
     @Body() bookingDto: BookingDto,
     @Res({ passthrough: true }) res,
   ) {
-    let userId = req.user['userId'];
+    let userId = req.user['userId']
     const result = await this._bookingUseCase.createBooking(bookingDto, userId);
     console.log(result, 'resultofbooking controllererrrrr');
     if (!result) {
