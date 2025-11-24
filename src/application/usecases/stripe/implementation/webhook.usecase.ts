@@ -22,7 +22,10 @@ export class StripeWebhookUsecase {
   ) {}
   async handle(rawBody: Buffer, sig: string, secret: string) {
     const event = this._paymentProvider.constructEvent(rawBody, sig, secret);
-    
+    if (event.type.startsWith('payment_intent.') || event.type.startsWith('charge.')) {
+    this._logger.log(`Ignored legacy event: ${event.type}`);
+    return { received: true };
+    }
     switch (event.type) {
       case 'checkout.session.completed': {
        const session = event.data.object as Stripe.Checkout.Session;
