@@ -52,7 +52,7 @@ export class CardPaymentUsecase implements IPayment {
       initiatedBy: Role.User,
     });
     console.log(transactionEntity,'rransaction entity in card.payment.usecase');
-    
+    console.log(checkoutUrl,'in cardpayment.usecase')
       await this._transactionRepo.create(transactionEntity)
       return{
         checkoutUrl
