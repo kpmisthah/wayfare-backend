@@ -46,14 +46,13 @@ export class CardPaymentUsecase implements IPayment {
       bookingId: booking.id,
       agencyId,
       paymentIntentId: '',
-      checkoutSessionId: checkoutUrl.split('/').pop() ?? '',
       amount: booking.totalAmount,
       status: PaymentStatus.PENDING,
       currency: 'inr',
       initiatedBy: Role.User,
     });
     console.log(transactionEntity,'rransaction entity in card.payment.usecase');
-    
+    console.log(checkoutUrl,'in cardpayment.usecase')
       await this._transactionRepo.create(transactionEntity)
       return{
         checkoutUrl

@@ -30,7 +30,7 @@ export interface IBookingUseCase {
   ): Promise<BookingEntity>;
 
   execute(packageId: string);
-  paymentVerification(paymentIntentId: string);
+  paymentVerification(bookingId:string)
   getUserBookingDetails(id: string): Promise<BookingResponseDto | null>;
   retryPayment(bookingId:string,userId:string):Promise<{url:string}>
 }

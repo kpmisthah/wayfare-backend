@@ -78,7 +78,6 @@ export class BookingUseCase implements IBookingUseCase {
     if (!booking) return null;
 
     const handler = this._paymentRegistry.get(createBookingDto.paymentType!);
-    console.log(handler,'handlerrr l enthaa kittne nokknmmmm')
     const paymentResult = await handler.payment(booking, booking.agencyId);
     return {
       booking: BookingMapper.toBookDto(booking),
@@ -251,8 +250,8 @@ export class BookingUseCase implements IBookingUseCase {
     return BookingMapper.toResponseBookingDtoByPackageId(booking);
   }
 
-  async paymentVerification(paymentIntentId:string){
-    let transaction = await this._transactionRepo.findByPaymentIntent(paymentIntentId)
+  async paymentVerification(bookingId:string){
+    let transaction = await this._transactionRepo.findByBookingId(bookingId)
     console.log("Reached Payment Controller at:", new Date().toISOString());
     console.log(transaction,'-----trnasaction----')
     if(!transaction) return null
