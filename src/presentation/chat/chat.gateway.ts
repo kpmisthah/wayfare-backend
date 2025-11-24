@@ -27,41 +27,85 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @Inject('IChatUsecase')
     private readonly _chatUsecase: ChatUsecase,
   ) {}
+  afterInit(server: Server) {
+    server.use((socket: Socket, next) => {
+      const cookies = cookie.parse(socket.handshake.headers.cookie || '');
+      const token = cookies['accessToken'];
 
-handleConnection(client: Socket) {
-  console.log('Socket connected:', client.id);
+      if (!token) {
+        console.log('No token → disconnecting');
+        return next(new Error('Authentication error'));
+      }
 
-  const cookies = cookie.parse(client.handshake.headers.cookie || '');
-  const token = cookies['accessToken'];
-  console.log('token in handleConnection', token);
-console.log(`[GATEWAY] handleConnection -> socket.id: ${client.id}, userId: ${(client as any).userId}`);
+      try {
+        const decoded = jwt.verify(
+          token,
+          process.env.JWT_ACCESS_SECRET!,
+        ) as any;
+        const userId = decoded.sub;
 
-  if (!token) {
-    console.log('No access token found in cookies');
-    client.disconnect();
-    return;
+        if (!userId) {
+          return next(new Error('Invalid token: no sub'));
+        }
+
+        (socket as any).userId = userId;
+        socket.join(userId);
+        console.log(`Authenticated socket ${socket.id} → user ${userId}`);
+        next(); // success
+      } catch (err) {
+        console.log('JWT verification failed:', err);
+        return next(new Error('Authentication error'));
+      }
+    });
   }
 
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET!) as jwt.JwtPayload;
+  handleConnection(client: Socket) {
+    // console.log('Socket connected:', client.id);
 
-    console.log('Connected user:', decoded);
+    // const cookies = cookie.parse(client.handshake.headers.cookie || '');
+    // const token = cookies['accessToken'];
+    // console.log('token in handleConnection', token);
+    // console.log(
+    //   `[GATEWAY] handleConnection -> socket.id: ${client.id}, userId: ${(client as any).userId}`,
+    // );
 
-    const userId = decoded.sub as string; // ✅ cast sub to string safely
+    // if (!token) {
+    //   console.log('No access token found in cookies');
+    //   client.disconnect();
+    //   return;
+    // }
+
+    // try {
+    //   const decoded = jwt.verify(
+    //     token,
+    //     process.env.JWT_ACCESS_SECRET!,
+    //   ) as jwt.JwtPayload;
+
+    //   console.log('Connected user:', decoded);
+
+    //   const userId = decoded.sub as string; // ✅ cast sub to string safely
+    //   if (!userId) {
+    //     console.log('No userId (sub) found in decoded token');
+    //     client.disconnect();
+    //     return;
+    //   }
+
+    //   (client as any).userId = userId;
+    //   client.join(userId); // ✅ Now userId is defined
+    //   console.log(` User ${userId} joined their personal room`);
+    // } catch (err) {
+    //   console.log(' Invalid token', err);
+    //   client.disconnect();
+    // }
+    const userId = (client as any).userId;
     if (!userId) {
-      console.log('No userId (sub) found in decoded token');
-      client.disconnect();
+      console.log(`Unauthorized socket ${client.id} → disconnecting`);
+      client.disconnect(true);
       return;
     }
 
-    (client as any).userId = userId;
-    client.join(userId); // ✅ Now userId is defined
-    console.log(` User ${userId} joined their personal room`);
-  } catch (err) {
-    console.log(' Invalid token', err);
-    client.disconnect();
+    console.log(`User ${userId} connected with socket ${client.id}`);
   }
-}
 
   handleDisconnect(client: Socket) {
     console.log('Socket disconnected:', client.id);
@@ -73,7 +117,11 @@ console.log(`[GATEWAY] handleConnection -> socket.id: ${client.id}, userId: ${(c
   ) {
     this.server.to(senderId).emit('connectionAcceptedNotification', payload);
   }
-  broadcastMessageToChat(conversationId: string, message: any, receiverId?: string) {
+  broadcastMessageToChat(
+    conversationId: string,
+    message: any,
+    receiverId?: string,
+  ) {
     this.server.to(conversationId).emit('newMessage', message);
     if (receiverId) {
       this.server.to(receiverId).emit('newMessageNotification', {
@@ -90,15 +138,20 @@ console.log(`[GATEWAY] handleConnection -> socket.id: ${client.id}, userId: ${(c
   ) {
     const { conversationId } = payload;
     if (!conversationId) {
-    console.warn(`[GATEWAY] Tried to join undefined room from socket ${client.id}`);
-    return;
-  }
-  if(!client.rooms.has(conversationId)){
-    client.join(conversationId);
-    console.log(`Client ${client.id} joined room: ${conversationId}`);
-    console.log('Rooms:', client.rooms); // <-- debug
-    console.log('Clients in room:', this.server.sockets.adapter.rooms.get(conversationId)?.size);
-  }
+      console.warn(
+        `[GATEWAY] Tried to join undefined room from socket ${client.id}`,
+      );
+      return;
+    }
+    if (!client.rooms.has(conversationId)) {
+      client.join(conversationId);
+      console.log(`Client ${client.id} joined room: ${conversationId}`);
+      console.log('Rooms:', client.rooms); // <-- debug
+      console.log(
+        'Clients in room:',
+        this.server.sockets.adapter.rooms.get(conversationId)?.size,
+      );
+    }
 
     client.emit('joined', { conversationId });
   }
@@ -117,8 +170,12 @@ console.log(`[GATEWAY] handleConnection -> socket.id: ${client.id}, userId: ${(c
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { conversationId: string; content: string },
   ) {
-    console.log('e]&=============================================================>')
-   console.log(`[GATEWAY] Message received: "${data.content}" from socket ${client.id}`);
+    console.log(
+      'e]&=============================================================>',
+    );
+    console.log(
+      `[GATEWAY] Message received: "${data.content}" from socket ${client.id}`,
+    );
     const senderId = (client as any).userId;
     console.log(senderId, 'sernderIdddd');
     if (!data.content?.trim()) return;
@@ -128,11 +185,11 @@ console.log(`[GATEWAY] handleConnection -> socket.id: ${client.id}, userId: ${(c
       senderId,
       data.content,
     );
-    console.log(saved,'in chat gateway')
+    console.log(saved, 'in chat gateway');
     // Broadcast to all sockets in that conversation room
     // this.server.to(data.conversationId).emit('receiveMessage', saved);
-    this.server.emit("receiveMessage", saved);
-    console.log('emit event sender')
+    this.server.to(data.conversationId).emit('receiveMessage', saved);
+    console.log('emit event sender');
     // client.to(data.conversationId).emit('receiveMessage', saved);
   }
 }
