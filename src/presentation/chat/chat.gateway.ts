@@ -167,8 +167,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     },
   ) {
     const fromUserId = (client as any).userId;
-    console.log(`${fromUserId} is calling ${data.toUserId} (${data.callType})`);
-
+    console.log(`----------<><><>${fromUserId} is calling ${data.toUserId} (${data.callType})----------------->`);
+    console.log(data,'data in handlerStartCalll');
+    
     // Send call to the receiver
     this.server.to(data.toUserId).emit('incomingCall', {
       from: fromUserId,
