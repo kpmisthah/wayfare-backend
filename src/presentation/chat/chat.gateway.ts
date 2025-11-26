@@ -193,3 +193,4 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // client.to(data.conversationId).emit('receiveMessage', saved);
   }
 }
+
