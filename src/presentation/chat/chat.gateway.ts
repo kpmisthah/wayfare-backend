@@ -60,43 +60,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   handleConnection(client: Socket) {
-    // console.log('Socket connected:', client.id);
-
-    // const cookies = cookie.parse(client.handshake.headers.cookie || '');
-    // const token = cookies['accessToken'];
-    // console.log('token in handleConnection', token);
-    // console.log(
-    //   `[GATEWAY] handleConnection -> socket.id: ${client.id}, userId: ${(client as any).userId}`,
-    // );
-
-    // if (!token) {
-    //   console.log('No access token found in cookies');
-    //   client.disconnect();
-    //   return;
-    // }
-
-    // try {
-    //   const decoded = jwt.verify(
-    //     token,
-    //     process.env.JWT_ACCESS_SECRET!,
-    //   ) as jwt.JwtPayload;
-
-    //   console.log('Connected user:', decoded);
-
-    //   const userId = decoded.sub as string; // ✅ cast sub to string safely
-    //   if (!userId) {
-    //     console.log('No userId (sub) found in decoded token');
-    //     client.disconnect();
-    //     return;
-    //   }
-
-    //   (client as any).userId = userId;
-    //   client.join(userId); // ✅ Now userId is defined
-    //   console.log(` User ${userId} joined their personal room`);
-    // } catch (err) {
-    //   console.log(' Invalid token', err);
-    //   client.disconnect();
-    // }
     const userId = (client as any).userId;
     if (!userId) {
       console.log(`Unauthorized socket ${client.id} → disconnecting`);
@@ -191,5 +154,46 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.to(data.conversationId).emit('receiveMessage', saved);
     console.log('emit event sender');
     // client.to(data.conversationId).emit('receiveMessage', saved);
+  }
+  @SubscribeMessage('startCall')
+  handleStartCall(
+    @ConnectedSocket() client: Socket,
+    @MessageBody()
+    data: {
+      toUserId: string;
+      conversationId: string;
+      callType: 'video' | 'audio';
+       signalData: any;
+    },
+  ) {
+    const fromUserId = (client as any).userId;
+    console.log(`----------<><><>${fromUserId} is calling ${data.toUserId} (${data.callType})----------------->`);
+    console.log(data,'data in handlerStartCalll');
+    
+    // Send call to the receiver
+    this.server.to(data.toUserId).emit('incomingCall', {
+      from: fromUserId,
+      // fromName: 'User', // You can pass name later
+      conversationId: data.conversationId,
+      callType: data.callType,
+      signalData: data.signalData, // WebRTC signal
+    });
+  }
+  @SubscribeMessage('acceptCall')
+  handleAcceptCall(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { callerId: string; signal: any },
+  ) {
+    console.log(`Call accepted by ${(client as any).userId}`);
+    this.server.to(data.callerId).emit('callAccepted', { signal: data.signal });
+  }
+  @SubscribeMessage('rejectCall')
+  handleRejectCall(@MessageBody() data: { callerId: string }) {
+    this.server.to(data.callerId).emit('callRejected');
+  }
+
+  @SubscribeMessage('endCall')
+  handleEndCall(@MessageBody() data: { toUserId: string }) {
+    this.server.to(data.toUserId).emit('callEnded');
   }
 }
