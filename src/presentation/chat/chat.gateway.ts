@@ -1,4 +1,4 @@
-import { Inject, Req, UseGuards } from '@nestjs/common';
+import { forwardRef, Inject, Req, UseGuards } from '@nestjs/common';
 import * as cookie from 'cookie';
 import * as jwt from 'jsonwebtoken';
 import {
@@ -14,6 +14,7 @@ import { Server, Socket } from 'socket.io';
 import { RequestWithUser } from 'src/application/usecases/auth/interfaces/request-with-user';
 import { ChatUsecase } from 'src/application/usecases/chat/implementation/message.usecase';
 import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
+import { MessageDto } from 'src/application/dtos/message.dto';
 
 @WebSocketGateway({
   cors: { origin: 'http://localhost:3000', credentials: true },
@@ -24,7 +25,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
 
   constructor(
-    @Inject('IChatUsecase')
+    @Inject(forwardRef(() => 'IChatUsecase'))
     private readonly _chatUsecase: ChatUsecase,
   ) {}
   afterInit(server: Server) {
@@ -59,15 +60,26 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
   }
 
-  handleConnection(client: Socket) {
+  async handleConnection(client: Socket) {
     const userId = (client as any).userId;
     if (!userId) {
       console.log(`Unauthorized socket ${client.id} → disconnecting`);
       client.disconnect(true);
       return;
     }
-
+    client.join(userId);
     console.log(`User ${userId} connected with socket ${client.id}`);
+    try {
+      const groups = await this._chatUsecase.getUserGroups(userId);
+      console.log(groups,'ee grp s l entha vera noikknmonmofffdsdfsdfsd---0123024===================')
+      groups.forEach((group: any) => {
+        client.join(group.id);
+        console.log(`[AUTO-JOIN] ${userId} → group ${group.id}`);
+      });
+      client.join(userId);
+    } catch (err) {
+      console.error('Failed to fetch groups on connect:', err);
+    }
   }
 
   handleDisconnect(client: Socket) {
@@ -96,42 +108,50 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
   @SubscribeMessage('joinRoom')
   handleJoin(
-    @MessageBody() payload: { conversationId: string },
+    @MessageBody() payload: { conversationId?: string; groupId?: string },
     @ConnectedSocket() client: Socket,
   ) {
-    const { conversationId } = payload;
-    if (!conversationId) {
+    // const { conversationId } = payload;
+    const roomId = payload.conversationId || payload.groupId;
+    if (!roomId) {
       console.warn(
         `[GATEWAY] Tried to join undefined room from socket ${client.id}`,
       );
       return;
     }
-    if (!client.rooms.has(conversationId)) {
-      client.join(conversationId);
-      console.log(`Client ${client.id} joined room: ${conversationId}`);
+    if (!client.rooms.has(roomId)) {
+      client.join(roomId);
+      console.log(`[JOIN] Client ${client.id} → room: ${roomId}`);
       console.log('Rooms:', client.rooms); // <-- debug
       console.log(
         'Clients in room:',
-        this.server.sockets.adapter.rooms.get(conversationId)?.size,
+        this.server.sockets.adapter.rooms.get(roomId)?.size,
       );
     }
-
-    client.emit('joined', { conversationId });
+    // if(room){
+    //   client.join(room)
+    //   console.log(`Client ${client.id} joined room: ${room}`);
+    // }
+    // client.emit('joined', { roomId });
   }
 
   @SubscribeMessage('leaveRoom')
   handleLeave(
-    @MessageBody() payload: { conversationId: string },
+    @MessageBody() payload: { conversationId?: string; groupId?: string },
     @ConnectedSocket() client: Socket,
   ) {
-    client.leave(payload.conversationId);
-    client.emit('left', { conversationId: payload.conversationId });
+    const roomId = payload.conversationId || payload.groupId;
+    if (roomId) {
+      client.leave(roomId);
+    }
+    // client.emit('left', { conversationId: payload.conversationId });
   }
 
   @SubscribeMessage('sendMessage')
   async handleMessage(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { conversationId: string; content: string },
+    @MessageBody()
+    data: { conversationId?: string; groupId?: string; content: string },
   ) {
     console.log(
       'e]&=============================================================>',
@@ -141,19 +161,36 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     );
     const senderId = (client as any).userId;
     console.log(senderId, 'sernderIdddd');
+    console.log(`[GATEWAY] Message from ${senderId}:`, data.content);
+    console.log(`         → conversationId: ${data.conversationId || 'null'}`);
+    console.log(`         → groupId: ${data.groupId || 'null'}`);
     if (!data.content?.trim()) return;
     // Save message
-    let saved = await this._chatUsecase.saveMessages(
-      data.conversationId,
-      senderId,
-      data.content,
-    );
-    console.log(saved, 'in chat gateway');
-    // Broadcast to all sockets in that conversation room
-    // this.server.to(data.conversationId).emit('receiveMessage', saved);
-    this.server.to(data.conversationId).emit('receiveMessage', saved);
-    console.log('emit event sender');
-    // client.to(data.conversationId).emit('receiveMessage', saved);
+    let savedMessage: MessageDto;
+    if (data.groupId) {
+      savedMessage = await this._chatUsecase.saveGroupMessage(
+        data.groupId,
+        senderId,
+        data.content,
+      );
+      console.log(savedMessage, '==============>saved message<============');
+      this.server.to(data.groupId).emit('receiveMessage', savedMessage);
+    } else if (data.conversationId) {
+      let saved = await this._chatUsecase.saveMessages(
+        data.conversationId,
+        senderId,
+        data.content,
+      );
+      console.log(
+        saved,
+        '==========================in chat gateway===========================',
+      );
+      // Broadcast to all sockets in that conversation room
+      // this.server.to(data.conversationId).emit('receiveMessage', saved);
+      this.server.to(data.conversationId).emit('receiveMessage', saved);
+      console.log('emit event sender');
+      // client.to(data.conversationId).emit('receiveMessage', saved);
+    }
   }
   @SubscribeMessage('startCall')
   handleStartCall(
@@ -163,13 +200,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       toUserId: string;
       conversationId: string;
       callType: 'video' | 'audio';
-       signalData: any;
+      signalData: any;
     },
   ) {
     const fromUserId = (client as any).userId;
-    console.log(`----------<><><>${fromUserId} is calling ${data.toUserId} (${data.callType})----------------->`);
-    console.log(data,'data in handlerStartCalll');
-    
+    console.log(
+      `----------<><><>${fromUserId} is calling ${data.toUserId} (${data.callType})----------------->`,
+    );
+    console.log(data, 'data in handlerStartCalll');
+
     // Send call to the receiver
     this.server.to(data.toUserId).emit('incomingCall', {
       from: fromUserId,

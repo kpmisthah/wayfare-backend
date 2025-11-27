@@ -11,17 +11,17 @@ import { SpelunkerModule } from 'nestjs-spelunker';
 import { json, urlencoded } from 'express';
 import { GlobalExceptionFilter } from './presentation/filters/global-exception.filter';
 const cookieParser = require('cookie-parser');
-const generateAppGraph = (app: INestApplication) => {
-  const tree = SpelunkerModule.explore(app);
-  const root = SpelunkerModule.graph(tree);
-  const edges = SpelunkerModule.findGraphEdges(root);
+// const generateAppGraph = (app: INestApplication) => {
+//   const tree = SpelunkerModule.explore(app);
+//   const root = SpelunkerModule.graph(tree);
+//   const edges = SpelunkerModule.findGraphEdges(root);
 
-  let graph = 'graph LR\n';
-  edges.forEach(({ from, to }) => {
-    graph += `${from.module.name} -->${to.module.name}\n`;
-  });
-  return graph;
-};
+//   let graph = 'graph LR\n';
+//   edges.forEach(({ from, to }) => {
+//     graph += `${from.module.name} -->${to.module.name}\n`;
+//   });
+//   return graph;
+// };
 
 async function bootstrap() {
   const customLoggerService = new Logging();
@@ -55,9 +55,9 @@ async function bootstrap() {
     }),
   );
 
-    const graph = generateAppGraph(app);
-    console.log(graph);
-    fs.writeFileSync('app.module.mmd', graph);
+    // const graph = generateAppGraph(app);
+    // console.log(graph);
+    // fs.writeFileSync('app.module.mmd', graph);
     app.useGlobalFilters(new UnauthorizedExceptionFilter());
     app.use(helmet());
     // Enable cookie parser
