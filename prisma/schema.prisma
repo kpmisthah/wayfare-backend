@@ -7,7 +7,6 @@ datasource db {
   provider = "postgresql"
   url      = env("POSTGRES_DATABASE_URL")
 }
-
 model User {
   id            String       @id @default(uuid())
   email         String       @unique
@@ -31,6 +30,9 @@ model User {
   sentConnections ConnectionRequest[] @relation("ReceivedConnections")
   recievedConnections ConnectionRequest[] @relation("SentConnections")
   Message Message[]
+
+  groupMembers GroupMember[]
+  createdGroups Group[] @relation("GroupCreator")
 }
 
 model UserProfile {
@@ -268,13 +270,45 @@ model Message {
   id             String        @id @default(uuid())
   content        String
   senderId       String
-  conversationId String
+  conversationId String?
+  groupId        String? 
   createdAt      DateTime      @default(now())
   sender         User          @relation(fields: [senderId], references: [id])
-  conversation   Conversation  @relation(fields: [conversationId], references: [id])
+  conversation   Conversation?  @relation(fields: [conversationId], references: [id])
+  group          Group?        @relation(fields: [groupId], references: [id])
 
   @@index([conversationId])
-  @@index([senderId])  
+  @@index([groupId])
+  @@index([senderId])    
+}
+model Group {
+  id          String   @id @default(uuid())
+  name        String
+  avatar      String?
+  creatorId   String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  members     GroupMember[]
+  messages    Message[]
+  creator     User          @relation("GroupCreator", fields: [creatorId], references: [id])
+}
+
+model GroupMember {
+  id        String   @id @default(uuid())
+  groupId   String
+  userId    String
+  role      GroupRole     @default(MEMBER) // ADMIN, MODERATOR, MEMBER
+  joinedAt  DateTime @default(now())
+
+  group     Group    @relation(fields: [groupId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  @@unique([groupId, userId])
+}
+
+enum GroupRole {
+  ADMIN
+  MEMBER
 }
 enum BookingStatus {
   PENDING

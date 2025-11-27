@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { ConnectionController } from "./connection.controller";
 import { SendConnectionUseCase } from "src/application/usecases/connection/implementation/send-connection.usecase";
 import { AcceptConnectionUseCase } from "src/application/usecases/connection/implementation/accept-connection.usecase";
@@ -8,7 +8,10 @@ import { ChatModule } from "../chat/chat.module";
 
 
 @Module({
-  imports:[ConversationModule,ChatModule],
+  imports:[
+    ConversationModule,
+    forwardRef(() => ChatModule),
+  ],
   controllers: [ConnectionController],
   providers: [
     {
@@ -24,5 +27,6 @@ import { ChatModule } from "../chat/chat.module";
         useClass:RejectConnectionUseCase,
     }
   ],
+  exports:['ISendConnectionUseCase']
 })
 export class ConnectionModule {}
