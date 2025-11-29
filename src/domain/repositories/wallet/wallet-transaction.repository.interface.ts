@@ -3,4 +3,5 @@ import { IBaseRepository } from "../base.repository";
 
 export interface IWalletTransactionRepository extends IBaseRepository<WalletTransactionEntity>{
     getTransactionsByWalletId(walletId: string): Promise<WalletTransactionEntity[]>
+    findAgencyByCredits():Promise<WalletTransactionEntity[]>
 }

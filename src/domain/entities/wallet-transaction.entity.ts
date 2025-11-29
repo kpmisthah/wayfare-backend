@@ -27,6 +27,20 @@ export class WalletTransactionEntity {
     }){
         return new WalletTransactionEntity('',props.walletId,props.amount,props.transactionType,props.paymentStatus,props.category,props.createdAt,props.bookingId,props.agencyId)
     }
+
+    public updateWalletTransaction(props:{status:PaymentStatus}){
+        return new WalletTransactionEntity(
+            this._id,
+            this._walletId,
+            this._amount,
+            this._transactionType,
+            props.status ?? this._paymentStatus,
+            this._category,
+            this._createdAt,
+            this._bookingId,
+            this._agencyId
+        )
+    }
     //getter
     get id(){
         return this._id
