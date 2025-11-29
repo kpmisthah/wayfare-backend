@@ -71,16 +71,19 @@ export class WalletPaymentUsecase implements IPayment {
 
     let w = await this._walletTransactionRepo.create(walletTransactionEntity);
     console.log(w,'walletTransaction Entity');
-    
+     const agencyWalletStatus = bookingEntity.getAgencyCreditStatus();
     let d = await this._walletUseCase.creditAgency(
       agencyId,
       bookingEntity.agencyEarning,
+      agencyWalletStatus,
+      bookingEntity.id
     );
     console.log(d,'credit agency in wallet paymebt');
     
-    let z = await this._walletUseCase.creditAdmin(bookingEntity.platformEarning);
+    let z = await this._walletUseCase.creditAdmin(bookingEntity.platformEarning,bookingEntity.id);
     console.log(z,'credit admin in walllet paybment');
     
     return {};
   }
+
 }

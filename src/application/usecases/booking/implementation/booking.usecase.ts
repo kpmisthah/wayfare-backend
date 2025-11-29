@@ -210,6 +210,8 @@ export class BookingUseCase implements IBookingUseCase {
           refundAmount,
           bookingEntity.userId,
           WalletTransactionEnum.REFUND,
+          bookingEntity.id,
+          PaymentStatus.SUCCEEDED
         );
       } else {
         let newWallet = await this._walletUsecase.createWallet(
