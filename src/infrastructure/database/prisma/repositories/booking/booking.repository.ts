@@ -60,6 +60,12 @@ export class BookingRepository
     return BookingMapper.tobookingDomains(bookings)
   }
 
+  async findByAgencyId(agencyId:string):Promise<BookingEntity[]>{
+    let bookings = await this._prisma.booking.findMany({
+      where:{agencyId}
+    })
+    return BookingMapper.toDomains(bookings)
+  }
   async fetchUserBookingDetails(id:string):Promise<BookingEntity|null>{
     let booking = await this._prisma.booking.findFirst({
       where:{id},

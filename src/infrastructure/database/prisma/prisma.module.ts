@@ -31,6 +31,8 @@ import { GoogleStrategy } from 'src/infrastructure/common/strategies/google.stra
 import { ConnectionRepository } from './repositories/connection/connection.repository';
 import { ConversationRepository } from './repositories/conversation/conversation.repository';
 import { MessageRepository } from './repositories/chat/message.repository';
+import { AgencyBankDetailsRepository } from './repositories/agency/agency-bank-details.repository';
+import { PayoutRequestRepository } from './repositories/agency/payout-request.repository';
 
 @Global()
 @Module({
@@ -131,6 +133,15 @@ import { MessageRepository } from './repositories/chat/message.repository';
     {
       provide:"IMessageRepository",
       useClass:MessageRepository
+    },
+    {
+      provide:"IBankingDetailsRepository",
+      useClass:AgencyBankDetailsRepository
+    },
+    {
+      provide:'IPayoutRequestRepository',
+      useClass:PayoutRequestRepository
+      
     }
   ],
   exports: [
@@ -156,6 +167,8 @@ import { MessageRepository } from './repositories/chat/message.repository';
     'IConnectionRepository',
     'IConversationRepository',
     'IMessageRepository',
+    'IBankingDetailsRepository',
+    'IPayoutRequestRepository',
     PROFILE_TYPE.IProfileRepository,
     ADMIN_TYPE.IAdminRepository,
     AGENCY_PACKAGE_TYPE.IAgencyPackageRepository,

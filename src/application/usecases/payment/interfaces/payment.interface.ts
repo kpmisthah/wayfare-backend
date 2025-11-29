@@ -12,4 +12,5 @@ export interface IPayment {
     success?: boolean;      
     clientSecret?: string;    
   }>;
+ 
 }

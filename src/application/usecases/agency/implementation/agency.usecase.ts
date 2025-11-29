@@ -14,6 +14,7 @@ import { AgencyProfileDto } from 'src/application/dtos/agency-profile.dto';
 import { IItineraryRepository } from 'src/domain/repositories/agency/itenerary.repository';
 import { UserMapper } from '../../mapper/user.mapper';
 import { UpdateStatusDto } from 'src/application/dtos/update-status.dto';
+import { BankDetailsDto } from 'src/application/dtos/request-payout.dto';
 // import { SearchService } from 'src/infrastructure/elastic-search/elastic-search.service';
 
 @Injectable()
@@ -163,7 +164,5 @@ export class AgencyService implements IAgencyService {
     return UserMapper.toUpdateStatus(updateUser);
   }
 
-  //   async searchAgencies(q: string) {
-  //   return this._searchService.searchAgency(q);
-  // }
+
 }

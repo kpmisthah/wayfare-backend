@@ -9,6 +9,7 @@ import { CloudinaryModule } from 'src/infrastructure/cloudinary/cloudinary.modul
 import { UsersModule } from '../users/users.module';
 import { NodemailerService } from 'src/infrastructure/utils/nodemailer.service';
 import { AdminModule } from '../admin/admin.module';
+import { BankingDetailsUsecase } from 'src/application/usecases/agency/implementation/bank-details.usecase';
 // import { SearchModule } from 'src/infrastructure/elastic-search/elastic-search.module';
 
 @Module({
@@ -35,6 +36,10 @@ import { AdminModule } from '../admin/admin.module';
       provide: 'INodemailerService',
       useClass: NodemailerService,
     },
+    {
+      provide:'IBankingDetailsUsecase',
+      useClass:BankingDetailsUsecase
+    }
   ],
   exports: [
     'IAgencyService',

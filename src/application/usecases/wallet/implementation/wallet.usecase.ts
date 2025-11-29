@@ -50,7 +50,7 @@ export class WalletUsecase implements IWalletUseCase {
     return WalletMapper.toWalletDto(walletEntity);
   }
 
-  async addBalance(balance: number, userId: string,category:WalletTransactionEnum): Promise<WalletDto | null> {
+  async addBalance(balance: number, userId: string,category:WalletTransactionEnum,bookingId:string,paymentStatus:PaymentStatus = PaymentStatus.SUCCEEDED): Promise<WalletDto | null> {
     console.log(balance,'balance',userId,'userId',category,'Categoryyy00 in addBalance');
     
     let existingWallet = await this._walletRepo.findByUserId(userId);
@@ -68,10 +68,10 @@ export class WalletUsecase implements IWalletUseCase {
       walletId: updateWallet.id,
       amount: balance,
       transactionType: Transaction.Credit,
-      paymentStatus: PaymentStatus.SUCCEEDED,
+      paymentStatus,
       category,
       createdAt:new Date(),
-      bookingId: '',
+      bookingId,
       agencyId:agency?.id ?? undefined,
     });
     
@@ -91,6 +91,8 @@ export class WalletUsecase implements IWalletUseCase {
   async creditAgency(
     agencyId: string,
     earning: number,
+     status: PaymentStatus.PENDING | PaymentStatus.SUCCEEDED,
+     bookingId:string
   ): Promise<WalletDto | null> {
     //ee agency id booking l ulle aan athayath book cheytha agency nte id
     let agencyUser = await this._agencyRepo.findById(agencyId);
@@ -103,19 +105,19 @@ export class WalletUsecase implements IWalletUseCase {
       let createdWallet = await this.createWallet(0, agencyUser.userId);
       if (!createdWallet) throw new Error('Failed to create wallet for agency');
     }
-    let updateWallet = await this.addBalance(earning, agencyUser.userId,WalletTransactionEnum.AGENCY_CREDIT);
+    let updateWallet = await this.addBalance(earning, agencyUser.userId,WalletTransactionEnum.AGENCY_CREDIT,bookingId,status);
     console.log(updateWallet, 'wallet froo agency');
 
     return updateWallet;
   }
-  async creditAdmin(earning: number): Promise<WalletDto | null> {
+  async creditAdmin(earning: number,bookingId:string): Promise<WalletDto | null> {
     let admin = await this._adminRepo.findAdmin();
     if (!admin) return null;
     let wallet = await this._walletRepo.findByUserId(admin.id);
     if (wallet.userId == '') {
       await this.createWallet(0, admin.id);
     }
-    let updateWallet = await this.addBalance(earning, admin.id,WalletTransactionEnum.ADMIN_CREDIT);
+    let updateWallet = await this.addBalance(earning, admin.id,WalletTransactionEnum.ADMIN_CREDIT,bookingId);
     return updateWallet;
   }
   async getTransactions(userId: string): Promise<WalletTransferDto[]> {

@@ -72,7 +72,7 @@ model Booking {
   id                    String              @id @default(uuid())
   packageId             String
   userId                String
-  travelDate            String
+  travelDate            String    
   peopleCount           Int
   connectiongroupId     String
   totalAmount           Int
@@ -114,6 +114,8 @@ model Agency {
   package           Package[]
   transaction       Transaction[]
   WalletTransaction WalletTransaction[]
+  bankDetails       AgencyBankDetails?
+  payoutRequests    PayoutRequest[]
 }
 
 model Itenerary {
@@ -304,6 +306,36 @@ model GroupMember {
   group     Group    @relation(fields: [groupId], references: [id])
   user      User     @relation(fields: [userId], references: [id])
   @@unique([groupId, userId])
+}
+model AgencyBankDetails {
+  id                String   @id @default(uuid())
+  agencyId          String   @unique
+  accountHolderName String
+  accountNumber     String
+  ifscCode          String
+  bankName          String?
+  branch             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  agency            Agency   @relation(fields: [agencyId], references: [id])
+}
+
+model PayoutRequest {
+  id             String          @id @default(uuid())
+  agencyId       String
+  amount         Float
+  status         PayoutStatus    @default(PENDING)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  agency         Agency          @relation(fields: [agencyId], references: [id])
+}
+
+enum PayoutStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
 }
 
 enum GroupRole {
