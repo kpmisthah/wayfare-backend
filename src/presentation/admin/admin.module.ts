@@ -5,8 +5,10 @@ import { AdminService } from 'src/application/usecases/admin/implementation/admi
 import { AdminRevenue } from 'src/application/usecases/admin/implementation/total-revenue.usecase';
 import { AgencyRevenue } from 'src/application/usecases/admin/implementation/agency.revenue';
 import { GetAdminSummaryUseCase } from 'src/application/usecases/admin/implementation/get-admin-summary-usecase';
+import { BookingModule } from '../booking/booking.module';
 
 @Module({
+  imports:[BookingModule],
   controllers: [AdminController],
   providers: [
     {

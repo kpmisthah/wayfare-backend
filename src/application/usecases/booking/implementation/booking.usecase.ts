@@ -7,7 +7,7 @@ import { BookingStatus } from 'src/domain/enums/booking-status.enum';
 import { BookingMapper } from '../../mapper/booking.mapper';
 import { IAgencyRepository } from 'src/domain/repositories/agency/agency.repository.interface';
 import { ITransactionRepository } from 'src/domain/repositories/transaction/transaction.repository';
-import { AGENCY_PACKAGE_TYPE } from 'src/domain/types';
+import { ADMIN_TYPE, AGENCY_PACKAGE_TYPE } from 'src/domain/types';
 import { IAgencyPackageRepository } from 'src/domain/repositories/agency/agency-package.repository';
 import { FetchBookingDto } from 'src/application/dtos/fetch-booking.dto';
 import { IUserRepository } from 'src/domain/repositories/user/user.repository.interface';
@@ -24,6 +24,8 @@ import { WalletTransactionEntity } from 'src/domain/entities/wallet-transaction.
 import { Transaction } from 'src/domain/enums/transaction.enum';
 import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
 import { BookingResponseDto } from 'src/application/dtos/booking-details-response.dto';
+import { IAdminRepository } from 'src/domain/repositories/admin/admin.repository.interface';
+import { RecentBookingResponse } from 'src/application/dtos/recent-booking-response.dto';
 
 @Injectable()
 export class BookingUseCase implements IBookingUseCase {
@@ -45,6 +47,8 @@ export class BookingUseCase implements IBookingUseCase {
     private readonly _paymentRegistry: PaymentRegistry,
     @Inject('IWalletTransactionRepo')
     private readonly _walletTransactionRepo: IWalletTransactionRepository,
+    @Inject(ADMIN_TYPE.IAdminRepository)
+    private readonly _adminRepo: IAdminRepository,    
   ) {}
 
   async createBooking(
@@ -286,5 +290,20 @@ export class BookingUseCase implements IBookingUseCase {
     throw new BadRequestException("checkoutUrl is not found")
   }
   return { url: result.checkoutUrl };
+  }
+
+    async getRecentBookings() :Promise<RecentBookingResponse[]>{
+      let limit = 5
+    const data = await this._adminRepo.findRecentBookings(limit);
+
+    return data.map((item) => ({
+      id: item.id,
+      customerName: item.user?.name ?? 'Unknown',
+      agencyName: item.agency?.user?.name ?? 'Unknown',
+      destination: item.package?.destination ?? 'Unknown',
+      amount: item.totalAmount,
+      status: item.status,
+      createdAt: item.createdAt,
+    }));
   }
 }
