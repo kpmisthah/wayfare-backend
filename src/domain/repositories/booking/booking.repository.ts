@@ -10,4 +10,7 @@ export interface IBookingRepository extends IBaseRepository<BookingEntity|null>{
     findByPackageId(packageId:string):Promise<BookingEntity[]>
     fetchUserBookingDetails(id:string):Promise<BookingEntity|null>
     findByAgencyId(agencyId:string):Promise<BookingEntity[]>
+    countAll(): Promise<number> 
+
+
 }
