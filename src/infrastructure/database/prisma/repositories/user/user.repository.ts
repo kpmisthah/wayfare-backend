@@ -120,5 +120,8 @@ export class UserRepository
     if (!agencies) return null;
     return UserMapper.toDomainMany(agencies);
   }
-  
+
+  async countAll():Promise<number>{
+    return await this._prisma.user.count()
+  }
 }

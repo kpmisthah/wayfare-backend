@@ -8,4 +8,9 @@ export interface IBookingRepository extends IBaseRepository<BookingEntity|null>{
     fetchBookingDetails(agencyId:string):Promise<BookingEntity[]>
     updateStatus(bookingId: string, status: BookingStatus):Promise<BookingEntity>
     findByPackageId(packageId:string):Promise<BookingEntity[]>
+    fetchUserBookingDetails(id:string):Promise<BookingEntity|null>
+    findByAgencyId(agencyId:string):Promise<BookingEntity[]>
+    countAll(): Promise<number> 
+
+
 }

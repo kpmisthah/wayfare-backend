@@ -1,3 +1,4 @@
+import { BookingResponseDto } from 'src/application/dtos/booking-details-response.dto';
 import { BookingStatusDto } from 'src/application/dtos/booking-status.dto';
 import { BookingDto } from 'src/application/dtos/booking.dto';
 import { CreateBookingDto } from 'src/application/dtos/create-booking.dto';
@@ -10,7 +11,7 @@ export interface IBookingUseCase {
   createBooking(
     createBookingDto: BookingDto,
     userId: string,
-  ): Promise<{ booking: CreateBookingDto; clientSecret: string } | null>;
+  ): Promise<{ booking: CreateBookingDto; checkoutUrl: string } | null>;
   fetchBookings(userId: string): Promise<FetchBookingDto[] | null>;
   getUserBookings(
     userId: string,
@@ -28,7 +29,9 @@ export interface IBookingUseCase {
     status: BookingStatus,
   ): Promise<BookingEntity>;
 
-  execute(packageId: string)
-  paymentVerification(paymentIntentId:string)
-  
+  execute(packageId: string);
+  paymentVerification(bookingId:string)
+  getUserBookingDetails(id: string): Promise<BookingResponseDto | null>;
+  retryPayment(bookingId:string,userId:string):Promise<{url:string}>
+  getRecentBookings()
 }

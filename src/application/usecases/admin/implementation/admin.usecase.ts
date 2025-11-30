@@ -15,30 +15,30 @@ import { UserMapper } from '../../mapper/user.mapper';
 export class AdminService implements IAdminService {
   constructor(
     @Inject(ADMIN_TYPE.IAdminRepository)
-    private readonly adminRepo: IAdminRepository,
+    private readonly _adminRepo: IAdminRepository,
     @Inject('IAgencyRepository')
-    private readonly agencyRepo: IAgencyRepository,
+    private readonly _agencyRepo: IAgencyRepository,
     @Inject('IUserRepository')
-    private readonly userRepo: IUserRepository,
+    private readonly _userRepo: IUserRepository,
   ) {}
   async createPreference(
     preferenceDto: PreferenceDto,
   ): Promise<preference | null> {
-    return await this.adminRepo.createPreference(preferenceDto);
+    return await this._adminRepo.createPreference(preferenceDto);
   }
 
   async getAllPreferences(): Promise<preference[] | null> {
-    return await this.adminRepo.getAllPreferences();
+    return await this._adminRepo.getAllPreferences();
   }
 
   async getAllAgencies(): Promise<AgencyManagementDto[] | null> {
-    const users = await this.userRepo.findAllAgencies();
+    const users = await this._userRepo.findAllAgencies();
     if (!users) return null;
-    const agencies = await this.agencyRepo.findAll();
+    const agencies = await this._agencyRepo.findAll();
     return AgencyMapper.toListAgencies(users, agencies);
   }
   async findAdmin():Promise<SafeUser|null>{
-    const admin = await this.adminRepo.findAdmin()
+    const admin = await this._adminRepo.findAdmin()
     if(!admin) return null
     return UserMapper.toSafeUserDto(admin)
   }

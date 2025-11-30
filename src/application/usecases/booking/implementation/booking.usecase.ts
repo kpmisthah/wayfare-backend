@@ -1,4 +1,4 @@
-import { Inject, Injectable, UseGuards } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException, UseGuards } from '@nestjs/common';
 import { IBookingUseCase } from '../interfaces/bookiing.usecase.interface';
 import { CreateBookingDto } from 'src/application/dtos/create-booking.dto';
 import { IBookingRepository } from 'src/domain/repositories/booking/booking.repository';
@@ -7,7 +7,7 @@ import { BookingStatus } from 'src/domain/enums/booking-status.enum';
 import { BookingMapper } from '../../mapper/booking.mapper';
 import { IAgencyRepository } from 'src/domain/repositories/agency/agency.repository.interface';
 import { ITransactionRepository } from 'src/domain/repositories/transaction/transaction.repository';
-import { AGENCY_PACKAGE_TYPE } from 'src/domain/types';
+import { ADMIN_TYPE, AGENCY_PACKAGE_TYPE } from 'src/domain/types';
 import { IAgencyPackageRepository } from 'src/domain/repositories/agency/agency-package.repository';
 import { FetchBookingDto } from 'src/application/dtos/fetch-booking.dto';
 import { IUserRepository } from 'src/domain/repositories/user/user.repository.interface';
@@ -23,6 +23,9 @@ import { IWalletTransactionRepository } from 'src/domain/repositories/wallet/wal
 import { WalletTransactionEntity } from 'src/domain/entities/wallet-transaction.entity';
 import { Transaction } from 'src/domain/enums/transaction.enum';
 import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
+import { BookingResponseDto } from 'src/application/dtos/booking-details-response.dto';
+import { IAdminRepository } from 'src/domain/repositories/admin/admin.repository.interface';
+import { RecentBookingResponse } from 'src/application/dtos/recent-booking-response.dto';
 
 @Injectable()
 export class BookingUseCase implements IBookingUseCase {
@@ -44,12 +47,14 @@ export class BookingUseCase implements IBookingUseCase {
     private readonly _paymentRegistry: PaymentRegistry,
     @Inject('IWalletTransactionRepo')
     private readonly _walletTransactionRepo: IWalletTransactionRepository,
+    @Inject(ADMIN_TYPE.IAdminRepository)
+    private readonly _adminRepo: IAdminRepository,    
   ) {}
 
   async createBooking(
     createBookingDto: BookingDto,
     userId: string,
-  ): Promise<{ booking: CreateBookingDto; clientSecret: string } | null> {
+  ): Promise<{ booking: CreateBookingDto; checkoutUrl: string } | null> {
     const bookingPackage = await this._packageRepo.findById(
       createBookingDto.packageId,
     );
@@ -77,11 +82,10 @@ export class BookingUseCase implements IBookingUseCase {
     if (!booking) return null;
 
     const handler = this._paymentRegistry.get(createBookingDto.paymentType!);
-    console.log(handler,'handlerrr l enthaa kittne nokknmmmm')
     const paymentResult = await handler.payment(booking, booking.agencyId);
     return {
       booking: BookingMapper.toBookDto(booking),
-      clientSecret: paymentResult.clientSecret || '',
+      checkoutUrl: paymentResult.checkoutUrl || '',
     };
   }
 
@@ -210,6 +214,8 @@ export class BookingUseCase implements IBookingUseCase {
           refundAmount,
           bookingEntity.userId,
           WalletTransactionEnum.REFUND,
+          bookingEntity.id,
+          PaymentStatus.SUCCEEDED
         );
       } else {
         let newWallet = await this._walletUsecase.createWallet(
@@ -226,7 +232,7 @@ export class BookingUseCase implements IBookingUseCase {
       category:WalletTransactionEnum.REFUND,
       createdAt:new Date(),
       bookingId: bookingEntity.id,
-      agencyId:bookingEntity.agencyId,  
+      agencyId:bookingEntity.agencyId,
     });
     await this._walletTransactionRepo.create(walletTransactionEntity);
     }
@@ -250,11 +256,54 @@ export class BookingUseCase implements IBookingUseCase {
     return BookingMapper.toResponseBookingDtoByPackageId(booking);
   }
 
-  async paymentVerification(paymentIntentId:string){
-    let transaction = await this._transactionRepo.findByPaymentIntent(paymentIntentId)
+  async paymentVerification(bookingId:string){
+    let transaction = await this._transactionRepo.findByBookingId(bookingId)
+    console.log("Reached Payment Controller at:", new Date().toISOString());
+    console.log(transaction,'-----trnasaction----')
     if(!transaction) return null
     return {
       status:transaction.status as PaymentStatus
     }
+  }
+
+  async getUserBookingDetails(id:string):Promise<BookingResponseDto|null>{
+    let getBookingDetails = await this._bookingRepo.fetchUserBookingDetails(id)
+    console.log(getBookingDetails,'getBookingdetailss')
+    if(!getBookingDetails){
+      return null
+    }
+    return BookingMapper.toBookingResponseDto(getBookingDetails)
+  }
+
+  async retryPayment(bookingId:string,userId:string):Promise<{url:string}>{
+    const booking = await this._bookingRepo.findById(bookingId);
+    if (!booking || booking.userId !== userId) {
+    throw new NotFoundException('Booking not found');
+  }
+
+  if(booking.status != BookingStatus.PENDING){
+    throw new BadRequestException("cannot retry payment")
+  }
+  const handler = this._paymentRegistry.get('card');
+  const result = await handler.payment(booking, booking.agencyId);
+  if(!result.checkoutUrl){
+    throw new BadRequestException("checkoutUrl is not found")
+  }
+  return { url: result.checkoutUrl };
+  }
+
+    async getRecentBookings() :Promise<RecentBookingResponse[]>{
+      let limit = 5
+    const data = await this._adminRepo.findRecentBookings(limit);
+
+    return data.map((item) => ({
+      id: item.id,
+      customerName: item.user?.name ?? 'Unknown',
+      agencyName: item.agency?.user?.name ?? 'Unknown',
+      destination: item.package?.destination ?? 'Unknown',
+      amount: item.totalAmount,
+      status: item.status,
+      createdAt: item.createdAt,
+    }));
   }
 }

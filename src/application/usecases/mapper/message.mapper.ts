@@ -6,7 +6,8 @@ export class MessageMapper {
         return {
             id:message.id,
             content:message.content,
-            conversationId:message.conversationId,
+            conversationId:message.conversationId ?? null,
+            groupId:message.groupId ?? null,
             senderId:message.senderId,
             createdAt:message.createdAt??'' 
         }

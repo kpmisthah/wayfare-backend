@@ -70,6 +70,7 @@ export class ConnectionRepository
         name: otherUser.name,
         profileImage: otherUser.profileImage,
         conversationId: conv?.id || null,
+        type:'direct'
       };
     });
     console.log(result,'in resulttt');

@@ -26,9 +26,9 @@ export class BookingRepository
     console.log(agencyId, 'agencyId in booking repo');
     let fetchBooking = await this._prisma.booking.findMany({
       where: { agencyId },
-      include:{
-        package:true
-      }
+      include: {
+        package: true,
+      },
     });
     console.log(fetchBooking, 'fetchBooking in booking repo');
 
@@ -39,12 +39,15 @@ export class BookingRepository
   ): Promise<BookingEntity | null> {
     throw new Error('Method not implemented.');
   }
-  async updateStatus(bookingId: string, status: BookingStatus):Promise<BookingEntity> {
+  async updateStatus(
+    bookingId: string,
+    status: BookingStatus,
+  ): Promise<BookingEntity> {
     const updateBooking = await this._prisma.booking.update({
       where: { id: bookingId },
       data: { status },
     });
-    return BookingMapper.toDomain(updateBooking)
+    return BookingMapper.toDomain(updateBooking);
   }
 
   //customer name
@@ -52,11 +55,30 @@ export class BookingRepository
   //phone number
   //people count
   //totalamount
-  async findByPackageId(packageId:string):Promise<BookingEntity[]>{
-   let bookings = await this._prisma.booking.findMany({
-      where:{packageId},
-      include:{user:true,package:true}
-    })
-    return BookingMapper.tobookingDomains(bookings)
+  async findByPackageId(packageId: string): Promise<BookingEntity[]> {
+    let bookings = await this._prisma.booking.findMany({
+      where: { packageId },
+      include: { user: true, package: true },
+    });
+    return BookingMapper.tobookingDomains(bookings);
+  }
+
+  async findByAgencyId(agencyId: string): Promise<BookingEntity[]> {
+    let bookings = await this._prisma.booking.findMany({
+      where: { agencyId },
+    });
+    return BookingMapper.toDomains(bookings);
+  }
+  async fetchUserBookingDetails(id: string): Promise<BookingEntity | null> {
+    let booking = await this._prisma.booking.findFirst({
+      where: { id },
+      include: { user: true, package: true },
+    });
+    if (!booking) return null;
+    return BookingMapper.tobookingDomain(booking);
+  }
+
+  async countAll(): Promise<number> {
+    return await this._prisma.booking.count();
   }
 }

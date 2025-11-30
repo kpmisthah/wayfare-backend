@@ -1,44 +1,59 @@
 import { Body, Controller, Get, Inject, Post } from '@nestjs/common';
 import { PreferenceDto } from 'src/application/dtos/preferences.dto';
 import { IAdminRevenue } from 'src/application/usecases/admin/interfaces/admin-revenue.usecase.interface';
+import { IAdminSumaryUsecase } from 'src/application/usecases/admin/interfaces/admin-summary-usecase.interface';
 import { IAdminService } from 'src/application/usecases/admin/interfaces/admin.usecase.interface';
 import { IAgencyRevenue } from 'src/application/usecases/admin/interfaces/agency-revenue.usecase.interface';
+import { IBookingUseCase } from 'src/application/usecases/booking/interfaces/bookiing.usecase.interface';
 import { ADMIN_TYPE } from 'src/domain/types';
 
 @Controller('admin')
 export class AdminController {
   constructor(
     @Inject(ADMIN_TYPE.IAdminService)
-    private readonly adminService: IAdminService,
+    private readonly _adminUsecase: IAdminService,
     @Inject('IAdminRevenue')
-    private readonly _adminRevenue:IAdminRevenue,
+    private readonly _adminRevenue: IAdminRevenue,
     @Inject('IAgencyRevenue')
-    private readonly _agencyRevenue:IAgencyRevenue
+    private readonly _agencyRevenue: IAgencyRevenue,
+    @Inject('IAdminSummaryUsecase')
+    private readonly _getAdminSummaryUsecase: IAdminSumaryUsecase,
+    @Inject('IBookingUseCase')
+    private readonly _bookingUseCase: IBookingUseCase,
   ) {}
   @Get('/preferences')
   getAllPreferences() {
-    return this.adminService.getAllPreferences();
+    return this._adminUsecase.getAllPreferences();
   }
   @Post('/preferences')
   createPreference(@Body() preferenceDto: PreferenceDto) {
-    return this.adminService.createPreference(preferenceDto);
+    return this._adminUsecase.createPreference(preferenceDto);
   }
   @Get('/agencies')
   getAgencies() {
-    return this.adminService.getAllAgencies();
+    return this._adminUsecase.getAllAgencies();
   }
   @Get('/finance/dashboard')
-  async getTotalRevenue(){
+  async getTotalRevenue() {
     return {
-    totalRevenue: await this._adminRevenue.getTotalRevenue(),
-    totalCommission: await this._adminRevenue.getAllCommission(),
-    walletBalance: await this._adminRevenue.getWalletBalance(),
-    activeAgencies: await this._adminRevenue.activeAgencyCount(),
-    transactionSummary: await this._adminRevenue.getTransactionSummary(),
-    }
+      totalRevenue: await this._adminRevenue.getTotalRevenue(),
+      totalCommission: await this._adminRevenue.getAllCommission(),
+      walletBalance: await this._adminRevenue.getWalletBalance(),
+      activeAgencies: await this._adminRevenue.activeAgencyCount(),
+      transactionSummary: await this._adminRevenue.getTransactionSummary(),
+    };
   }
   @Get('/finance/agency')
-  async getAgencyRevenueSummary(){
-    return this._agencyRevenue.getAgencyRevenueSummary()
+  async getAgencyRevenueSummary() {
+    return this._agencyRevenue.getAgencyRevenueSummary();
+  }
+
+  @Get('/summary')
+  async getSummary() {
+    return this._getAdminSummaryUsecase.getDashboardStats();
+  }
+  @Get('recent-bookings')
+  async getRecentBookings() {
+    return await this._bookingUseCase.getRecentBookings();
   }
 }

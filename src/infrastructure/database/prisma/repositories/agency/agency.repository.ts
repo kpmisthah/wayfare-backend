@@ -10,12 +10,12 @@ export class AgencyRepository
   extends BaseRepository<AgencyEntity>
   implements IAgencyRepository
 {
-  constructor(private readonly prisma: PrismaService) {
-    super(prisma.agency, AgencyMapper);
+  constructor(private readonly _prisma: PrismaService) {
+    super(_prisma.agency, AgencyMapper);
   }
 
   async findByEmail(email: string): Promise<AgencyEntity | null> {
-    const agency = await this.prisma.agency.findFirst({
+    const agency = await this._prisma.agency.findFirst({
       where: {
         user: {
           email: email,
@@ -36,7 +36,7 @@ export class AgencyRepository
   // }
 
   async findAll(): Promise<AgencyEntity[] | null> {
-    const agency = await this.prisma.agency.findMany();
+    const agency = await this._prisma.agency.findMany();
     console.log(agency, 'agency in repo getAllAgencies');
     if (!agency) {
       return null;
@@ -50,7 +50,7 @@ export class AgencyRepository
     skip = 0,
     limit = 6,
   ){
-    const agencies = await this.prisma.agency.findMany({
+    const agencies = await this._prisma.agency.findMany({
       where: {
         user: {
           name: {
@@ -74,7 +74,7 @@ export class AgencyRepository
    return agencies.map(a => AgencyMapper.fromPrisma(a));
   }
   async count(query: string): Promise<number> {
-    return this.prisma.agency.count({
+    return this._prisma.agency.count({
       where: {
         user: {
           name: {
@@ -87,7 +87,7 @@ export class AgencyRepository
   }
 
   async updateStatus(id: string, isVerified): Promise<AgencyEntity | null> {
-    const updatedData = await this.prisma.agency.update({
+    const updatedData = await this._prisma.agency.update({
       where: { userId: id },
       data: AgencyMapper.toPrisma(isVerified),
     });
@@ -105,7 +105,7 @@ export class AgencyRepository
       id,
       '---------------------------from agency repo findByUserId------------------------------',
     );
-    const agency = await this.prisma.agency.findFirst({
+    const agency = await this._prisma.agency.findFirst({
       where: { userId: id },
     });
 
@@ -113,5 +113,8 @@ export class AgencyRepository
       return null;
     }
     return AgencyMapper.toDomain(agency);
+  }
+  async countAll(): Promise<number> {
+    return await this._prisma.agency.count()
   }
 }

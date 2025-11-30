@@ -9,6 +9,7 @@ export class BaseRepository<T> {
   ) {
   }
   async create(entity: T): Promise<T | null> {
+    console.log(entity,'in Bankingcratio')
     const data = await this.model.create({
       data: this.mapper.toPrisma(entity),
     });

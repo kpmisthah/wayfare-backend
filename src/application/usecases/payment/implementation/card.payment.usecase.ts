@@ -6,6 +6,7 @@ import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
 import { Role } from 'src/domain/enums/role.enum';
 import { ITransactionRepository } from 'src/domain/repositories/transaction/transaction.repository';
 import { CreateBookingDto } from 'src/application/dtos/create-booking.dto';
+import { BookingEntity } from 'src/domain/entities/booking.entity';
 
 @Injectable()
 export class CardPaymentUsecase implements IPayment {
@@ -20,30 +21,41 @@ export class CardPaymentUsecase implements IPayment {
     return type == 'card'
   }
 
-  async payment(booking:CreateBookingDto,agencyId:string) {
+  async payment(booking:BookingEntity,agencyId:string) {
     console.log(booking,'in cardPayment and ',agencyId,'in here');
     
-    const clientSecret = await this._paymentProvider.createPaymentIntent(
-      booking.totalAmount * 100,
-      'inr',
-      { bookingId: booking.id },
-    );
-    console.log(clientSecret,'client sectrrt in cardPaymnetUsecase');
-    
+    // const clientSecret = await this._paymentProvider.createPaymentIntent(
+    //   booking.totalAmount * 100,
+    //   'inr',
+    //   { bookingId: booking.id },
+    // );
+    // console.log(clientSecret,'client sectrrt in cardPaymnetUsecase');
+    const checkoutUrl = await this._paymentProvider.createCheckoutSession({
+      amount: booking.totalAmount,
+      currency: 'inr',
+      metadata: {
+        bookingId: booking.id,
+        userId: booking.userId,
+        type: 'initial',
+      },
+      successUrl: `${process.env.FRONTEND_URL}/booking/success?booking_id=${booking.id}&payment_method=card`,
+      cancelUrl: `${process.env.FRONTEND_URL}/booking/failure?booking_id=${booking.id}`,
+      expiresAt: Math.floor((Date.now() + 30 * 60 * 1000) / 1000), // 30 min
+    });
     const transactionEntity = TransactionEntity.create({
       bookingId: booking.id,
       agencyId,
-      paymentIntentId: clientSecret.split('_secret')[0],
+      paymentIntentId: '',
       amount: booking.totalAmount,
       status: PaymentStatus.PENDING,
       currency: 'inr',
       initiatedBy: Role.User,
     });
     console.log(transactionEntity,'rransaction entity in card.payment.usecase');
-    
+    console.log(checkoutUrl,'in cardpayment.usecase')
       await this._transactionRepo.create(transactionEntity)
       return{
-        clientSecret
+        checkoutUrl
       }
   }
 }

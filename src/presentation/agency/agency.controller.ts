@@ -34,8 +34,11 @@ import { IAdminService } from 'src/application/usecases/admin/interfaces/admin.u
 import { FilterPackageDto } from 'src/application/dtos/filter-package.dto';
 import { UpdatePackageDto } from 'src/application/dtos/update-package.dto';
 import { PackageStatus } from 'src/domain/enums/package-status.enum';
+import { BankDetailsDto } from 'src/application/dtos/request-payout.dto';
+import { IBankingDetailsUsecase } from 'src/application/usecases/agency/interfaces/agnecy-banking-details.usecase.interface';
 
 @Controller('agency')
+// @UseGuards(AccessTokenGuard)
 export class AgencyController {
   constructor(
     @Inject('IAgencyService')
@@ -46,6 +49,8 @@ export class AgencyController {
     private readonly _agencyProfileUsecase: IAgencyProfileService,
     @Inject(ADMIN_TYPE.IAdminService)
     private readonly _adminUsecase: IAdminService,
+    @Inject('IBankingDetailsUsecase')
+    private readonly _bankingDetailsUsecase:IBankingDetailsUsecase
   ) {}
 
   // @Post('/signin')
@@ -61,7 +66,6 @@ export class AgencyController {
   //   return this.agencyService.findAll();
   // }
 
-  @UseGuards(AccessTokenGuard)
   @Post('/agency-profile')
   async createAgencyProfile(
     @Body() createAgencyDto: CreateAgencyDto,
@@ -73,8 +77,7 @@ export class AgencyController {
     return await this._agencyUsecase.createAgency(createAgencyDto, agencyId);
   }
 
-  //update agencyProfiles
-  @UseGuards(AccessTokenGuard)
+
   @Patch('/agency-profile')
   async updateAgencyProfile(
     @Body() updateAgencyProfileDto: UpdateAgencyProfileDto,
@@ -92,7 +95,6 @@ export class AgencyController {
     return await this._agencyProfileUsecase.getAgencyProfile();
   }
 
-  @UseGuards(AccessTokenGuard)
   @UseInterceptors(FilesInterceptor('photos'))
   @Post('add/packages')
   async addPackages(
@@ -115,7 +117,7 @@ export class AgencyController {
       files,
     );
   }
-  @UseGuards(AccessTokenGuard)
+
   @Get('get/packages')
   async getPackages(
     @Req() req: RequestWithUser,
@@ -128,7 +130,6 @@ export class AgencyController {
     return await this._agencyPackageUsecase.getPackages(userId, +page, +limit);
   }
 
-  @UseGuards(AccessTokenGuard)
   @Get('/agencyPackages')
   async getPackage(@Req() req: RequestWithUser) {
     const userId = req.user['userId'];
@@ -177,7 +178,7 @@ export class AgencyController {
     console.log(result,'result');
     return result
   }
-  @UseGuards(AccessTokenGuard)
+
   @Get('/me')
   async getAgency(@Req() req: RequestWithUser) {
     const agencyId = req.user['userId'];
@@ -235,7 +236,7 @@ export class AgencyController {
   async getAgencyById(@Param('agencyId') agencyId: string) {
     return this._agencyUsecase.findById(agencyId);
   }
-  @UseGuards(AccessTokenGuard)
+
   @Patch(':id')
   async agencyApproval(@Param('id') id: string,@Body() body:{action:'accept'|'reject',reason?:string}) {
     // let id = req.user['userId']
@@ -244,5 +245,10 @@ export class AgencyController {
     console.log(action, 'action');
     console.log(reason, 'reason');
     return await this._agencyUsecase.agencyApproval(id,action,reason);
+  }
+
+  @Post('/bank-details')
+  async agencyBankDetails(@Body() bankDetailsDto:BankDetailsDto){
+    return await this._bankingDetailsUsecase.bankDetails(bankDetailsDto)
   }
 }
