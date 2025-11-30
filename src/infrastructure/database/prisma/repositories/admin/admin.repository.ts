@@ -33,4 +33,29 @@ export class AdminRepository implements IAdminRepository {
       return UserMapper.toDomain(admin)
   }
 
+    async findRecentBookings(limit:number) {
+    const bookings = await this.prisma.booking.findMany({
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        totalAmount: true,
+        status: true,
+        createdAt: true,
+        user: { select: { name: true }},
+        agency: {
+          select: {
+            user: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+        package: { select: { destination: true }},
+      },
+    });
+
+    return bookings;
+  }
 }
