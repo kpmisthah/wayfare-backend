@@ -12,4 +12,5 @@ export interface IAgencyRepository extends IBaseRepository<AgencyEntity> {
   findByUserId(id: string): Promise<AgencyEntity | null>;
   count(query: string): Promise<number>
   findAlls(query:string,orderBy:any,skip:number, limit:number) 
+  countAll(): Promise<number> 
 }
