@@ -44,7 +44,19 @@ export class TripRepository
   }
   async findTravellersByDestinations(destinations:string[],userId:string):Promise<AiTripEntity[]>{
     const travellers = await this._prisma.tripPlan.findMany({
-      where:{destination:{in:destinations},visibility:true,userId:{not:userId}},
+      where:{
+        destination:{in:destinations},
+        visibility:true,
+        userId:{not:userId},
+        user: {
+        NOT: {
+          OR: [
+            { connectionsSent: { some: { receiverId: userId,status:"ACCEPTED"} } },
+            { connectionsReceived: { some: { senderId: userId ,status:"ACCEPTED"} } }
+          ]
+        }
+      }
+    },
       include:{
         user:{
           include:{

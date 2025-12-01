@@ -36,9 +36,10 @@ import { UpdatePackageDto } from 'src/application/dtos/update-package.dto';
 import { PackageStatus } from 'src/domain/enums/package-status.enum';
 import { BankDetailsDto } from 'src/application/dtos/request-payout.dto';
 import { IBankingDetailsUsecase } from 'src/application/usecases/agency/interfaces/agnecy-banking-details.usecase.interface';
+import { IWalletUseCase } from 'src/application/usecases/wallet/interfaces/wallet.usecase.interface';
 
 @Controller('agency')
-// @UseGuards(AccessTokenGuard)
+@UseGuards(AccessTokenGuard)
 export class AgencyController {
   constructor(
     @Inject('IAgencyService')
@@ -50,7 +51,9 @@ export class AgencyController {
     @Inject(ADMIN_TYPE.IAdminService)
     private readonly _adminUsecase: IAdminService,
     @Inject('IBankingDetailsUsecase')
-    private readonly _bankingDetailsUsecase:IBankingDetailsUsecase
+    private readonly _bankingDetailsUsecase: IBankingDetailsUsecase,
+    @Inject('IWalletUseCase')
+    private readonly _walletUseCase: IWalletUseCase,
   ) {}
 
   // @Post('/signin')
@@ -76,7 +79,6 @@ export class AgencyController {
     console.log(createAgencyDto, 'update agency profile dto');
     return await this._agencyUsecase.createAgency(createAgencyDto, agencyId);
   }
-
 
   @Patch('/agency-profile')
   async updateAgencyProfile(
@@ -166,22 +168,23 @@ export class AgencyController {
   }
   @Patch('/package/status/:id')
   async updateStatus(
-  @Param('id') id: string,
-  @Body('status') status: PackageStatus
-) {
-  return this._agencyPackageUsecase.updatePackageStatus(id, status);
-}
+    @Param('id') id: string,
+    @Body('status') status: PackageStatus,
+  ) {
+    return this._agencyPackageUsecase.updatePackageStatus(id, status);
+  }
 
   @Get('/trending/packages')
   async trendingPackages() {
     let result = await this._agencyPackageUsecase.trendingPackages();
-    console.log(result,'result');
-    return result
+    console.log(result, 'result');
+    return result;
   }
 
   @Get('/me')
   async getAgency(@Req() req: RequestWithUser) {
     const agencyId = req.user['userId'];
+    console.log(agencyId, 'agencyIddd');
     return this._agencyProfileUsecase.findProfile(agencyId);
   }
 
@@ -195,6 +198,17 @@ export class AgencyController {
     const pageNum = parseInt(page) || 1;
     const limitNum = parseInt(limit) || 6;
     return this._agencyUsecase.searchAgencies(query, pageNum, limitNum, sortBy);
+  }
+
+  @Get('/wallet')
+  async getWalletSummary(@Req() req: RequestWithUser) {
+    let userId = req.user['userId'];
+    return await this._walletUseCase.getWalletSummary(userId);
+  }
+  @Get('/recent-booking')
+  async getRecent(@Req() req: RequestWithUser) {
+    const userId = req.user['userId'];
+    return await this._walletUseCase.getRecentTransaction(userId);
   }
   // @Get()
   // async listAgencies(
@@ -234,21 +248,41 @@ export class AgencyController {
 
   @Get('/:agencyId')
   async getAgencyById(@Param('agencyId') agencyId: string) {
+    console.log("<.................iviide verundoo---------------------------->")
     return this._agencyUsecase.findById(agencyId);
   }
 
   @Patch(':id')
-  async agencyApproval(@Param('id') id: string,@Body() body:{action:'accept'|'reject',reason?:string}) {
+  async agencyApproval(
+    @Param('id') id: string,
+    @Body() body: { action: 'accept' | 'reject'; reason?: string },
+  ) {
     // let id = req.user['userId']
     console.log(id, 'id');
-    const {action,reason} = body
+    const { action, reason } = body;
     console.log(action, 'action');
     console.log(reason, 'reason');
-    return await this._agencyUsecase.agencyApproval(id,action,reason);
+    return await this._agencyUsecase.agencyApproval(id, action, reason);
   }
-
+  @Get('/bank/details')
+  async getAgencyBankDetails(@Req() req: RequestWithUser) {
+    let userId = req.user['userId'];
+    console.log(userId,'userIddd')
+    return await this._bankingDetailsUsecase.getBankDetailsByAgency(userId);
+  }
   @Post('/bank-details')
-  async agencyBankDetails(@Body() bankDetailsDto:BankDetailsDto){
-    return await this._bankingDetailsUsecase.bankDetails(bankDetailsDto)
+  async agencyBankDetails(@Body() bankDetailsDto: BankDetailsDto) {
+    return await this._bankingDetailsUsecase.bankDetails(bankDetailsDto);
+  }
+  @Patch('/update/bankdetails')
+  async updateBankDetails(
+    @Req() req:RequestWithUser,
+    @Body() updateBankDetailsDto: Partial<BankDetailsDto>,
+  ) {
+    let userId = req.user['userId']
+    return await this._bankingDetailsUsecase.updateBankDetails(
+      userId,
+      updateBankDetailsDto,
+    );
   }
 }

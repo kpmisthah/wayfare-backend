@@ -7,32 +7,33 @@ datasource db {
   provider = "postgresql"
   url      = env("POSTGRES_DATABASE_URL")
 }
-model User {
-  id            String       @id @default(uuid())
-  email         String       @unique
-  name          String
-  password      String?
-  profileImage  String?
-  isBlock       Boolean      @default(false)
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-  refreshToken  String?      @default("null")
-  role          Role         @default(USER)
-  bannerImage   String?
-  isVerified    Boolean      @default(false)
-  phone         String?
-  agencyProfile Agency?
-  Booking       Booking[]
-  TripPlan      TripPlan[]
-  userProfile   UserProfile?
-  Wallet        Wallet?
-  conversations UserOnConversation[]
-  sentConnections ConnectionRequest[] @relation("ReceivedConnections")
-  recievedConnections ConnectionRequest[] @relation("SentConnections")
-  Message Message[]
 
-  groupMembers GroupMember[]
-  createdGroups Group[] @relation("GroupCreator")
+model User {
+  id                  String               @id @default(uuid())
+  email               String               @unique
+  name                String
+  password            String?
+  profileImage        String?
+  isBlock             Boolean              @default(false)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  refreshToken        String?              @default("null")
+  role                Role                 @default(USER)
+  bannerImage         String?
+  isVerified          Boolean              @default(false)
+  phone               String?
+  agencyProfile       Agency?
+  Booking             Booking[]
+  TripPlan            TripPlan[]
+  userProfile         UserProfile?
+  Wallet              Wallet?
+  conversations       UserOnConversation[]
+  connectionsSent     ConnectionRequest[]  @relation("SentConnections")
+  connectionsReceived ConnectionRequest[]  @relation("ReceivedConnections")
+  Message             Message[]
+
+  groupMembers  GroupMember[]
+  createdGroups Group[]       @relation("GroupCreator")
 }
 
 model UserProfile {
@@ -72,7 +73,7 @@ model Booking {
   id                    String              @id @default(uuid())
   packageId             String
   userId                String
-  travelDate            String    
+  travelDate            String
   peopleCount           Int
   connectiongroupId     String
   totalAmount           Int
@@ -109,7 +110,7 @@ model Agency {
   ownerName         String?
   websiteUrl        String?
   user              User                @relation(fields: [userId], references: [id])
-  rejectionReason   String? @default("null")
+  rejectionReason   String?             @default("null")
   booking           Booking[]
   package           Package[]
   transaction       Transaction[]
@@ -208,9 +209,8 @@ model TripPlan {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   user         User     @relation(fields: [userId], references: [id])
-  startDate String
-  visibility Boolean
-
+  startDate    String
+  visibility   Boolean
 }
 
 model Wallet {
@@ -239,23 +239,23 @@ model WalletTransaction {
 }
 
 model ConnectionRequest {
-  id          String   @id @default(uuid())
-  senderId    String
-  receiverId  String
-  status      ConnectionType @default(PENDING)
-  createdAt   DateTime @default(now())
-  sender   User @relation("SentConnections", fields: [senderId], references: [id])
-  receiver User @relation("ReceivedConnections", fields: [receiverId], references: [id])
+  id         String         @id @default(uuid())
+  senderId   String
+  receiverId String
+  status     ConnectionType @default(PENDING)
+  createdAt  DateTime       @default(now())
+  sender     User           @relation("SentConnections", fields: [senderId], references: [id])
+  receiver   User           @relation("ReceivedConnections", fields: [receiverId], references: [id])
 
   @@unique([senderId, receiverId])
   @@index([receiverId])
 }
 
 model Conversation {
-  id         String                @id @default(uuid())
-  createdAt  DateTime              @default(now())
-  participants      UserOnConversation[]
-  messages   Message[]
+  id           String               @id @default(uuid())
+  createdAt    DateTime             @default(now())
+  participants UserOnConversation[]
+  messages     Message[]
 }
 
 model UserOnConversation {
@@ -273,40 +273,43 @@ model Message {
   content        String
   senderId       String
   conversationId String?
-  groupId        String? 
+  groupId        String?
   createdAt      DateTime      @default(now())
   sender         User          @relation(fields: [senderId], references: [id])
-  conversation   Conversation?  @relation(fields: [conversationId], references: [id])
+  conversation   Conversation? @relation(fields: [conversationId], references: [id])
   group          Group?        @relation(fields: [groupId], references: [id])
 
   @@index([conversationId])
   @@index([groupId])
-  @@index([senderId])    
+  @@index([senderId])
 }
-model Group {
-  id          String   @id @default(uuid())
-  name        String
-  avatar      String?
-  creatorId   String
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
 
-  members     GroupMember[]
-  messages    Message[]
-  creator     User          @relation("GroupCreator", fields: [creatorId], references: [id])
+model Group {
+  id        String   @id @default(uuid())
+  name      String
+  avatar    String?
+  creatorId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members  GroupMember[]
+  messages Message[]
+  creator  User          @relation("GroupCreator", fields: [creatorId], references: [id])
 }
 
 model GroupMember {
-  id        String   @id @default(uuid())
-  groupId   String
-  userId    String
-  role      GroupRole     @default(MEMBER) // ADMIN, MODERATOR, MEMBER
-  joinedAt  DateTime @default(now())
+  id       String    @id @default(uuid())
+  groupId  String
+  userId   String
+  role     GroupRole @default(MEMBER) // ADMIN, MODERATOR, MEMBER
+  joinedAt DateTime  @default(now())
 
-  group     Group    @relation(fields: [groupId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+  group Group @relation(fields: [groupId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+
   @@unique([groupId, userId])
 }
+
 model AgencyBankDetails {
   id                String   @id @default(uuid())
   agencyId          String   @unique
@@ -314,21 +317,21 @@ model AgencyBankDetails {
   accountNumber     String
   ifscCode          String
   bankName          String?
-  branch             String?
+  branch            String?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
-  agency            Agency   @relation(fields: [agencyId], references: [id])
+  agency Agency @relation(fields: [agencyId], references: [id])
 }
 
 model PayoutRequest {
-  id             String          @id @default(uuid())
-  agencyId       String
-  amount         Float
-  status         PayoutStatus    @default(PENDING)
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  agency         Agency          @relation(fields: [agencyId], references: [id])
+  id        String       @id @default(uuid())
+  agencyId  String
+  amount    Float
+  status    PayoutStatus @default(PENDING)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  agency    Agency       @relation(fields: [agencyId], references: [id])
 }
 
 enum PayoutStatus {
@@ -342,6 +345,7 @@ enum GroupRole {
   ADMIN
   MEMBER
 }
+
 enum BookingStatus {
   PENDING
   CONFIRMED

@@ -30,22 +30,22 @@ export class WalletTransactionRepository extends BaseRepository<WalletTransactio
         return transaction.map(txn=>WalletTransactionMapper.toEntity(txn))
     }
 
-    async getWalletSummary(walletId:string){
+    async getWalletSummary(agencyId:string){
         let successAmount = await this._prisma.walletTransaction.aggregate({
             where:{
-                walletId,
+                agencyId,
                 status:PaymentStatus.SUCCEEDED
             },
             _sum:{amount:true}
         })
 
         let wholeAmount = await this._prisma.walletTransaction.aggregate({
-            where:{walletId},
+            where:{agencyId},
             _sum:{amount:true}
         })
 
         let pendingAmount = await this._prisma.walletTransaction.aggregate({
-            where:{walletId,status:PaymentStatus.PENDING},
+            where:{agencyId,status:PaymentStatus.PENDING},
             _sum:{amount:true}
         })
         const walletAmount = successAmount._sum.amount
@@ -57,4 +57,29 @@ export class WalletTransactionRepository extends BaseRepository<WalletTransactio
             pendingWalletAmount
         }
     }
+
+    async getRecentAgencyWalletTransactions(agencyId: string, limit) {
+    return await this._prisma.walletTransaction.findMany({
+      where: { agencyId },
+      orderBy: { createdAt: "desc" },
+      take: limit,
+      include: {
+        booking: {
+          select: {
+            id: true,
+            package: {
+              select: {
+                destination: true
+              }
+            },
+            user:{
+                select:{
+                    name:true
+                }
+            }
+          }
+        }
+      }
+    });
+  }
 }

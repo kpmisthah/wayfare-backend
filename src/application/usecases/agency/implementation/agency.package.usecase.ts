@@ -180,12 +180,12 @@ export class AgencyPackageService implements IAgencyPackageService {
 
   async getPackageDetails(packageId: string): Promise<PackageDto | null> {
     const pack = await this._agencyPackageRepo.findById(packageId);
-    console.log(pack, 'pack');
+    console.log(pack, '<==============pack======================>');
     if (!pack) return null;
     const trans = await this._transportationRepo.findById(
       pack.transportationId,
     );
-    console.log(trans, 'trns');
+    console.log(trans, '[[[[[[[[[[[[[[[[[[[[[trns]]]]]]]]]]]]]]]]]]]]');
     const itinerary = (await this._iteneraryRepo.findByItenerary(pack.id)) ?? [];
     console.log(itinerary, 'itinerary');
 

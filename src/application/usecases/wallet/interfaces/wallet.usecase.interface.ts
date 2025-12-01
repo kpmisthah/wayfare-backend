@@ -16,4 +16,6 @@ addBalance(balance: number, userId: string,category:WalletTransactionEnum,bookin
   creditAdmin(earning: number,bookingId:string): Promise<WalletDto | null>;
   getTransactions(userId: string): Promise<WalletTransferDto[]>;
   findByUserId(userId: string): Promise<WalletDto | null>;
+  getWalletSummary(userId:string)
+  getRecentTransaction(userId:string)
 }

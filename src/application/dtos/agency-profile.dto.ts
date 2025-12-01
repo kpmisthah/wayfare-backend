@@ -12,5 +12,6 @@ export class AgencyProfileDto {
     name: string;
     email: string;
     verified: boolean;
+    profileImage:string
   };
 }

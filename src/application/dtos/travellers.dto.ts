@@ -13,5 +13,6 @@ export class TravellersDto {
     profileImage:string
     @IsString()
     location:string
+   
 
 }

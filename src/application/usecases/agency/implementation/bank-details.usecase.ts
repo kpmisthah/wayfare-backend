@@ -1,29 +1,73 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { BankDetailsDto } from "src/application/dtos/request-payout.dto";
-import { BankingEntity } from "src/domain/entities/banking.entity";
-import { IBankingDetailsRepository } from "src/domain/interfaces/agency-bookibnng-details.interface";
-import { BankingMapper } from "../../mapper/banking-detail.mapper";
-import { IBankingDetailsUsecase } from "../interfaces/agnecy-banking-details.usecase.interface";
+import { Inject, Injectable } from '@nestjs/common';
+import { BankDetailsDto } from 'src/application/dtos/request-payout.dto';
+import { BankingEntity } from 'src/domain/entities/banking.entity';
+import { IBankingDetailsRepository } from 'src/domain/interfaces/agency-bookibnng-details.interface';
+import { BankingMapper } from '../../mapper/banking-detail.mapper';
+import { IBankingDetailsUsecase } from '../interfaces/agnecy-banking-details.usecase.interface';
+import { IAgencyRepository } from 'src/domain/repositories/agency/agency.repository.interface';
 
 @Injectable()
-export class BankingDetailsUsecase implements IBankingDetailsUsecase{
-    constructor(
-        @Inject('IBankingDetailsRepository')
-        private readonly _bankingDetailsRepo:IBankingDetailsRepository
-    ){}
-    async bankDetails(bankDetailsDto:BankDetailsDto):Promise<BankDetailsDto|null>{
-        let bankDetails = BankingEntity.create({
-            agencyId:bankDetailsDto.agencyId,
-            accountHolderName:bankDetailsDto.accountHolderName,
-            accountNumber:bankDetailsDto.accountNumber,
-            ifcCode:bankDetailsDto.ifscCode,
-            bankName:bankDetailsDto.bankName,
-            branch:bankDetailsDto.branch
-        })
-        console.log(bankDetails,'bank detailsss')
-        let createBankDetails = await this._bankingDetailsRepo.create(bankDetails)
-        console.log(createBankDetails,'createBankDetails')
-        if(!createBankDetails) return null
-        return BankingMapper.toBankingDetailsDto(createBankDetails)
-    }
+export class BankingDetailsUsecase implements IBankingDetailsUsecase {
+  constructor(
+    @Inject('IBankingDetailsRepository')
+    private readonly _bankingDetailsRepo: IBankingDetailsRepository,
+    @Inject('IAgencyRepository')
+    private readonly _agencyRepo: IAgencyRepository,
+  ) {}
+  async bankDetails(
+    bankDetailsDto: BankDetailsDto,
+  ): Promise<BankDetailsDto | null> {
+    let bankDetails = BankingEntity.create({
+      agencyId: bankDetailsDto.agencyId,
+      accountHolderName: bankDetailsDto.accountHolderName,
+      accountNumber: bankDetailsDto.accountNumber,
+      ifcCode: bankDetailsDto.ifscCode,
+      bankName: bankDetailsDto.bankName,
+      branch: bankDetailsDto.branch,
+    });
+    console.log(bankDetails, 'bank detailsss');
+    let createBankDetails = await this._bankingDetailsRepo.create(bankDetails);
+    console.log(createBankDetails, 'createBankDetails');
+    if (!createBankDetails) return null;
+    return BankingMapper.toBankingDetailsDto(createBankDetails);
+  }
+  async getBankDetailsByAgency(userId: string): Promise<BankDetailsDto | null> {
+    let agency = await this._agencyRepo.findByUserId(userId);
+    if (!agency) return null;
+    const bankDetails = await this._bankingDetailsRepo.findByAgencyId(
+      agency.id,
+    );
+    console.log(bankDetails, 'bankdetailsss');
+
+    if (!bankDetails) return null
+
+    return BankingMapper.toBankingDetailsDto(bankDetails);
+  }
+  async updateBankDetails(
+    userId: string,
+    updateBankDetailsDto: Partial<BankDetailsDto>
+  ): Promise<BankDetailsDto | null> {
+    let agency = await this._agencyRepo.findByUserId(userId)
+    if(!agency) return null
+    const existing = await this._bankingDetailsRepo.findByAgencyId(agency.id);
+
+    if (!existing) return null;
+
+    const updatedEntity = existing.update({
+      accountHolderName: updateBankDetailsDto.accountHolderName,
+      accountNumber: updateBankDetailsDto.accountNumber,
+      ifcCode: updateBankDetailsDto.ifscCode,
+      bankName: updateBankDetailsDto.bankName,
+      branch: updateBankDetailsDto.branch,
+    });
+
+    const updated = await this._bankingDetailsRepo.update(
+      existing.id,
+      updatedEntity,
+    );
+
+    if (!updated) return null;
+
+    return BankingMapper.toBankingDetailsDto(updated);
+  }
 }

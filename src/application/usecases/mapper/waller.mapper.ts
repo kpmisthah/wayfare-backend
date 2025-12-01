@@ -1,3 +1,4 @@
+import { RecentWalletTxDto } from "src/application/dtos/recent-wallet.dto";
 import { WalletTransferDto } from "src/application/dtos/wallet-tranfer.dto";
 import { WalletDto } from "src/application/dtos/wallet.dto";
 import { WalletTransactionEntity } from "src/domain/entities/wallet-transaction.entity";
@@ -23,4 +24,19 @@ export class WalletMapper {
     static toWalletTransactionsDto(walletTransactionEntity:WalletTransactionEntity[]):WalletTransferDto[] {
         return walletTransactionEntity.map((transaction)=>this.toWalletTransactionDto(transaction))
     }
+
+    static toRecentWalletTxDto(entity): RecentWalletTxDto {
+    return {
+      id:entity.id,  
+      amount: entity.amount,
+      status: entity.status,
+      name: entity.booking?.user?.name ?? "N/A",
+      destination: entity.booking?.package?.destination ?? "N/A",
+      createdAt: entity.createdAt
+    };
+  }
+
+  static toRecentWalletTxListDto(entities): RecentWalletTxDto[] {
+    return entities.map((t) => this.toRecentWalletTxDto(t));
+  }
 }

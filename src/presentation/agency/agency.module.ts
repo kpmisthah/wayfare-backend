@@ -10,10 +10,11 @@ import { UsersModule } from '../users/users.module';
 import { NodemailerService } from 'src/infrastructure/utils/nodemailer.service';
 import { AdminModule } from '../admin/admin.module';
 import { BankingDetailsUsecase } from 'src/application/usecases/agency/implementation/bank-details.usecase';
+import { WalletModule } from '../wallet/wallet.module';
 // import { SearchModule } from 'src/infrastructure/elastic-search/elastic-search.module';
 
 @Module({
-  imports: [CloudinaryModule, UsersModule, AdminModule],
+  imports: [CloudinaryModule, UsersModule, AdminModule,WalletModule],
   controllers: [AgencyController],
   providers: [
     {

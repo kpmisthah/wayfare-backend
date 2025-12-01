@@ -83,6 +83,7 @@ export class WalletUsecase implements IWalletUseCase {
 
   async getWallet(userId: string): Promise<WalletDto | null> {
     let wallet = await this._walletRepo.findByUserId(userId);
+    console.log(wallet,'wallet')
     if (!wallet) {
       return null;
     }
@@ -131,4 +132,19 @@ export class WalletUsecase implements IWalletUseCase {
     let wallet = await this._walletRepo.findByUserId(userId);
     return WalletMapper.toWalletDto(wallet);
   } 
+
+  async getWalletSummary(userId:string){
+    let agency = await this._agencyRepo.findByUserId(userId)
+    console.log(agency,'agencyyyy')
+    if(!agency) return null
+    return  await this._walletTransactionRepo.getWalletSummary(agency.id)
+  }
+
+  async getRecentTransaction(userId:string){
+    let agency = await this._agencyRepo.findByUserId(userId)
+    let limit = 5
+    if(!agency) return null
+    let tx = await this._walletTransactionRepo.getRecentAgencyWalletTransactions(agency.id,limit)
+    return WalletMapper.toRecentWalletTxListDto(tx);
+  }
 }

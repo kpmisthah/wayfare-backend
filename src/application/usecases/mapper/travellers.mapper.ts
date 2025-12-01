@@ -33,7 +33,7 @@ export class TravellersMapper {
             startDate:aiTripEntity.startDate,
             name:aiTripEntity.userName ?? '',
             profileImage:aiTripEntity.profileImage ?? '',
-            location:aiTripEntity.location ?? ''
+            location:aiTripEntity.location ?? '',
         }
     }
     static toWholeTravellersDto(aiTripEntity:AiTripEntity[]):TravellersDto[]{

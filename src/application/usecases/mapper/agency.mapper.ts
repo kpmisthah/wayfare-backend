@@ -38,6 +38,7 @@ export class AgencyMapper {
         name: userEntity.name,
         email: userEntity.email,
         verified: userEntity.isVerified,
+        profileImage:userEntity.profileImage
       },
     };
   }
