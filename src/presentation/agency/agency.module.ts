@@ -14,7 +14,7 @@ import { WalletModule } from '../wallet/wallet.module';
 // import { SearchModule } from 'src/infrastructure/elastic-search/elastic-search.module';
 
 @Module({
-  imports: [CloudinaryModule, UsersModule, AdminModule,WalletModule],
+  imports: [CloudinaryModule, UsersModule, AdminModule, WalletModule],
   controllers: [AgencyController],
   providers: [
     {
@@ -38,9 +38,9 @@ import { WalletModule } from '../wallet/wallet.module';
       useClass: NodemailerService,
     },
     {
-      provide:'IBankingDetailsUsecase',
-      useClass:BankingDetailsUsecase
-    }
+      provide: 'IBankingDetailsUsecase',
+      useClass: BankingDetailsUsecase,
+    },
   ],
   exports: [
     'IAgencyService',

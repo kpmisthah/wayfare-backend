@@ -5,7 +5,6 @@ import {
   Inject,
   Param,
   Post,
-  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -35,13 +34,16 @@ export class MessageController {
     const creatorId = req.user['userId'];
     console.log(creatorId, 'creatorIddddd');
     const result = await this._chatUsecase.createGroup(creatorId, groupChatDto);
-    console.log(result,'===========>in creatrion group======================<')
+    console.log(
+      result,
+      '===========>in creatrion group======================<',
+    );
     return result;
   }
   @Get('/groups')
   async getUserGroups(@Req() req: RequestWithUser) {
     const userId = req.user.userId;
-    return this._chatUsecase.getUserGroups(userId);
+    return await this._chatUsecase.getUserGroups(userId);
   }
   // message.controller.ts
   @Get('chats')
@@ -55,7 +57,7 @@ export class MessageController {
 
     // Get groups
     const groups = await this._chatUsecase.getUserGroups(userId);
-    console.log(groups,'grpupssssss')
+    console.log(groups, 'grpupssssss');
     // Format groups properly
     const formattedGroups = groups.map((g) => ({
       groupId: g.id,
@@ -63,7 +65,7 @@ export class MessageController {
       name: g.name,
       avatar: g.avatar || null,
       members: g.members.map((m) => m.userId),
-      type:g.type,
+      type: g.type,
       creatorId: g.creatorId,
       createdAt: g.createdAt,
     }));
@@ -79,13 +81,12 @@ export class MessageController {
     // const t = Number(take)
     // const s = Number(skip)
     const isGroup = await this._chatUsecase.isGroupId(conversationId);
-    if(isGroup){
-      console.log(isGroup,'=========isGroup=========...')
+    if (isGroup) {
+      console.log(isGroup, '=========isGroup=========...');
       return this._chatUsecase.getGroupMessages(conversationId);
-    }else{
+    } else {
       return await this._chatUsecase.getMessages(conversationId);
     }
-    
   }
   // Controller
 }

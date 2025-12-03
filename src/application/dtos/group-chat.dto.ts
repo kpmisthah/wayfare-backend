@@ -12,5 +12,5 @@ export class GroupChatDto {
   @IsArray()
   @IsString({ each: true })
   @IsNotEmpty({ each: true })
-  memberIds: string[]; 
+  memberIds: string[];
 }

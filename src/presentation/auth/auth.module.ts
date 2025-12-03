@@ -11,12 +11,16 @@ import { OtpModule } from '../otp/otp.module';
 // import { GoogleStrategy } from 'src/application/usecases/auth/strategies/google.strategy';
 import { UserService } from 'src/application/usecases/users/implementation/users.usecase';
 import { JwtTokenFactory } from 'src/application/usecases/auth/implementation/jwt-token.factory';
-import { AgencyService } from 'src/application/usecases/agency/implementation/agency.usecase';
 import { GoogleLoginUseCase } from 'src/application/usecases/auth/implementation/google-login.usecase';
 import { AgencyModule } from '../agency/agency.module';
 
 @Module({
-  imports: [JwtModule.register({ global: true }), UsersModule, OtpModule,AgencyModule],
+  imports: [
+    JwtModule.register({ global: true }),
+    UsersModule,
+    OtpModule,
+    AgencyModule,
+  ],
   controllers: [AuthController],
   providers: [
     GoogleLoginUseCase,

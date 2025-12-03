@@ -1,3 +1,3 @@
-export interface IAgencyRevenueRepository{
-    getAgencyRevenueSummary()
+export interface IAgencyRevenueRepository {
+  getAgencyRevenueSummary();
 }

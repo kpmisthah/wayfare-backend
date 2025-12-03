@@ -1,25 +1,25 @@
-import { IsOptional, IsString } from "class-validator";
+import { IsOptional, IsString } from 'class-validator';
 
-export class BankDetailsDto{
+export class BankDetailsDto {
   @IsString()
   @IsOptional()
-  id:string
+  id: string;
 
   @IsString()
-  agencyId:string
+  agencyId: string;
 
   @IsString()
-  accountHolderName:string
+  accountHolderName: string;
 
   @IsString()
-  accountNumber:string
+  accountNumber: string;
 
   @IsString()
-  ifscCode:string
+  ifscCode: string;
 
   @IsString()
-  bankName:string
-  
+  bankName: string;
+
   @IsString()
-  branch:string
+  branch: string;
 }

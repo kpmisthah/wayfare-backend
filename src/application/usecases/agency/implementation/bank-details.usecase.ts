@@ -17,7 +17,7 @@ export class BankingDetailsUsecase implements IBankingDetailsUsecase {
   async bankDetails(
     bankDetailsDto: BankDetailsDto,
   ): Promise<BankDetailsDto | null> {
-    let bankDetails = BankingEntity.create({
+    const bankDetails = BankingEntity.create({
       agencyId: bankDetailsDto.agencyId,
       accountHolderName: bankDetailsDto.accountHolderName,
       accountNumber: bankDetailsDto.accountNumber,
@@ -26,29 +26,30 @@ export class BankingDetailsUsecase implements IBankingDetailsUsecase {
       branch: bankDetailsDto.branch,
     });
     console.log(bankDetails, 'bank detailsss');
-    let createBankDetails = await this._bankingDetailsRepo.create(bankDetails);
+    const createBankDetails =
+      await this._bankingDetailsRepo.create(bankDetails);
     console.log(createBankDetails, 'createBankDetails');
     if (!createBankDetails) return null;
     return BankingMapper.toBankingDetailsDto(createBankDetails);
   }
   async getBankDetailsByAgency(userId: string): Promise<BankDetailsDto | null> {
-    let agency = await this._agencyRepo.findByUserId(userId);
+    const agency = await this._agencyRepo.findByUserId(userId);
     if (!agency) return null;
     const bankDetails = await this._bankingDetailsRepo.findByAgencyId(
       agency.id,
     );
     console.log(bankDetails, 'bankdetailsss');
 
-    if (!bankDetails) return null
+    if (!bankDetails) return null;
 
     return BankingMapper.toBankingDetailsDto(bankDetails);
   }
   async updateBankDetails(
     userId: string,
-    updateBankDetailsDto: Partial<BankDetailsDto>
+    updateBankDetailsDto: Partial<BankDetailsDto>,
   ): Promise<BankDetailsDto | null> {
-    let agency = await this._agencyRepo.findByUserId(userId)
-    if(!agency) return null
+    const agency = await this._agencyRepo.findByUserId(userId);
+    if (!agency) return null;
     const existing = await this._bankingDetailsRepo.findByAgencyId(agency.id);
 
     if (!existing) return null;

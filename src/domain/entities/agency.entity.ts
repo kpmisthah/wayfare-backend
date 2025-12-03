@@ -1,5 +1,4 @@
 import { AgencyStatus } from '../enums/agency-status.enum';
-import { Role } from '../enums/role.enum';
 
 export class AgencyEntity {
   constructor(
@@ -17,7 +16,7 @@ export class AgencyEntity {
     private readonly _ownerName?: string,
     private readonly _websiteUrl?: string,
     private readonly _transactionId?: string | null,
-    private readonly _reason?:string|null
+    private readonly _reason?: string | null,
   ) {}
 
   static create(props: {
@@ -60,8 +59,11 @@ export class AgencyEntity {
     );
   }
 
-  public updateAgency(props: { status?: AgencyStatus,reason?:string|null }) {
-    console.log(props.reason,'reaaspm')
+  public updateAgency(props: {
+    status?: AgencyStatus;
+    reason?: string | null;
+  }) {
+    console.log(props.reason, 'reaaspm');
     return new AgencyEntity(
       this._id,
       this._description,
@@ -152,5 +154,5 @@ export class AgencyEntity {
   }
   get reason() {
     return this._reason;
-  } 
+  }
 }

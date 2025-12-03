@@ -8,7 +8,7 @@ import { GetAdminSummaryUseCase } from 'src/application/usecases/admin/implement
 import { BookingModule } from '../booking/booking.module';
 
 @Module({
-  imports:[BookingModule],
+  imports: [BookingModule],
   controllers: [AdminController],
   providers: [
     {
@@ -16,17 +16,17 @@ import { BookingModule } from '../booking/booking.module';
       useClass: AdminService,
     },
     {
-      provide:"IAdminRevenue",
-      useClass:AdminRevenue
+      provide: 'IAdminRevenue',
+      useClass: AdminRevenue,
     },
     {
-      provide:"IAgencyRevenue",
-      useClass:AgencyRevenue
+      provide: 'IAgencyRevenue',
+      useClass: AgencyRevenue,
     },
     {
-      provide:"IAdminSummaryUsecase",
-      useClass:GetAdminSummaryUseCase
-    }
+      provide: 'IAdminSummaryUsecase',
+      useClass: GetAdminSummaryUseCase,
+    },
   ],
   exports: [ADMIN_TYPE.IAdminService],
 })

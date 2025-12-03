@@ -26,28 +26,28 @@ export class ConnectionController {
     private readonly _rejectConnection: IRejectConnection,
   ) {}
   @Get()
-  async getConnections(@Req() req:RequestWithUser) {
-    const userId = req.user['userId']
+  async getConnections(@Req() req: RequestWithUser) {
+    const userId = req.user['userId'];
     //ivide userId parine enthaannn vechaaal recieverId (athaayath ashiq nte id)
     //jalva aan ashiq n request itte
-    return await this._sendConnection.getConnectionForUser(userId)
+    return await this._sendConnection.getConnectionForUser(userId);
   }
   @Get('/accepted')
-  async getAcceptedConnections(@Req() req:RequestWithUser){
-    const userId = req.user['userId']
-    console.log(userId,'userIddddddd')
-    let u = await this._sendConnection.getAcceptedConnections(userId)
-    console.log(u,'uu');
-    return u
+  async getAcceptedConnections(@Req() req: RequestWithUser) {
+    const userId = req.user['userId'];
+    console.log(userId, 'userIddddddd');
+    const u = await this._sendConnection.getAcceptedConnections(userId);
+    console.log(u, 'uu');
+    return u;
   }
   @Post(':receiverId')
   async send(
     @Req() req: RequestWithUser,
     @Param('receiverId') receiverId: string,
   ) {
-    console.log(receiverId,'recieverIddd')
-    let senderId = req.user['userId'];
-    console.log(senderId,'senderIddd')
+    console.log(receiverId, 'recieverIddd');
+    const senderId = req.user['userId'];
+    console.log(senderId, 'senderIddd');
     return await this._sendConnection.execute(senderId, receiverId);
   }
   @Patch(':id/accept')

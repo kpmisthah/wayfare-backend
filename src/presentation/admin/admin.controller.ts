@@ -35,12 +35,25 @@ export class AdminController {
   }
   @Get('/finance/dashboard')
   async getTotalRevenue() {
+    const [
+      totalRevenue,
+      totalCommission,
+      walletBalance,
+      activeAgencies,
+      transactionSummary,
+    ] = await Promise.all([
+      this._adminRevenue.getTotalRevenue(),
+      this._adminRevenue.getAllCommission(),
+      this._adminRevenue.getWalletBalance(),
+      this._adminRevenue.activeAgencyCount(),
+      this._adminRevenue.getTransactionSummary(),
+    ]);
     return {
-      totalRevenue: await this._adminRevenue.getTotalRevenue(),
-      totalCommission: await this._adminRevenue.getAllCommission(),
-      walletBalance: await this._adminRevenue.getWalletBalance(),
-      activeAgencies: await this._adminRevenue.activeAgencyCount(),
-      transactionSummary: await this._adminRevenue.getTransactionSummary(),
+      totalRevenue,
+      totalCommission,
+      walletBalance,
+      activeAgencies,
+      transactionSummary,
     };
   }
   @Get('/finance/agency')

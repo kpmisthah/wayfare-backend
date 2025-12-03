@@ -23,14 +23,14 @@ export class TripController {
     @Inject('IAiTripPlanUsecase')
     private readonly _tripPlan: IAiTripPlanUsecase,
   ) {}
-  
+
   @Post('generate')
   async generateTripPlan(
     @Req() req: RequestWithUser,
     @Body() dto: GenerateTripDto,
   ) {
-    const userId = req.user['userId'];    
-    console.log(dto,'dto in controlllerrrrrr trip controlllerrr');
+    const userId = req.user['userId'];
+    console.log(dto, 'dto in controlllerrrrrr trip controlllerrr');
     return await this._generateAndSaveTrip.execute(userId, dto);
   }
   @Get('/:id/:destination')
@@ -39,8 +39,8 @@ export class TripController {
   }
 
   @Get()
-  async fetchAllTrip( @Req() req:RequestWithUser){
-    const userId = req.user['userId']
-    return await this._tripPlan.fetchAllTrip(userId)
+  async fetchAllTrip(@Req() req: RequestWithUser) {
+    const userId = req.user['userId'];
+    return await this._tripPlan.fetchAllTrip(userId);
   }
 }

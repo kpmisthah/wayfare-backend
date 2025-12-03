@@ -1,4 +1,3 @@
-
 export class AgencyResponseDto {
   description: string | null;
   // status: AgencyStatus;

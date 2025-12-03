@@ -4,6 +4,7 @@ import { IAgencyRepository } from 'src/domain/repositories/agency/agency.reposit
 import { AgencyEntity } from 'src/domain/entities/agency.entity';
 import { AgencyMapper } from 'src/infrastructure/mappers/agency.mapper';
 import { BaseRepository } from '../base.repository';
+import { AgencyManageDto } from 'src/application/dtos/AgencyManagement.dto';
 
 @Injectable()
 export class AgencyRepository
@@ -49,7 +50,7 @@ export class AgencyRepository
     orderBy: any,
     skip = 0,
     limit = 6,
-  ){
+  ): Promise<AgencyManageDto[] | null> {
     const agencies = await this._prisma.agency.findMany({
       where: {
         user: {
@@ -71,7 +72,7 @@ export class AgencyRepository
     if (!agencies) {
       return null;
     }
-   return agencies.map(a => AgencyMapper.fromPrisma(a));
+    return agencies.map((a) => AgencyMapper.fromPrisma(a));
   }
   async count(query: string): Promise<number> {
     return this._prisma.agency.count({
@@ -115,6 +116,6 @@ export class AgencyRepository
     return AgencyMapper.toDomain(agency);
   }
   async countAll(): Promise<number> {
-    return await this._prisma.agency.count()
+    return await this._prisma.agency.count();
   }
 }

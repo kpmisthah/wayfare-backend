@@ -1,5 +1,3 @@
-import { UpdateUserProfileDto } from 'src/application/dtos/update-user-profile.dto';
-
 export class UserProfileEntity {
   constructor(
     private readonly _id: string,
@@ -12,7 +10,7 @@ export class UserProfileEntity {
       location?: string;
       phone?: string;
     },
-    id,
+    id: string,
   ) {
     return new UserProfileEntity(
       '',

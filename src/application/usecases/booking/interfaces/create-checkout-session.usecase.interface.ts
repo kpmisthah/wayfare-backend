@@ -1,12 +1,12 @@
-import { RetryPaymentDto } from "src/application/dtos/retry-payment.dto";
+import { RetryPaymentDto } from 'src/application/dtos/retry-payment.dto';
 
-export interface ICreateCheckoutSession{
-    execute(
+export interface ICreateCheckoutSession {
+  execute(
     command: {
       bookingId?: string;
       successUrl: string;
       cancelUrl: string;
     },
     userId: string,
-  ): Promise<{ url: string }> 
+  ): Promise<{ url: string }>;
 }

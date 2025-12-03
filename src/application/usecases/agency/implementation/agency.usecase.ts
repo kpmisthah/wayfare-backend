@@ -14,8 +14,7 @@ import { AgencyProfileDto } from 'src/application/dtos/agency-profile.dto';
 import { IItineraryRepository } from 'src/domain/repositories/agency/itenerary.repository';
 import { UserMapper } from '../../mapper/user.mapper';
 import { UpdateStatusDto } from 'src/application/dtos/update-status.dto';
-import { BankDetailsDto } from 'src/application/dtos/request-payout.dto';
-// import { SearchService } from 'src/infrastructure/elastic-search/elastic-search.service';
+import { UserEntity } from 'src/domain/entities/user.entity';
 
 @Injectable()
 export class AgencyService implements IAgencyService {
@@ -62,28 +61,28 @@ export class AgencyService implements IAgencyService {
     action: 'accept' | 'reject',
     reason?: string,
   ): Promise<AgencyManagementDto | null> {
-    console.log(action, 'action in usecase',reason,'reason in usecase');  
+    console.log(action, 'action in usecase', reason, 'reason in usecase');
     const agencyEntity = await this._agencyRepo.findById(id);
     if (!agencyEntity) return null;
     const userEntity = await this._userRepo.findById(agencyEntity.userId);
     if (!userEntity) return null;
-    let updatedUser;
+    let updatedUser: UserEntity;
     let updatedAgency: AgencyEntity;
     if (action === 'accept') {
-      console.log("reject aakumbo accept l verndo")
+      console.log('reject aakumbo accept l verndo');
       const userUpdate = userEntity.update({ isVerified: true });
       updatedUser = await this._userRepo.update(userUpdate.id, userUpdate);
       updatedAgency = agencyEntity.updateAgency({ reason: null });
-      let u = await this._agencyRepo.update(updatedAgency.id, updatedAgency);
+      const u = await this._agencyRepo.update(updatedAgency.id, updatedAgency);
       console.log(u, 'updated agency');
     } else {
-      console.log('reject aakumbo ivide alle verunne')
+      console.log('reject aakumbo ivide alle verunne');
       const userUpdate = userEntity.update({ isVerified: false });
       updatedUser = await this._userRepo.update(userUpdate.id, userUpdate);
 
       updatedAgency = agencyEntity.updateAgency({ reason });
-      console.log(updatedAgency,'updateagency after rejection')
-      let v = await this._agencyRepo.update(updatedAgency.id, updatedAgency);
+      console.log(updatedAgency, 'updateagency after rejection');
+      const v = await this._agencyRepo.update(updatedAgency.id, updatedAgency);
       console.log(v, 'updated agency');
     }
     return AgencyMapper.toAgencyManagement(updatedUser, updatedAgency);
@@ -141,8 +140,8 @@ export class AgencyService implements IAgencyService {
       this._agencyRepo.findAlls(query, orderBy, skip, limit),
       this._agencyRepo.count(query),
     ]);
-    let mapped = AgencyMapper.toList(agencies);
-    console.log(mapped,'mapped agenciessss')
+    const mapped = AgencyMapper.toList(agencies);
+    console.log(mapped, 'mapped agenciessss');
     return {
       data: mapped,
       totalPages: Math.ceil(total / limit),
@@ -150,7 +149,7 @@ export class AgencyService implements IAgencyService {
     };
   }
   async updateStatus(id: string): Promise<UpdateStatusDto | null> {
-    const agency = await this._agencyRepo.findById(id)
+    const agency = await this._agencyRepo.findById(id);
     if (!agency) return null;
     const user = await this._userRepo.findById(agency.userId);
     if (!user) return null;
@@ -163,6 +162,4 @@ export class AgencyService implements IAgencyService {
     if (!updateUser) return null;
     return UserMapper.toUpdateStatus(updateUser);
   }
-
-
 }

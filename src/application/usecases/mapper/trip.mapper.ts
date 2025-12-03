@@ -15,9 +15,9 @@ export class TripMapper {
     };
   }
 
-  static toTripsDto(aiTripsEntity:AiTripEntity[]):TripDto[] {
-    return aiTripsEntity.map((aiTrip)=>{
-      return TripMapper.toTripDto(aiTrip)
-    })
+  static toTripsDto(aiTripsEntity: AiTripEntity[]): TripDto[] {
+    return aiTripsEntity.map((aiTrip) => {
+      return TripMapper.toTripDto(aiTrip);
+    });
   }
 }

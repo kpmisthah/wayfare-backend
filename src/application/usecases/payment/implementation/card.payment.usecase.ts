@@ -5,7 +5,6 @@ import { TransactionEntity } from 'src/domain/entities/transaction.entity';
 import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
 import { Role } from 'src/domain/enums/role.enum';
 import { ITransactionRepository } from 'src/domain/repositories/transaction/transaction.repository';
-import { CreateBookingDto } from 'src/application/dtos/create-booking.dto';
 import { BookingEntity } from 'src/domain/entities/booking.entity';
 
 @Injectable()
@@ -14,16 +13,16 @@ export class CardPaymentUsecase implements IPayment {
     @Inject('IStripeService')
     private readonly _paymentProvider: PaymentProvider,
     @Inject('ITransactionRepository')
-    private readonly _transactionRepo:ITransactionRepository,    
+    private readonly _transactionRepo: ITransactionRepository,
   ) {}
-  
+
   supports(type: string): boolean {
-    return type == 'card'
+    return type == 'card';
   }
 
-  async payment(booking:BookingEntity,agencyId:string) {
-    console.log(booking,'in cardPayment and ',agencyId,'in here');
-    
+  async payment(booking: BookingEntity, agencyId: string) {
+    console.log(booking, 'in cardPayment and ', agencyId, 'in here');
+
     // const clientSecret = await this._paymentProvider.createPaymentIntent(
     //   booking.totalAmount * 100,
     //   'inr',
@@ -51,11 +50,14 @@ export class CardPaymentUsecase implements IPayment {
       currency: 'inr',
       initiatedBy: Role.User,
     });
-    console.log(transactionEntity,'rransaction entity in card.payment.usecase');
-    console.log(checkoutUrl,'in cardpayment.usecase')
-      await this._transactionRepo.create(transactionEntity)
-      return{
-        checkoutUrl
-      }
+    console.log(
+      transactionEntity,
+      'rransaction entity in card.payment.usecase',
+    );
+    console.log(checkoutUrl, 'in cardpayment.usecase');
+    await this._transactionRepo.create(transactionEntity);
+    return {
+      checkoutUrl,
+    };
   }
 }

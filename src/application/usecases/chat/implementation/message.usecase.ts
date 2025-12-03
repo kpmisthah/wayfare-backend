@@ -5,7 +5,6 @@ import { IChatUsecase } from '../interfaces/message.interface';
 import { MessageMapper } from '../../mapper/message.mapper';
 import { MessageDto } from 'src/application/dtos/message.dto';
 import { GroupChatDto } from 'src/application/dtos/group-chat.dto';
-import { Server } from 'socket.io';
 import { ChatGateway } from 'src/presentation/chat/chat.gateway';
 
 @Injectable()
@@ -29,13 +28,13 @@ export class ChatUsecase implements IChatUsecase {
     console.log(conversationId, 'in message app');
     console.log(senderId, 'sender id in message app');
     console.log(content, 'in content in app');
-    let chat = await this._chatRepo.createChat(messageEntity);
+    const chat = await this._chatRepo.createChat(messageEntity);
     console.log(chat, 'chattter in app');
     if (!chat) return null;
     return MessageMapper.toMessageDto(chat);
   }
   async getMessages(conversationId: string): Promise<MessageDto[]> {
-    let messages =
+    const messages =
       await this._chatRepo.getMessagesByConversation(conversationId);
     return MessageMapper.toMessageDtos(messages);
   }
@@ -54,9 +53,9 @@ export class ChatUsecase implements IChatUsecase {
         userId,
         role: userId === creatorId ? 'ADMIN' : 'MEMBER',
       })),
-    })
+    });
 
-    const groupId = group.id
+    const groupId = group.id;
 
     // FORCE ALL MEMBERS INTO THE ROOM — NO RACE CONDITION
     allMembers.forEach((userId) => {
@@ -129,12 +128,12 @@ export class ChatUsecase implements IChatUsecase {
     return this._chatRepo.getUserGroups(userId);
   }
   async isGroupId(id: string): Promise<boolean> {
-  const group = await this._chatRepo.getGroupById(id)
-  console.log(group,'=====group in isGroupIdd===========')
-  return !!group;
-}
-async getGroupMessages(groupId: string): Promise<MessageDto[]> {
-  const messages = await this._chatRepo.getMessagesByGroup(groupId);
-  return MessageMapper.toMessageDtos(messages);
-}
+    const group = await this._chatRepo.getGroupById(id);
+    console.log(group, '=====group in isGroupIdd===========');
+    return !!group;
+  }
+  async getGroupMessages(groupId: string): Promise<MessageDto[]> {
+    const messages = await this._chatRepo.getMessagesByGroup(groupId);
+    return MessageMapper.toMessageDtos(messages);
+  }
 }

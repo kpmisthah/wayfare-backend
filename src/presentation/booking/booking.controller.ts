@@ -12,8 +12,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { BookingDto } from 'src/application/dtos/booking.dto';
-import { CreateBookingDto } from 'src/application/dtos/create-booking.dto';
-import { RetryPaymentDto } from 'src/application/dtos/retry-payment.dto';
 import { RequestWithUser } from 'src/application/usecases/auth/interfaces/request-with-user';
 import { IBookingUseCase } from 'src/application/usecases/booking/interfaces/bookiing.usecase.interface';
 import { ICreateCheckoutSession } from 'src/application/usecases/booking/interfaces/create-checkout-session.usecase.interface';
@@ -28,7 +26,7 @@ export class BookingController {
     @Inject('IBookingUseCase')
     private readonly _bookingUseCase: IBookingUseCase,
     @Inject('ICreateCheckoutSessionUseCase')
-    private readonly _createCheckoutSessionUseCase:ICreateCheckoutSession
+    private readonly _createCheckoutSessionUseCase: ICreateCheckoutSession,
   ) {}
   @Post('/package')
   async createBooking(
@@ -36,30 +34,40 @@ export class BookingController {
     @Body() bookingDto: BookingDto,
     @Res({ passthrough: true }) res,
   ) {
-    let userId = req.user['userId']
+    const userId = req.user['userId'];
     const result = await this._bookingUseCase.createBooking(bookingDto, userId);
     console.log(result, 'resultofbooking controllererrrrr');
     if (!result) {
-      return res.status(StatusCode.BAD_REQUEST).json({ message: 'Booking failed' });
+      return res
+        .status(StatusCode.BAD_REQUEST)
+        .json({ message: 'Booking failed' });
     }
     return res.status(StatusCode.CREATED).json({
-      bookingId:result.booking.id,
-      checkoutUrl:result.checkoutUrl
+      bookingId: result.booking.id,
+      checkoutUrl: result.checkoutUrl,
     });
   }
 
   @Get('/get-bookings')
   async fetchBookings(@Req() req: RequestWithUser) {
-    let userId = req.user['userId'];
+    const userId = req.user['userId'];
     return await this._bookingUseCase.fetchBookings(userId);
   }
 
   @Get('/user')
-  async getUserBookings(@Req() req: RequestWithUser,@Query('page')page?:string,@Query('limit')limit?:string) {
-    let userId = req.user['userId'];
-    const pageNumber = page? Number(page):1
-    const limitNumber = limit? Number(limit):1
-    return await this._bookingUseCase.getUserBookings(userId,pageNumber,limitNumber);
+  async getUserBookings(
+    @Req() req: RequestWithUser,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    const userId = req.user['userId'];
+    const pageNumber = page ? Number(page) : 1;
+    const limitNumber = limit ? Number(limit) : 1;
+    return await this._bookingUseCase.getUserBookings(
+      userId,
+      pageNumber,
+      limitNumber,
+    );
   }
 
   @Post('/cancel/:id')
@@ -74,9 +82,9 @@ export class BookingController {
     @Body() body: { status: BookingStatus },
     @Req() req: RequestWithUser,
   ) {
-    const agencyId = req.user['userId']
-    console.log(agencyId,'agencyId');
-    
+    const agencyId = req.user['userId'];
+    console.log(agencyId, 'agencyId');
+
     return this._bookingUseCase.updateBookingStatus(
       bookingId,
       agencyId,
@@ -88,19 +96,18 @@ export class BookingController {
     @Req() req: RequestWithUser,
     @Body() { bookingId }: { bookingId: string },
   ) {
-    const userId = req.user['userId']
-    const result = await this._bookingUseCase.retryPayment(bookingId,userId)
-    console.log(result,'in retry payment')
-    return result
-  }
-  
-  @Get(':id/my-booking')
-  async getMyBookingDetails(@Param('id') id:string){
-    return this._bookingUseCase.getUserBookingDetails(id)
-  }
-  @Get(":id/bookings")
-  async getBookings(@Param("id") packageId: string) {
-    return this._bookingUseCase.execute(packageId);
+    const userId = req.user['userId'];
+    const result = await this._bookingUseCase.retryPayment(bookingId, userId);
+    console.log(result, 'in retry payment');
+    return result;
   }
 
+  @Get(':id/my-booking')
+  async getMyBookingDetails(@Param('id') id: string) {
+    return this._bookingUseCase.getUserBookingDetails(id);
+  }
+  @Get(':id/bookings')
+  async getBookings(@Param('id') packageId: string) {
+    return this._bookingUseCase.execute(packageId);
+  }
 }

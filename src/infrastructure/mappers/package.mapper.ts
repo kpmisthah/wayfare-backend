@@ -1,7 +1,6 @@
 import { Package, Prisma, Transportation } from '@prisma/client';
 import { PackageEntity } from 'src/domain/entities/package.entity';
 import { PackageStatus } from 'src/domain/enums/package-status.enum';
-import { TransportationMapper } from './transportation.mapper';
 
 export class PackageMapper {
   static toDomain(
@@ -18,7 +17,7 @@ export class PackageMapper {
       pkg.destination ?? '',
       pkg.status as PackageStatus,
       pkg.price,
-      pkg.transportationId ?? ''
+      pkg.transportationId ?? '',
     );
   }
 

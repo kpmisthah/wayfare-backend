@@ -1,4 +1,4 @@
-import { Prisma, TripPlan} from '@prisma/client';
+import { Prisma, TripPlan } from '@prisma/client';
 import { AiTripEntity } from 'src/domain/entities/ai.trip.entity';
 import { DayPlan, Hotel } from 'src/domain/types/ai.trip.type';
 
@@ -11,7 +11,7 @@ type TripWithUserProfile = Prisma.TripPlanGetPayload<{
     };
   };
 }>;
-  
+
 export class TripMapper {
   static toPrisma(trip: AiTripEntity): Prisma.TripPlanCreateInput {
     return {
@@ -22,8 +22,8 @@ export class TripMapper {
       hotels: trip.hotels as unknown as Prisma.InputJsonValue,
       itinerary: trip.itinerary as unknown as Prisma.InputJsonValue,
       user: { connect: { id: trip.userId } },
-      startDate:trip.startDate,
-      visibility:trip.visibility
+      startDate: trip.startDate,
+      visibility: trip.visibility,
     };
   }
 
@@ -38,16 +38,16 @@ export class TripMapper {
       trip.hotels as unknown as Hotel[],
       trip.itinerary as unknown as DayPlan[],
       trip.startDate,
-      trip.visibility
+      trip.visibility,
     );
   }
-  static toDomainMany(trips:TripPlan[]):AiTripEntity[] {
-    return trips.map((trip)=>{
-      return TripMapper.toDomain(trip)
-    })
+  static toDomainMany(trips: TripPlan[]): AiTripEntity[] {
+    return trips.map((trip) => {
+      return TripMapper.toDomain(trip);
+    });
   }
 
-  static toTravellerDomain(trip:TripWithUserProfile):AiTripEntity{
+  static toTravellerDomain(trip: TripWithUserProfile): AiTripEntity {
     return new AiTripEntity(
       trip.id,
       trip.userId,
@@ -61,13 +61,12 @@ export class TripMapper {
       trip.visibility,
       trip.user?.name ?? '',
       trip.user?.profileImage ?? '',
-      trip.user?.userProfile?.location ?? ''      
-    )
+      trip.user?.userProfile?.location ?? '',
+    );
   }
-  static toTravellersDomain(trips:TripWithUserProfile[]):AiTripEntity[]{
-    return trips.map((trip)=>{
-      return TripMapper.toTravellerDomain(trip)
-    })
+  static toTravellersDomain(trips: TripWithUserProfile[]): AiTripEntity[] {
+    return trips.map((trip) => {
+      return TripMapper.toTravellerDomain(trip);
+    });
   }
 }
-

@@ -28,20 +28,20 @@ export class GoogleLoginUseCase {
       const newUser = UserEntity.create({
         name,
         email: googleUser.email,
-        password: '', 
+        password: '',
         phone: '',
-        role: Role.User, 
+        role: Role.User,
         isVerified: false,
       });
 
       user = await this._userRepository.create(newUser);
     }
-    if(!user) throw new Error("No user")
+    if (!user) throw new Error('No user');
     const tokens = await this._jwtFactory.generateTokens(
-        user.id,
-        user.name,
-        user.role
-    )
+      user.id,
+      user.name,
+      user.role,
+    );
     return {
       user: {
         id: user.id,
@@ -50,8 +50,8 @@ export class GoogleLoginUseCase {
         role: user.role,
         profileImage: user.profileImage,
       },
-      accessToken:tokens.accessToken,
-      refreshToken:tokens.refreshToken
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
     };
   }
 }

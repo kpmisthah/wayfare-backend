@@ -7,5 +7,5 @@ export interface IAdminService {
   createPreference(preferenceDto: PreferenceDto): Promise<preference | null>;
   getAllPreferences(): Promise<preference[] | null>;
   getAllAgencies(): Promise<AgencyManagementDto[] | null>;
-  findAdmin():Promise<SafeUser|null>
+  findAdmin(): Promise<SafeUser | null>;
 }

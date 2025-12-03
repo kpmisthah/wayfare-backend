@@ -16,7 +16,7 @@ export class MessageDto {
   senderId: string;
   @IsString()
   createdAt: string;
-  
+
   @IsString()
   @IsOptional()
   senderName?: string;

@@ -1,4 +1,10 @@
-import { BadRequestException, Inject, Injectable, NotFoundException, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+  UseGuards,
+} from '@nestjs/common';
 import { IBookingUseCase } from '../interfaces/bookiing.usecase.interface';
 import { CreateBookingDto } from 'src/application/dtos/create-booking.dto';
 import { IBookingRepository } from 'src/domain/repositories/booking/booking.repository';
@@ -26,6 +32,7 @@ import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
 import { BookingResponseDto } from 'src/application/dtos/booking-details-response.dto';
 import { IAdminRepository } from 'src/domain/repositories/admin/admin.repository.interface';
 import { RecentBookingResponse } from 'src/application/dtos/recent-booking-response.dto';
+import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
 
 @Injectable()
 export class BookingUseCase implements IBookingUseCase {
@@ -48,9 +55,9 @@ export class BookingUseCase implements IBookingUseCase {
     @Inject('IWalletTransactionRepo')
     private readonly _walletTransactionRepo: IWalletTransactionRepository,
     @Inject(ADMIN_TYPE.IAdminRepository)
-    private readonly _adminRepo: IAdminRepository,    
+    private readonly _adminRepo: IAdminRepository,
   ) {}
-
+  @UseGuards(AccessTokenGuard)
   async createBooking(
     createBookingDto: BookingDto,
     userId: string,
@@ -90,22 +97,22 @@ export class BookingUseCase implements IBookingUseCase {
   }
 
   async fetchBookings(userId: string): Promise<FetchBookingDto[] | null> {
-    let agency = await this._agencyRepo.findByUserId(userId);
+    const agency = await this._agencyRepo.findByUserId(userId);
     if (!agency) return null;
-    let bookings = await this._bookingRepo.fetchBookingDetails(agency.id);
+    const bookings = await this._bookingRepo.fetchBookingDetails(agency.id);
     console.log(bookings, 'bookings in booking.usecase');
-    let userEntity = await Promise.all(
+    const userEntity = await Promise.all(
       bookings.map((booking) => this._userRepo.findById(booking.userId)),
     );
     console.log(userEntity, 'in booking.usecase');
-    let filteredBooking = bookings.filter(
+    const filteredBooking = bookings.filter(
       (booking) => booking.agencyId != null,
     );
     console.log(filteredBooking);
 
-    let packageEntity = await Promise.all(
+    const packageEntity = await Promise.all(
       filteredBooking.map((booking) =>
-        this._packageRepo.findBookedPackage(booking.agencyId!),
+        this._packageRepo.findBookedPackage(booking.agencyId),
       ),
     );
     console.log(packageEntity, 'in booking.usecase');
@@ -121,44 +128,39 @@ export class BookingUseCase implements IBookingUseCase {
     userId: string,
     page: number,
     limit: number,
-  ): Promise<{ data: (FetchUserBookingDto|undefined)[]; totalPages: number; page: number }> {
-    console.log(page,'pageee',limit,'limitttt')
-    let bookingEntity = await this._bookingRepo.findByUserId(userId);
-      if (!bookingEntity || bookingEntity.length === 0) {
-    return { data: [], totalPages: 0,page };
-  }
+  ): Promise<{
+    data: (FetchUserBookingDto | undefined)[];
+    totalPages: number;
+    page: number;
+  }> {
+    console.log(page, 'pageee', limit, 'limitttt');
+    const bookingEntity = await this._bookingRepo.findByUserId(userId);
+    if (!bookingEntity || bookingEntity.length === 0) {
+      return { data: [], totalPages: 0, page };
+    }
     const totalBookings = bookingEntity.length;
-    console.log(totalBookings,'totalbookingss')
     const totalPages = Math.ceil(totalBookings / limit);
-    console.log(totalPages,'totalpagesss')
     const startIndex = (page - 1) * limit;
-    console.log(startIndex,'startindexxx')  
     const endIndex = page * limit;
-    console.log(endIndex,'endindexxx')
     const paginatedBookings = bookingEntity.slice(startIndex, endIndex);
-    console.log(paginatedBookings,'paginatedbookingss')
-    let packageEntity = await this._packageRepo.getAllPackages();
-    console.log(packageEntity,'packageentityyyy')
-    let packages = await Promise.all(
-      paginatedBookings.map((booking) =>
-        packageEntity.find((pkg) => pkg.id == booking.packageId),
-      ),
+    const packageEntity = await this._packageRepo.getAllPackages();
+    const packages = paginatedBookings.map((booking) =>
+      packageEntity.find((pkg) => pkg.id == booking.packageId),
     );
-    console.log(packages,'packagesin userbookingsss')
-    let agencies = await Promise.all(
+    const agencies = await Promise.all(
       paginatedBookings.map((booking) => {
         if (booking) {
           return this._agencyRepo.findById(booking.agencyId);
         }
       }),
     );
-    console.log(agencies,'agenciesin userbookingss')
-    let filteredAgencies = agencies.filter(
+    console.log(agencies, 'agenciesin userbookingss');
+    const filteredAgencies = agencies.filter(
       (agency) => agency !== null && agency !== undefined,
     );
 
-    console.log(filteredAgencies,'filtered agenciesin userbookingss')
-    let agencyUsers = await Promise.all(
+    console.log(filteredAgencies, 'filtered agenciesin userbookingss');
+    const agencyUsers = await Promise.all(
       agencies.map((agency) => {
         if (agency) {
           return this._userRepo.findById(agency.userId);
@@ -166,75 +168,75 @@ export class BookingUseCase implements IBookingUseCase {
         return null;
       }),
     );
-    console.log(agencyUsers,'agency usersin userbookingss')
-    let filteredAgencyUsers = agencyUsers.filter(
+    console.log(agencyUsers, 'agency usersin userbookingss');
+    const filteredAgencyUsers = agencyUsers.filter(
       (user) => user !== null && user !== undefined,
     );
-    console.log(filteredAgencyUsers,'filtered agency usersin userbookingss')
-    let mapped = BookingMapper.toFetchUserBookingsDto(
+    console.log(filteredAgencyUsers, 'filtered agency usersin userbookingss');
+    const mapped = BookingMapper.toFetchUserBookingsDto(
       paginatedBookings,
       packages,
       filteredAgencyUsers,
       filteredAgencies,
     );
-    console.log(mapped,'mapped in usecase')
-    return{
-      data:mapped,
+    console.log(mapped, 'mapped in usecase');
+    return {
+      data: mapped,
       totalPages,
-      page
-    }
+      page,
+    };
   }
 
   async cancelBooking(id: string): Promise<BookingStatusDto | null> {
-    let bookingEntity = await this._bookingRepo.findById(id);
+    const bookingEntity = await this._bookingRepo.findById(id);
     if (!bookingEntity) return null;
-    let travelStartDate = new Date(bookingEntity.travelDate);
+    const travelStartDate = new Date(bookingEntity.travelDate);
     const refundPercentage =
       RefundPolicyEntity.calculateRefund(travelStartDate);
     //refund wallet
-    let updateBookingStatus = bookingEntity.updateBooking({
+    const updateBookingStatus = bookingEntity.updateBooking({
       status: BookingStatus.CANCELLED,
     });
     console.log(updateBookingStatus, 'update Booking Dstatus');
 
-    let update = await this._bookingRepo.update(id, updateBookingStatus);
+    const update = await this._bookingRepo.update(id, updateBookingStatus);
 
     console.log(update, 'updateeee in cancelt Booking');
 
     if (!update) return null;
     if (refundPercentage > 0) {
-      let refundAmount = (bookingEntity.totalAmount * refundPercentage) / 100;
+      const refundAmount = (bookingEntity.totalAmount * refundPercentage) / 100;
       console.log(refundAmount, 'refund Amount');
       let existingWallet = await this._walletUsecase.findByUserId(
         bookingEntity.userId,
       );
       console.log(existingWallet, 'existing wallet in cancel booking');
-      if (existingWallet?.userId!='') {
+      if (existingWallet?.userId != '') {
         await this._walletUsecase.addBalance(
           refundAmount,
           bookingEntity.userId,
           WalletTransactionEnum.REFUND,
           bookingEntity.id,
-          PaymentStatus.SUCCEEDED
+          PaymentStatus.SUCCEEDED,
         );
       } else {
-        let newWallet = await this._walletUsecase.createWallet(
+        const newWallet = await this._walletUsecase.createWallet(
           refundAmount,
           bookingEntity.userId,
         );
         existingWallet = newWallet;
       }
       const walletTransactionEntity = WalletTransactionEntity.create({
-      walletId:existingWallet?.id ?? '',
-      amount: refundAmount,
-      transactionType: Transaction.Credit,
-      paymentStatus: PaymentStatus.REFUNDED,
-      category:WalletTransactionEnum.REFUND,
-      createdAt:new Date(),
-      bookingId: bookingEntity.id,
-      agencyId:bookingEntity.agencyId,
-    });
-    await this._walletTransactionRepo.create(walletTransactionEntity);
+        walletId: existingWallet?.id ?? '',
+        amount: refundAmount,
+        transactionType: Transaction.Credit,
+        paymentStatus: PaymentStatus.REFUNDED,
+        category: WalletTransactionEnum.REFUND,
+        createdAt: new Date(),
+        bookingId: bookingEntity.id,
+        agencyId: bookingEntity.agencyId,
+      });
+      await this._walletTransactionRepo.create(walletTransactionEntity);
     }
 
     return BookingMapper.toUpdateBookingStatus(update);
@@ -251,49 +253,53 @@ export class BookingUseCase implements IBookingUseCase {
     return await this._bookingRepo.updateStatus(bookingId, status);
   }
 
-  async execute(packageId: string){
-    let booking = await this._bookingRepo.findByPackageId(packageId);
+  async execute(packageId: string) {
+    const booking = await this._bookingRepo.findByPackageId(packageId);
     return BookingMapper.toResponseBookingDtoByPackageId(booking);
   }
 
-  async paymentVerification(bookingId:string){
-    let transaction = await this._transactionRepo.findByBookingId(bookingId)
-    console.log("Reached Payment Controller at:", new Date().toISOString());
-    console.log(transaction,'-----trnasaction----')
-    if(!transaction) return null
+  async paymentVerification(bookingId: string) {
+    const transaction = await this._transactionRepo.findByBookingId(bookingId);
+    console.log('Reached Payment Controller at:', new Date().toISOString());
+    console.log(transaction, '-----trnasaction----');
+    if (!transaction) return null;
     return {
-      status:transaction.status as PaymentStatus
-    }
+      status: transaction.status,
+    };
   }
 
-  async getUserBookingDetails(id:string):Promise<BookingResponseDto|null>{
-    let getBookingDetails = await this._bookingRepo.fetchUserBookingDetails(id)
-    console.log(getBookingDetails,'getBookingdetailss')
-    if(!getBookingDetails){
-      return null
+  async getUserBookingDetails(id: string): Promise<BookingResponseDto | null> {
+    const getBookingDetails =
+      await this._bookingRepo.fetchUserBookingDetails(id);
+    console.log(getBookingDetails, 'getBookingdetailss');
+    if (!getBookingDetails) {
+      return null;
     }
-    return BookingMapper.toBookingResponseDto(getBookingDetails)
+    return BookingMapper.toBookingResponseDto(getBookingDetails);
   }
 
-  async retryPayment(bookingId:string,userId:string):Promise<{url:string}>{
+  async retryPayment(
+    bookingId: string,
+    userId: string,
+  ): Promise<{ url: string }> {
     const booking = await this._bookingRepo.findById(bookingId);
     if (!booking || booking.userId !== userId) {
-    throw new NotFoundException('Booking not found');
+      throw new NotFoundException('Booking not found');
+    }
+
+    if (booking.status != BookingStatus.PENDING) {
+      throw new BadRequestException('cannot retry payment');
+    }
+    const handler = this._paymentRegistry.get('card');
+    const result = await handler.payment(booking, booking.agencyId);
+    if (!result.checkoutUrl) {
+      throw new BadRequestException('checkoutUrl is not found');
+    }
+    return { url: result.checkoutUrl };
   }
 
-  if(booking.status != BookingStatus.PENDING){
-    throw new BadRequestException("cannot retry payment")
-  }
-  const handler = this._paymentRegistry.get('card');
-  const result = await handler.payment(booking, booking.agencyId);
-  if(!result.checkoutUrl){
-    throw new BadRequestException("checkoutUrl is not found")
-  }
-  return { url: result.checkoutUrl };
-  }
-
-    async getRecentBookings() :Promise<RecentBookingResponse[]>{
-      let limit = 5
+  async getRecentBookings(): Promise<RecentBookingResponse[]> {
+    const limit = 5;
     const data = await this._adminRepo.findRecentBookings(limit);
 
     return data.map((item) => ({

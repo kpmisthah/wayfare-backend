@@ -1,4 +1,3 @@
-
 export class AgencyProfileDto {
   id: string;
   description: string | null;
@@ -12,6 +11,6 @@ export class AgencyProfileDto {
     name: string;
     email: string;
     verified: boolean;
-    profileImage:string
+    profileImage: string;
   };
 }

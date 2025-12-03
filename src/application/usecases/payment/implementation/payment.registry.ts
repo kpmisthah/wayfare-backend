@@ -1,7 +1,7 @@
-import { Injectable, OnModuleInit } from "@nestjs/common";
-import { IPayment } from "../interfaces/payment.interface";
-import { CardPaymentUsecase } from "./card.payment.usecase";
-import { WalletPaymentUsecase } from "./wallet.payment.usecase";
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { IPayment } from '../interfaces/payment.interface';
+import { CardPaymentUsecase } from './card.payment.usecase';
+import { WalletPaymentUsecase } from './wallet.payment.usecase';
 
 @Injectable()
 export class PaymentRegistry implements OnModuleInit {
@@ -9,12 +9,12 @@ export class PaymentRegistry implements OnModuleInit {
 
   constructor(
     private _cardPayment: CardPaymentUsecase,
-    private _walletPayment: WalletPaymentUsecase
+    private _walletPayment: WalletPaymentUsecase,
   ) {}
 
   onModuleInit() {
-    this.register("card", this._cardPayment);
-    this.register("wallet", this._walletPayment);
+    this.register('card', this._cardPayment);
+    this.register('wallet', this._walletPayment);
   }
 
   register(type: string, handler: IPayment) {

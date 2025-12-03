@@ -38,12 +38,12 @@ export class AuthRepository implements IAuthRepository {
       return null;
     }
   }
-  async logout(userId) {
-    let d = await this._prisma.user.update({
+  async logout(userId: string): Promise<boolean> {
+    const d = await this._prisma.user.update({
       where: { id: userId },
       data: { refreshToken: null },
     });
-    console.log(d,'ddddd')
-    return d
+    console.log(d, 'ddddd');
+    return true;
   }
 }

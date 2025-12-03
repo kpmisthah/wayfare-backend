@@ -1,7 +1,6 @@
 import { BadRequestException, Inject, NotFoundException } from '@nestjs/common';
 import { IBookingRepository } from 'src/domain/repositories/booking/booking.repository';
 import { PaymentProvider } from '../../stripe/interface/payment.interface';
-import { RetryPaymentDto } from 'src/application/dtos/retry-payment.dto';
 import { ICreateCheckoutSession } from '../interfaces/create-checkout-session.usecase.interface';
 
 export class CreateCheckoutSessionUseCase implements ICreateCheckoutSession {
@@ -20,7 +19,8 @@ export class CreateCheckoutSessionUseCase implements ICreateCheckoutSession {
     },
     userId: string,
   ): Promise<{ url: string }> {
-    if(!command.bookingId) throw new BadRequestException("Booking id is not defined")
+    if (!command.bookingId)
+      throw new BadRequestException('Booking id is not defined');
     const booking = await this._bookingRepo.findById(command.bookingId);
 
     if (!booking || booking.userId !== userId) {

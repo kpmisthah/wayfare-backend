@@ -92,7 +92,7 @@ export class ProfileController {
   }
   @UseGuards(AccessTokenGuard)
   @Get('/me')
-  async getUserProfile(@Req() req) {
+  async getUserProfile(@Req() req: RequestWithUser) {
     const userPr = await this.profileService.findById(req.user.userId);
     console.log(userPr, 'user{rofile');
     return userPr;

@@ -20,5 +20,5 @@ export interface IUserRepository {
   updateRefreshToken(userId: string, refreshToken: string): Promise<UserEntity>;
   findAllAgencies(): Promise<UserEntity[] | null>;
   listUsersFromAgencies(): Promise<UserEntity[] | null>;
-  countAll():Promise<number>
+  countAll(): Promise<number>;
 }

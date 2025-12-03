@@ -1,8 +1,7 @@
-import { Inject, Injectable, Req } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateUserDto } from 'src/application/dtos/create-user.dto';
 import { SafeUser } from 'src/application/dtos/safe-user.dto';
 import { UpdateUserDto } from 'src/application/dtos/update-user.dto';
-import { IAgencyRepository } from 'src/domain/repositories/agency/agency.repository.interface';
 import { IUserRepository } from 'src/domain/repositories/user/user.repository.interface';
 import { IUserUsecase } from 'src/application/usecases/users/interfaces/user.usecase.interface';
 import { UserEntity } from 'src/domain/entities/user.entity';
@@ -13,8 +12,6 @@ export class UserService implements IUserUsecase {
   constructor(
     @Inject('IUserRepository')
     private readonly _userRepo: IUserRepository,
-    @Inject('IAgencyRepository')
-    private readonly _agencyRepo: IAgencyRepository,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<SafeUser | null> {
@@ -83,7 +80,7 @@ export class UserService implements IUserUsecase {
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<SafeUser | null> {
-    console.log(updateUserDto,'update dto in usecase')
+    console.log(updateUserDto, 'update dto in usecase');
     const updateUserEntity = await this._userRepo.findById(id);
     if (!updateUserEntity) return null;
     const userUpdate = updateUserEntity.update({
@@ -91,10 +88,10 @@ export class UserService implements IUserUsecase {
       email: updateUserDto.email,
       password: updateUserDto.password,
       refreshToken: updateUserDto.refreshToken,
-      isBlock:updateUserDto.isBlock
+      isBlock: updateUserDto.isBlock,
     });
     const user = await this._userRepo.update(id, userUpdate);
-    console.log(user,'updated user in usecase')
+    console.log(user, 'updated user in usecase');
     if (!user) return null;
     return UserMapper.toSafeUserDto(user);
   }

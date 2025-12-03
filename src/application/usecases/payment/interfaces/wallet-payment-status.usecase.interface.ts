@@ -1,3 +1,3 @@
-export interface IWalletPaymentStatus{
-    releasePendingCredits():Promise<void>
+export interface IWalletPaymentStatus {
+  releasePendingCredits(): Promise<void>;
 }

@@ -34,8 +34,8 @@ export class BookingEntity {
     commission: number;
   }) {
     console.log(props, 'props in create');
-    let platformEarning = (props.totalAmount * props.commission) / 100;
-    let agencyEarning = props.totalAmount - platformEarning;
+    const platformEarning = (props.totalAmount * props.commission) / 100;
+    const agencyEarning = props.totalAmount - platformEarning;
     return new BookingEntity(
       '',
       props.packageId,
@@ -72,14 +72,16 @@ export class BookingEntity {
     );
   }
 
-  public getAgencyCreditStatus(): PaymentStatus.PENDING | PaymentStatus.SUCCEEDED {
+  public getAgencyCreditStatus():
+    | PaymentStatus.PENDING
+    | PaymentStatus.SUCCEEDED {
     const travelDate = new Date(this._travelDate);
     const safeDate = new Date(travelDate);
-    safeDate.setDate(safeDate.getDate() - 4); 
+    safeDate.setDate(safeDate.getDate() - 4);
     const today = new Date();
 
     return today >= safeDate ? PaymentStatus.SUCCEEDED : PaymentStatus.PENDING;
-  } 
+  }
 
   ///getters
   get id() {

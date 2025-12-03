@@ -22,18 +22,18 @@ export class AdminRepository implements IAdminRepository {
     return await this.prisma.preference.findMany();
   }
 
-  async findAdmin():Promise<UserEntity|null>{
-   let admin = await this.prisma.user.findFirst({
-      where:{
-        role:Role.ADMIN
-      }
-    })
-    if(!admin) return null
-    console.log(admin,'admin in infra repo');
-      return UserMapper.toDomain(admin)
+  async findAdmin(): Promise<UserEntity | null> {
+    const admin = await this.prisma.user.findFirst({
+      where: {
+        role: Role.ADMIN,
+      },
+    });
+    if (!admin) return null;
+    console.log(admin, 'admin in infra repo');
+    return UserMapper.toDomain(admin);
   }
 
-    async findRecentBookings(limit:number) {
+  async findRecentBookings(limit: number) {
     const bookings = await this.prisma.booking.findMany({
       take: limit,
       orderBy: { createdAt: 'desc' },
@@ -42,7 +42,7 @@ export class AdminRepository implements IAdminRepository {
         totalAmount: true,
         status: true,
         createdAt: true,
-        user: { select: { name: true }},
+        user: { select: { name: true } },
         agency: {
           select: {
             user: {
@@ -52,7 +52,7 @@ export class AdminRepository implements IAdminRepository {
             },
           },
         },
-        package: { select: { destination: true }},
+        package: { select: { destination: true } },
       },
     });
 

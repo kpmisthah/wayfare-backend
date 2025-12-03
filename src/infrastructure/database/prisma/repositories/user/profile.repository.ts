@@ -105,11 +105,11 @@ export class ProfileRepository implements IProfileRepository {
     if (!updateUserProfile) return null;
     return UserProfileMapper.toDomain(updateUserProfile);
   }
-  async findByUserId(userId:string):Promise<UserProfileEntity|null>{
+  async findByUserId(userId: string): Promise<UserProfileEntity | null> {
     const userProfile = await this.prisma.userProfile.findFirst({
-      where:{userId}
-    })
-    if(!userProfile) return null
-    return UserProfileMapper.toDomain(userProfile)
+      where: { userId },
+    });
+    if (!userProfile) return null;
+    return UserProfileMapper.toDomain(userProfile);
   }
 }

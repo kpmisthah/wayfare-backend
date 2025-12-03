@@ -15,12 +15,12 @@ export class PackageDto {
   highlights: string;
 
   @IsNumber()
-  @Type(()=>Number)
+  @Type(() => Number)
   duration: number;
   picture: string[];
 
   @IsNumber()
-  @Type(()=>Number)
+  @Type(() => Number)
   price: number;
   itinerary: itineraryDto[];
   status: PackageStatus;

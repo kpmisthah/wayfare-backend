@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { TripRepository } from 'src/infrastructure/database/prisma/repositories/trip/trip.repository';
 import { IAiTripPlanUsecase } from '../interafaces/ai-trip-plan.usecase.interface';
 import { TripDto } from 'src/application/dtos/Trip.dto';
 import { TripMapper } from '../../mapper/trip.mapper';
@@ -17,8 +16,8 @@ export class AiTripPlanUsecase implements IAiTripPlanUsecase {
     return TripMapper.toTripDto(result);
   }
 
-  async fetchAllTrip(userId:string):Promise<TripDto[]|null>{
-    const result = await this._tripRepo.findByUserId(userId)
-    return TripMapper.toTripsDto(result)
+  async fetchAllTrip(userId: string): Promise<TripDto[] | null> {
+    const result = await this._tripRepo.findByUserId(userId);
+    return TripMapper.toTripsDto(result);
   }
 }

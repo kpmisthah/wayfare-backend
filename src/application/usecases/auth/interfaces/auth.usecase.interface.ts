@@ -34,13 +34,9 @@ export interface IAuthUsecase {
     res: Response,
     role: string,
   ): Promise<any>;
-  updateRefreshToken(
-    userId: string,
-    refreshToken: string,
-    role: Role,
-  ): Promise<void>;
+  updateRefreshToken(userId: string, refreshToken: string): Promise<void>;
   googleLoginResponse(req: any, res: Response): void;
-  changePassword(userId: string, changePasswordDto: ChangePassword)
+  changePassword(userId: string, changePasswordDto: ChangePassword);
   // handleGoogleLogin(
   //   email: string,
   //   name: string,

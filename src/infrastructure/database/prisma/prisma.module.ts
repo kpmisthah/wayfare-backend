@@ -96,53 +96,53 @@ import { PayoutRequestRepository } from './repositories/agency/payout-request.re
       useClass: TripRepository,
     },
     {
-      provide:'IBookingRepository',
-      useClass:BookingRepository
+      provide: 'IBookingRepository',
+      useClass: BookingRepository,
     },
     {
-      provide:"ITransactionRepository",
-      useClass:TransactionRepository
-    },{
-      provide:'IStripeService',
-      useClass:StripeService
+      provide: 'ITransactionRepository',
+      useClass: TransactionRepository,
     },
     {
-      provide:'IWalletRepository',
-      useClass:WalletRepository
+      provide: 'IStripeService',
+      useClass: StripeService,
     },
     {
-      provide:"IWalletTransactionRepo",
-      useClass:WalletTransactionRepository
+      provide: 'IWalletRepository',
+      useClass: WalletRepository,
     },
     {
-      provide:"IAdminRevenueRepository",
-      useClass:AdminRevenueRepository
+      provide: 'IWalletTransactionRepo',
+      useClass: WalletTransactionRepository,
     },
     {
-      provide:"IAgenciesRevenueRepository",
-      useClass:AgenciesRevenueRepository
+      provide: 'IAdminRevenueRepository',
+      useClass: AdminRevenueRepository,
     },
     {
-      provide:"IConnectionRepository",
-      useClass:ConnectionRepository
+      provide: 'IAgenciesRevenueRepository',
+      useClass: AgenciesRevenueRepository,
     },
     {
-      provide:"IConversationRepository",
-      useClass:ConversationRepository
+      provide: 'IConnectionRepository',
+      useClass: ConnectionRepository,
     },
     {
-      provide:"IMessageRepository",
-      useClass:MessageRepository
+      provide: 'IConversationRepository',
+      useClass: ConversationRepository,
     },
     {
-      provide:"IBankingDetailsRepository",
-      useClass:AgencyBankDetailsRepository
+      provide: 'IMessageRepository',
+      useClass: MessageRepository,
     },
     {
-      provide:'IPayoutRequestRepository',
-      useClass:PayoutRequestRepository
-      
-    }
+      provide: 'IBankingDetailsRepository',
+      useClass: AgencyBankDetailsRepository,
+    },
+    {
+      provide: 'IPayoutRequestRepository',
+      useClass: PayoutRequestRepository,
+    },
   ],
   exports: [
     PrismaService,

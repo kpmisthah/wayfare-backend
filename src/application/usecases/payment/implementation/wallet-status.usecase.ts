@@ -8,11 +8,11 @@ import { IWalletPaymentStatus } from '../interfaces/wallet-payment-status.usecas
 export class WalletPaymentStatus implements IWalletPaymentStatus {
   constructor(
     @Inject('IWalletTransactionRepo')
-    private readonly _walletTransactionRepo: IWalletTransactionRepository, 
-        @Inject('IBookingRepository')
-        private readonly _bookingRepo: IBookingRepository,   
+    private readonly _walletTransactionRepo: IWalletTransactionRepository,
+    @Inject('IBookingRepository')
+    private readonly _bookingRepo: IBookingRepository,
   ) {}
-  async releasePendingCredits():Promise<void> {
+  async releasePendingCredits(): Promise<void> {
     const pendingTnx = await this._walletTransactionRepo.findAgencyByCredits();
     for (const txn of pendingTnx) {
       const booking = await this._bookingRepo.findById(txn.bookingId!);
@@ -22,7 +22,7 @@ export class WalletPaymentStatus implements IWalletPaymentStatus {
         txn.paymentStatus == PaymentStatus.PENDING &&
         agencyWalletStatus == PaymentStatus.SUCCEEDED
       ) {
-        let updateWalletTransaction = txn.updateWalletTransaction({
+        const updateWalletTransaction = txn.updateWalletTransaction({
           status: PaymentStatus.SUCCEEDED,
         });
         await this._walletTransactionRepo.update(

@@ -31,7 +31,7 @@ export class StripeWebhookUsecase {
     }
     switch (event.type) {
       case 'checkout.session.completed': {
-        const session = event.data.object as Stripe.Checkout.Session;
+        const session = event.data.object;
         // console.log(intent,'intent...................');
         if (session.payment_status !== 'paid') {
           this._logger.warn(`Session completed but not paid: ${session.id}`);
@@ -59,34 +59,34 @@ export class StripeWebhookUsecase {
         console.log(updateTransactionStatus, 'updateTransactionStatus');
 
         if (updateTransactionStatus?.status == PaymentStatus.SUCCEEDED) {
-          let bookingEntity = await this._bookingRepo.findById(
+          const bookingEntity = await this._bookingRepo.findById(
             updateTransaction.bookingId,
           );
           console.log(bookingEntity, 'bookingEntity in stripeWebhook');
 
           if (!bookingEntity) return null;
-          let updateBooking = bookingEntity.updateBooking({
+          const updateBooking = bookingEntity.updateBooking({
             status: BookingStatus.CONFIRMED,
           });
           const u = await this._bookingRepo.update(
             bookingEntity.id,
             updateBooking,
           );
-          if(!u) return null
+          if (!u) return null;
           console.log(updateBooking, 'updateBooking');
           //wallet creation for admin
-           const agencyWalletStatus = bookingEntity.getAgencyCreditStatus();
-          let agencyWallet = await this._walletUseCase.creditAgency(
+          const agencyWalletStatus = bookingEntity.getAgencyCreditStatus();
+          const agencyWallet = await this._walletUseCase.creditAgency(
             bookingEntity.agencyId,
             bookingEntity.agencyEarning,
             agencyWalletStatus,
-            bookingEntity.id
+            bookingEntity.id,
           );
           console.log(agencyWallet, 'agencyWallet in agencyEWsllaer stripe');
 
-          let platformWallet = await this._walletUseCase.creditAdmin(
+          const platformWallet = await this._walletUseCase.creditAdmin(
             bookingEntity.platformEarning,
-            bookingEntity.id
+            bookingEntity.id,
           );
           console.log(platformWallet, 'platform wallet in stripe');
         }
@@ -94,7 +94,7 @@ export class StripeWebhookUsecase {
       }
       case 'checkout.session.expired': {
         console.log('faieeeeeed aayoooooooooooooo');
-        const session = event.data.object as Stripe.Checkout.Session;
+        const session = event.data.object;
         const bookingId = session.metadata?.bookingId;
         if (!bookingId) {
           this._logger.warn('No bookingId in metadata');

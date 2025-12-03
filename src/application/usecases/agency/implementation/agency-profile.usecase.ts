@@ -21,7 +21,7 @@ export class AgencyProfilService implements IAgencyProfileService {
     private readonly agencyRepo: IAgencyRepository,
   ) {}
   async updateProfile(
-    agencyId:string,
+    agencyId: string,
     updateAgencyProfileDto: UpdateAgencyProfileDto,
   ): Promise<AgencyProfileDto | null> {
     const existingAgency = await this.agencyRepo.findByUserId(agencyId);

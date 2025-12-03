@@ -14,7 +14,7 @@ export class GenerateTripDto {
   budget: string;
 
   @IsDateString()
-  startDate:string;
+  startDate: string;
 
-  visiblity:boolean
+  visiblity: boolean;
 }

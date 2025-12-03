@@ -1,8 +1,4 @@
 export class AgencyRevenueMapper {
-    static toDomain(){
-        
-    }
-    static toDomains(){
-
-    }
+  static toDomain() {}
+  static toDomains() {}
 }

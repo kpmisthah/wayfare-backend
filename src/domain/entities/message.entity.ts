@@ -55,8 +55,8 @@ export class MessageEntity {
   get createdAt() {
     return this._createdAt;
   }
-  get groupId(){
-    return this._groupId
+  get groupId() {
+    return this._groupId;
   }
   get isGroupMessage(): boolean {
     return this._groupId !== null;

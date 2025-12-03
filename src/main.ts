@@ -1,27 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 // import * as cookieParser from 'cookie-parser'
 import { Logging } from './infrastructure/core/custom-logger';
-import { WinstonModule } from 'nest-winston';
-import * as fs from 'fs';
 import helmet from 'helmet';
 import { UnauthorizedExceptionFilter } from './infrastructure/filters/unauthorized.filter';
-import { SpelunkerModule } from 'nestjs-spelunker';
 import { json, urlencoded } from 'express';
-import { GlobalExceptionFilter } from './presentation/filters/global-exception.filter';
 const cookieParser = require('cookie-parser');
-// const generateAppGraph = (app: INestApplication) => {
-//   const tree = SpelunkerModule.explore(app);
-//   const root = SpelunkerModule.graph(tree);
-//   const edges = SpelunkerModule.findGraphEdges(root);
-
-//   let graph = 'graph LR\n';
-//   edges.forEach(({ from, to }) => {
-//     graph += `${from.module.name} -->${to.module.name}\n`;
-//   });
-//   return graph;
-// };
 
 async function bootstrap() {
   const customLoggerService = new Logging();
@@ -34,26 +19,26 @@ async function bootstrap() {
 
     const app = await NestFactory.create(AppModule);
     // app.useGlobalFilters(new GlobalExceptionFilter());
-      app.use(
-    json({
-      verify: (req: any, res, buf) => {
-        if (req.originalUrl.includes('/webhook')) {
-          req.rawBody = buf.toString();
-        }
-      },
-    }),
-  );
+    app.use(
+      json({
+        verify: (req: any, res, buf) => {
+          if (req.originalUrl.includes('/webhook')) {
+            req.rawBody = buf.toString();
+          }
+        },
+      }),
+    );
 
-  app.use(
-    urlencoded({
-      extended: true,
-      verify: (req: any, res, buf) => {
-        if (req.originalUrl.includes('/webhook')) {
-          req.rawBody = buf.toString();
-        }
-      },
-    }),
-  );
+    app.use(
+      urlencoded({
+        extended: true,
+        verify: (req: any, res, buf) => {
+          if (req.originalUrl.includes('/webhook')) {
+            req.rawBody = buf.toString();
+          }
+        },
+      }),
+    );
 
     // const graph = generateAppGraph(app);
     // console.log(graph);

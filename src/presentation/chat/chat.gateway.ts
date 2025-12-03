@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Req, UseGuards } from '@nestjs/common';
+import { forwardRef, Inject } from '@nestjs/common';
 import * as cookie from 'cookie';
 import * as jwt from 'jsonwebtoken';
 import {
@@ -11,9 +11,7 @@ import {
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { RequestWithUser } from 'src/application/usecases/auth/interfaces/request-with-user';
 import { ChatUsecase } from 'src/application/usecases/chat/implementation/message.usecase';
-import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
 import { MessageDto } from 'src/application/dtos/message.dto';
 
 @WebSocketGateway({
@@ -71,7 +69,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log(`User ${userId} connected with socket ${client.id}`);
     try {
       const groups = await this._chatUsecase.getUserGroups(userId);
-      console.log(groups,'ee grp s l entha vera noikknmonmofffdsdfsdfsd---0123024===================')
+      console.log(
+        groups,
+        'ee grp s l entha vera noikknmonmofffdsdfsdfsd---0123024===================',
+      );
       groups.forEach((group: any) => {
         client.join(group.id);
         console.log(`[AUTO-JOIN] ${userId} → group ${group.id}`);
@@ -176,7 +177,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       console.log(savedMessage, '==============>saved message<============');
       this.server.to(data.groupId).emit('receiveMessage', savedMessage);
     } else if (data.conversationId) {
-      let saved = await this._chatUsecase.saveMessages(
+      const saved = await this._chatUsecase.saveMessages(
         data.conversationId,
         senderId,
         data.content,

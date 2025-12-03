@@ -6,10 +6,9 @@ export class BaseRepository<T> {
   constructor(
     protected model,
     protected mapper,
-  ) {
-  }
+  ) {}
   async create(entity: T): Promise<T | null> {
-    console.log(entity,'in Bankingcratio')
+    console.log(entity, 'in Bankingcratio');
     const data = await this.model.create({
       data: this.mapper.toPrisma(entity),
     });
@@ -26,7 +25,7 @@ export class BaseRepository<T> {
   }
 
   async update(id: string, update: T): Promise<T> {
-    console.log(id,'iddd in base repo and update',update)
+    console.log(id, 'iddd in base repo and update', update);
     const data = await this.model.update({
       where: { id },
       data: this.mapper.toPrisma(update),

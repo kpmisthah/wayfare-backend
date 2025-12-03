@@ -1,3 +1,3 @@
-export interface IAcceptConnection{
-    execute(id:string)
+export interface IAcceptConnection {
+  execute(id: string);
 }

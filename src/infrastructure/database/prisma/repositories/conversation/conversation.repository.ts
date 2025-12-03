@@ -49,5 +49,4 @@ export class ConversationRepository implements IConversationRepository {
     // if (conversations) return null;
     return ConversationMapper.toDomains(conversations);
   }
-
 }

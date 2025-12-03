@@ -45,7 +45,7 @@ const customLogger = new Logging();
     ChatModule,
     ConversationModule,
     ConnectionModule,
-    PaymentModule
+    PaymentModule,
     // ElasticsearchModule
   ],
   controllers: [AppController],

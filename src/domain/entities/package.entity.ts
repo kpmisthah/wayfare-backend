@@ -1,5 +1,4 @@
 import { PackageStatus } from '../enums/package-status.enum';
-import { TransportationEntity } from './transportation.entity';
 export class PackageEntity {
   constructor(
     private readonly _id: string,
@@ -45,20 +44,20 @@ export class PackageEntity {
     );
   }
 
-  public update(props:{
-    name?:string,
-    destination?:string,
-    description?:string,
-    highlights?:string,
-    duration?:number,
-    picture?:string[],
-    price?:number,
+  public update(props: {
+    name?: string;
+    destination?: string;
+    description?: string;
+    highlights?: string;
+    duration?: number;
+    picture?: string[];
+    price?: number;
     // vehicle?:string,
     // pickup_point?:string,
     // drop_point?:string,
     // detail?:string,
-    status?:PackageStatus
-  }):PackageEntity{
+    status?: PackageStatus;
+  }): PackageEntity {
     return new PackageEntity(
       this._id,
       this._agencyId,
@@ -70,8 +69,8 @@ export class PackageEntity {
       props.destination ?? '',
       props.status!,
       props.price ?? this._price,
-      this._transportationId
-    )
+      this._transportationId,
+    );
   }
 
   //getters

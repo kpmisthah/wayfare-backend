@@ -15,7 +15,7 @@ export class BookingRepository
     super(_prisma.booking, BookingMapper);
   }
   async findByUserId(userId: string): Promise<BookingEntity[] | null> {
-    let booking = await this._prisma.booking.findMany({
+    const booking = await this._prisma.booking.findMany({
       where: { userId },
     });
     if (!booking) return null;
@@ -24,7 +24,7 @@ export class BookingRepository
 
   async fetchBookingDetails(agencyId: string): Promise<BookingEntity[]> {
     console.log(agencyId, 'agencyId in booking repo');
-    let fetchBooking = await this._prisma.booking.findMany({
+    const fetchBooking = await this._prisma.booking.findMany({
       where: { agencyId },
       include: {
         package: true,
@@ -34,11 +34,11 @@ export class BookingRepository
 
     return BookingMapper.toDomains(fetchBooking);
   }
-  findByPaymentIntentId(
-    paymentIntentId: string,
-  ): Promise<BookingEntity | null> {
-    throw new Error('Method not implemented.');
-  }
+  // findByPaymentIntentId(
+  //   paymentIntentId: string,
+  // ): Promise<BookingEntity | null> {
+  //   throw new Error('Method not implemented.');
+  // }
   async updateStatus(
     bookingId: string,
     status: BookingStatus,
@@ -56,7 +56,7 @@ export class BookingRepository
   //people count
   //totalamount
   async findByPackageId(packageId: string): Promise<BookingEntity[]> {
-    let bookings = await this._prisma.booking.findMany({
+    const bookings = await this._prisma.booking.findMany({
       where: { packageId },
       include: { user: true, package: true },
     });
@@ -64,13 +64,13 @@ export class BookingRepository
   }
 
   async findByAgencyId(agencyId: string): Promise<BookingEntity[]> {
-    let bookings = await this._prisma.booking.findMany({
+    const bookings = await this._prisma.booking.findMany({
       where: { agencyId },
     });
     return BookingMapper.toDomains(bookings);
   }
   async fetchUserBookingDetails(id: string): Promise<BookingEntity | null> {
-    let booking = await this._prisma.booking.findFirst({
+    const booking = await this._prisma.booking.findFirst({
       where: { id },
       include: { user: true, package: true },
     });

@@ -4,7 +4,6 @@ import {
   Param,
   Post,
   Get,
-  Put,
   Query,
   UseGuards,
   Inject,
@@ -50,8 +49,7 @@ export class UsersController {
   @UseGuards(AccessTokenGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    console.log(updateUserDto,'update dto in controller')
+    console.log(updateUserDto, 'update dto in controller');
     return this.userService.update(id, updateUserDto);
   }
-
 }

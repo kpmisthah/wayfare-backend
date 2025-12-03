@@ -32,7 +32,7 @@ export class WalletPaymentUsecase implements IPayment {
   }
 
   async payment(booking: CreateBookingDto, agencyId: string) {
-    let bookingEntity = await this._bookingRepo.findById(booking.id);
+    const bookingEntity = await this._bookingRepo.findById(booking.id);
     console.log(booking, 'booking');
 
     if (!bookingEntity) throw new Error('Bookings  not found');
@@ -46,21 +46,21 @@ export class WalletPaymentUsecase implements IPayment {
       });
 
       const createWallet = await this._walletRepo.create(newWallet);
-      if(!createWallet) throw new Error("Failed to create wallet")
-        wallet = createWallet
+      if (!createWallet) throw new Error('Failed to create wallet');
+      wallet = createWallet;
     }
-    let updateWallet = wallet.debit(booking.totalAmount);
-    console.log(updateWallet,'updateWallet heee');
-    let c = await this._walletRepo.update(wallet.id, updateWallet);
-    console.log(c,'walletrepo update');
-    
+    const updateWallet = wallet.debit(booking.totalAmount);
+    console.log(updateWallet, 'updateWallet heee');
+    const c = await this._walletRepo.update(wallet.id, updateWallet);
+    console.log(c, 'walletrepo update');
+
     const walletTransactionEntity = WalletTransactionEntity.create({
       walletId: wallet.id,
       amount: booking.totalAmount,
       transactionType: Transaction.Debit,
       paymentStatus: PaymentStatus.SUCCEEDED,
-      category:WalletTransactionEnum.USER_PAYMENT,
-      createdAt:new Date(),
+      category: WalletTransactionEnum.USER_PAYMENT,
+      createdAt: new Date(),
       bookingId: booking.id,
       agencyId,
     });
@@ -69,21 +69,23 @@ export class WalletPaymentUsecase implements IPayment {
     });
     await this._bookingRepo.update(bookingEntity.id, updatedBooking);
 
-    let w = await this._walletTransactionRepo.create(walletTransactionEntity);
-    console.log(w,'walletTransaction Entity');
-     const agencyWalletStatus = bookingEntity.getAgencyCreditStatus();
-    let d = await this._walletUseCase.creditAgency(
+    const w = await this._walletTransactionRepo.create(walletTransactionEntity);
+    console.log(w, 'walletTransaction Entity');
+    const agencyWalletStatus = bookingEntity.getAgencyCreditStatus();
+    const d = await this._walletUseCase.creditAgency(
       agencyId,
       bookingEntity.agencyEarning,
       agencyWalletStatus,
-      bookingEntity.id
+      bookingEntity.id,
     );
-    console.log(d,'credit agency in wallet paymebt');
-    
-    let z = await this._walletUseCase.creditAdmin(bookingEntity.platformEarning,bookingEntity.id);
-    console.log(z,'credit admin in walllet paybment');
-    
+    console.log(d, 'credit agency in wallet paymebt');
+
+    const z = await this._walletUseCase.creditAdmin(
+      bookingEntity.platformEarning,
+      bookingEntity.id,
+    );
+    console.log(z, 'credit admin in walllet paybment');
+
     return {};
   }
-
 }

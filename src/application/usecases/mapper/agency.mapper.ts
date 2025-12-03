@@ -38,7 +38,7 @@ export class AgencyMapper {
         name: userEntity.name,
         email: userEntity.email,
         verified: userEntity.isVerified,
-        profileImage:userEntity.profileImage
+        profileImage: userEntity.profileImage,
       },
     };
   }
@@ -54,7 +54,7 @@ export class AgencyMapper {
       websiteUrl: agencyEntity?.websiteUrl ?? '',
       description: agencyEntity?.description ?? '',
       // transportationId:agencyEntity?.transactionId,
-      reason:agencyEntity?.reason ?? '',
+      reason: agencyEntity?.reason ?? '',
       user: {
         id: userEntity.id,
         name: userEntity.name,
@@ -80,13 +80,13 @@ export class AgencyMapper {
     itineraryEntity: (ItineraryEntity | null)[],
     transportationEntity?: TransportationEntity,
   ): PackageDto {
-    console.log(packageEntity,'in application mapper')
-    console.log(itineraryEntity,'in package');
-    console.log(transportationEntity,'transportation in app mapper');
-    
+    console.log(packageEntity, 'in application mapper');
+    console.log(itineraryEntity, 'in package');
+    console.log(transportationEntity, 'transportation in app mapper');
+
     const validation = itineraryEntity.filter((it) => it != null);
-    console.log(validation,'validaationnn');
-    
+    console.log(validation, 'validaationnn');
+
     return {
       id: packageEntity.id,
       title: packageEntity.itineraryName,
@@ -126,21 +126,24 @@ export class AgencyMapper {
   static toManyPackages(
     packageEntity: PackageEntity[],
     itineraryEntity: ItineraryEntity[],
-    transportationEntity:TransportationEntity[]
+    transportationEntity: TransportationEntity[],
   ): PackageDto[] {
-  
-      return packageEntity.map((pkg)=>{
-        let itnForPackage = itineraryEntity.filter((itn)=>itn.packageId == pkg.id)
-        let transportationForPackage = transportationEntity.find((trn)=>trn.id ==pkg.transportationId)
-        return AgencyMapper.toPackageDto(
-          pkg,
-          itnForPackage,
-          transportationForPackage
-        )
-      })
+    return packageEntity.map((pkg) => {
+      const itnForPackage = itineraryEntity.filter(
+        (itn) => itn.packageId == pkg.id,
+      );
+      const transportationForPackage = transportationEntity.find(
+        (trn) => trn.id == pkg.transportationId,
+      );
+      return AgencyMapper.toPackageDto(
+        pkg,
+        itnForPackage,
+        transportationForPackage,
+      );
+    });
   }
 
-    static toListPackages(
+  static toListPackages(
     packageEntity: PackageEntity[],
     itineraryEntity: (ItineraryEntity | null)[],
   ): PackageDto[] {
@@ -156,7 +159,7 @@ export class AgencyMapper {
     });
   }
   static toAgency(domain: AgencyEntity, user: UserEntity) {
-    console.log(user)
+    console.log(user);
     return {
       id: domain.id,
       address: domain.address ?? '',
@@ -177,8 +180,7 @@ export class AgencyMapper {
 
   static toList(agencyModels: { domain: AgencyEntity; user: UserEntity }[]) {
     return agencyModels.map((model) =>
-      AgencyMapper.toAgency(model.domain, model.user)
+      AgencyMapper.toAgency(model.domain, model.user),
     );
   }
-  }
-
+}

@@ -1,4 +1,3 @@
-
 export interface DashboardCards {
   totalUsers: number;
   totalBookings: number;
@@ -6,13 +5,11 @@ export interface DashboardCards {
   totalRevenue: number;
 }
 
-
 export interface RevenueDataPoint {
   month: string;
   revenue: number;
   bookings: number;
 }
-
 
 export interface BookingStatusDataPoint {
   name: string;

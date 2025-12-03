@@ -1,33 +1,33 @@
-import { Type } from "class-transformer";
-import { IsDateString, IsNumber, IsString } from "class-validator";
-import { BookingStatus } from "src/domain/enums/booking-status.enum";
+import { Type } from 'class-transformer';
+import { IsDateString, IsNumber, IsString } from 'class-validator';
+import { BookingStatus } from 'src/domain/enums/booking-status.enum';
 
-export class FetchUserBookingDto{
-    @IsString()
-    id:string
+export class FetchUserBookingDto {
+  @IsString()
+  id: string;
 
-    @IsString()
-    destination:string;
+  @IsString()
+  destination: string;
 
-    @IsString()
-    agencyName?:string
+  @IsString()
+  agencyName?: string;
 
-    @IsNumber()
-    @Type(()=>Number)
-    travellers:number;
+  @IsNumber()
+  @Type(() => Number)
+  travellers: number;
 
-    @IsNumber()
-    @Type(()=>Number)
-    price:number;
+  @IsNumber()
+  @Type(() => Number)
+  price: number;
 
-    @IsString()
-    photo:string[]
-    
-    bookingStatus:BookingStatus
+  @IsString()
+  photo: string[];
 
-    @IsString()
-    highlights:string
+  bookingStatus: BookingStatus;
 
-    @IsDateString()
-    travelDate:string
+  @IsString()
+  highlights: string;
+
+  @IsDateString()
+  travelDate: string;
 }

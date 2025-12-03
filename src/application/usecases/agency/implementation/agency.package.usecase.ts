@@ -16,7 +16,7 @@ import { ITransportationRepository } from 'src/domain/repositories/agency/transp
 import { FilterPackageDto } from 'src/application/dtos/filter-package.dto';
 import { UpdatePackageDto } from 'src/application/dtos/update-package.dto';
 import { PackageMapper } from '../../mapper/package.mapper';
-
+import { TrendingDestinationDto } from 'src/application/dtos/trending-destination.dto';
 
 @Injectable()
 export class AgencyPackageService implements IAgencyPackageService {
@@ -39,15 +39,22 @@ export class AgencyPackageService implements IAgencyPackageService {
     userId: string,
     files: Express.Multer.File[],
   ): Promise<PackageDto | null> {
-    console.log(addPackageDto,'addPackageDtooo')
-    console.log(files,'filesssss');
+    console.log(addPackageDto, 'addPackageDtooo');
+    console.log(files, 'filesssss');
     const uploadedUrls: string[] = [];
     for (const file of files) {
       const imageUrl = await this._cloudinaryService.uploadImage(file);
-      console.log('-------------------------------------',imageUrl,'-------------------------------');
+      console.log(
+        '-------------------------------------',
+        imageUrl,
+        '-------------------------------',
+      );
       uploadedUrls.push(imageUrl);
     }
-    console.log(uploadedUrls,'---------------------uploadImageUrls--------------------------------')
+    console.log(
+      uploadedUrls,
+      '---------------------uploadImageUrls--------------------------------',
+    );
     const existingAgency = await this.agencyRepo.findByUserId(userId);
     console.log(existingAgency, 'exisitng agency');
 
@@ -60,12 +67,15 @@ export class AgencyPackageService implements IAgencyPackageService {
       drop_point: addPackageDto.drop_point,
       details: addPackageDto.details,
     });
-    console.log(createTransport,'---------------createTransporttt---------------------------');
-    
+    console.log(
+      createTransport,
+      '---------------createTransporttt---------------------------',
+    );
+
     const transportaionEntity =
       await this._transportationRepo.create(createTransport);
-      console.log(transportaionEntity,'transportationEntityyy');
-      
+    console.log(transportaionEntity, 'transportationEntityyy');
+
     if (!transportaionEntity) {
       return null;
     }
@@ -80,10 +90,11 @@ export class AgencyPackageService implements IAgencyPackageService {
       destination: addPackageDto.destination,
       status: PackageStatus.ACTIVE,
       price: Number(addPackageDto.price),
-      transportationId: transportaionEntity.id
+      transportationId: transportaionEntity.id,
       // transportationEntity:transportaionEntity
     });
-    const savePackage = await this._agencyPackageRepo.addPackages(createPackage);
+    const savePackage =
+      await this._agencyPackageRepo.addPackages(createPackage);
     console.log(savePackage, 'savePacakge');
 
     if (!savePackage) {
@@ -112,32 +123,45 @@ export class AgencyPackageService implements IAgencyPackageService {
     }
     console.log(saveItinerary, 'saveeeItinnerrraaryy');
 
-    let a = AgencyMapper.toPackageDto(
+    const a = AgencyMapper.toPackageDto(
       savePackage,
       saveItinerary,
       transportaionEntity,
     );
-    console.log(a,'aaaa')
-    return a
+    console.log(a, 'aaaa');
+    return a;
   }
 
-  async getPackages(userId: string,page:number,limit:number): Promise<{items:PackageDto[],page:number,totalPages:number,total:number}|null> {
+  async getPackages(
+    userId: string,
+    page: number,
+    limit: number,
+  ): Promise<{
+    items: PackageDto[];
+    page: number;
+    totalPages: number;
+    total: number;
+  } | null> {
     const agency = await this.agencyRepo.findByUserId(userId);
-    console.log(agency,'agency')
-    if (!agency) return {items:[],page:1,totalPages:1,total:0};
-    const total = await this._agencyPackageRepo.countPackages(agency.id)
-    const packages = await this._agencyPackageRepo.getPackagesByPage(agency.id,page,limit);
-    console.log(packages,'packages');
+    console.log(agency, 'agency');
+    if (!agency) return { items: [], page: 1, totalPages: 1, total: 0 };
+    const total = await this._agencyPackageRepo.countPackages(agency.id);
+    const packages = await this._agencyPackageRepo.getPackagesByPage(
+      agency.id,
+      page,
+      limit,
+    );
+    console.log(packages, 'packages');
     const iteneraries = await this._iteneraryRepo.getIteneraries();
     if (!iteneraries) return null;
-    let items = AgencyMapper.toListPackages(packages, iteneraries);
-    console.log(items,'itemssss')
-    return{
+    const items = AgencyMapper.toListPackages(packages, iteneraries);
+    console.log(items, 'itemssss');
+    return {
       items,
       page,
-      totalPages:Math.ceil(total/limit),
-      total
-    }
+      totalPages: Math.ceil(total / limit),
+      total,
+    };
   }
 
   async getAgencyPackages(userId: string): Promise<PackageDto[] | null> {
@@ -155,27 +179,34 @@ export class AgencyPackageService implements IAgencyPackageService {
     return AgencyMapper.toListPackages(packages, itineraries);
   }
 
-  async getPackagesByAgencyId(agencyId: string,page:number,limit:number): Promise<{data:PackageDto[],total:number,totalPages:number} > {
+  async getPackagesByAgencyId(
+    agencyId: string,
+    page: number,
+    limit: number,
+  ): Promise<{ data: PackageDto[]; total: number; totalPages: number }> {
     const getPackages = await this._agencyPackageRepo.findByAgencyId(agencyId);
-    const total = getPackages.length  
-    const totalPages = Math.ceil(total/limit)
-    const start = (page-1)*limit
-    const end = start+limit
-    const slicedPackages = getPackages.slice(start,end)    
+    const total = getPackages.length;
+    const totalPages = Math.ceil(total / limit);
+    const start = (page - 1) * limit;
+    const end = start + limit;
+    const slicedPackages = getPackages.slice(start, end);
     const iteneraries = await Promise.all(
       slicedPackages.map((pkg) => this._iteneraryRepo.findByItenerary(pkg.id)),
     );
     console.log(iteneraries);
-    
+
     const allItineraries = iteneraries.flat();
-    const mappedAgencies = AgencyMapper.toListPackages(slicedPackages, allItineraries);
-    console.log(mappedAgencies,'mapped agencies');
-    
+    const mappedAgencies = AgencyMapper.toListPackages(
+      slicedPackages,
+      allItineraries,
+    );
+    console.log(mappedAgencies, 'mapped agencies');
+
     return {
-      data:mappedAgencies,
+      data: mappedAgencies,
       total,
       totalPages,
-    }
+    };
   }
 
   async getPackageDetails(packageId: string): Promise<PackageDto | null> {
@@ -186,80 +217,107 @@ export class AgencyPackageService implements IAgencyPackageService {
       pack.transportationId,
     );
     console.log(trans, '[[[[[[[[[[[[[[[[[[[[[trns]]]]]]]]]]]]]]]]]]]]');
-    const itinerary = (await this._iteneraryRepo.findByItenerary(pack.id)) ?? [];
+    const itinerary =
+      (await this._iteneraryRepo.findByItenerary(pack.id)) ?? [];
     console.log(itinerary, 'itinerary');
 
     return AgencyMapper.toPackageDto(pack, itinerary, trans ?? undefined);
   }
 
-  async filterPackages(filterPackages:FilterPackageDto):Promise<PackageDto[]|null>{
-    let startDate = new Date(filterPackages.startDate)
-    let endDate = new Date(filterPackages.endDate)
-    let start = startDate.getTime()
-    let end = endDate.getTime()
-    let timeDifference = end - start
-    let duration =  timeDifference/ (1000 * 3600 * 24);
-    let minPricePerPerson = filterPackages.minBudget/filterPackages.travelers
-    let maxPricePerPerson = filterPackages.maxBudget/filterPackages.travelers
-    let packageRepo = await this._agencyPackageRepo.filterPackages(filterPackages.destination,duration,minPricePerPerson,maxPricePerPerson)
-    const iteneraries = await this._iteneraryRepo.getIteneraries()
-    if(!iteneraries) return null
-    let transportation = await this._transportationRepo.getTransportations()
-    return AgencyMapper.toManyPackages(packageRepo,iteneraries,transportation)
+  async filterPackages(
+    filterPackages: FilterPackageDto,
+  ): Promise<PackageDto[] | null> {
+    const startDate = new Date(filterPackages.startDate);
+    const endDate = new Date(filterPackages.endDate);
+    const start = startDate.getTime();
+    const end = endDate.getTime();
+    const timeDifference = end - start;
+    const duration = timeDifference / (1000 * 3600 * 24);
+    const minPricePerPerson =
+      filterPackages.minBudget / filterPackages.travelers;
+    const maxPricePerPerson =
+      filterPackages.maxBudget / filterPackages.travelers;
+    const packageRepo = await this._agencyPackageRepo.filterPackages(
+      filterPackages.destination,
+      duration,
+      minPricePerPerson,
+      maxPricePerPerson,
+    );
+    const iteneraries = await this._iteneraryRepo.getIteneraries();
+    if (!iteneraries) return null;
+    const transportation = await this._transportationRepo.getTransportations();
+    return AgencyMapper.toManyPackages(
+      packageRepo,
+      iteneraries,
+      transportation,
+    );
   }
 
-  async updatePackage(id:string,updatePackageDto:UpdatePackageDto):Promise<UpdatePackageDto|null>{
-    let travelpackage = await this._agencyPackageRepo.findById(id)
-    if(!travelpackage) return null
-    let transportation = await this._transportationRepo.findById(travelpackage.transportationId)
-    if(!transportation) return null
-    console.log(travelpackage,'travelPackagesss in app');
-    
-    if(!travelpackage) return null
-    let packageUpdate = travelpackage.update({
-      name:updatePackageDto.title,
-      destination:updatePackageDto.destination,
-      description:updatePackageDto.description,
-      highlights:updatePackageDto.highlights,
-      duration:updatePackageDto.duration,
-      picture:updatePackageDto.picture,
-      price:updatePackageDto.price,
+  async updatePackage(
+    id: string,
+    updatePackageDto: UpdatePackageDto,
+  ): Promise<UpdatePackageDto | null> {
+    const travelpackage = await this._agencyPackageRepo.findById(id);
+    if (!travelpackage) return null;
+    const transportation = await this._transportationRepo.findById(
+      travelpackage.transportationId,
+    );
+    if (!transportation) return null;
+    console.log(travelpackage, 'travelPackagesss in app');
+
+    if (!travelpackage) return null;
+    const packageUpdate = travelpackage.update({
+      name: updatePackageDto.title,
+      destination: updatePackageDto.destination,
+      description: updatePackageDto.description,
+      highlights: updatePackageDto.highlights,
+      duration: updatePackageDto.duration,
+      picture: updatePackageDto.picture,
+      price: updatePackageDto.price,
       // vehicle:updatePackageDto.vehicle,
       // pickup_point:updatePackageDto.pickup_point,
       // drop_point:updatePackageDto.drop_point,
       // detail:updatePackageDto.detail,
-      status:updatePackageDto.status
-    })
-    console.log(packageUpdate,'in package updare app')
-    let transportationUpdate = transportation.update({
-      vehicle:updatePackageDto.vehicle,
-      pickup_point:updatePackageDto.pickup_point,
-      drop_point:updatePackageDto.drop_point,
-      details:updatePackageDto.details
-    })
-    let updated = await this._agencyPackageRepo.update(id,packageUpdate)
-    console.log(updated,'in package Mapper');
-    if(!updated) return null
-    let updateTransportation = await this._transportationRepo.update(transportation.id,transportationUpdate)
+      status: updatePackageDto.status,
+    });
+    console.log(packageUpdate, 'in package updare app');
+    const transportationUpdate = transportation.update({
+      vehicle: updatePackageDto.vehicle,
+      pickup_point: updatePackageDto.pickup_point,
+      drop_point: updatePackageDto.drop_point,
+      details: updatePackageDto.details,
+    });
+    const updated = await this._agencyPackageRepo.update(id, packageUpdate);
+    console.log(updated, 'in package Mapper');
+    if (!updated) return null;
+    const updateTransportation = await this._transportationRepo.update(
+      transportation.id,
+      transportationUpdate,
+    );
     console.log(updateTransportation);
-    if(!updateTransportation) return null
-    return PackageMapper.toPackageDto(updated,updateTransportation)
+    if (!updateTransportation) return null;
+    return PackageMapper.toPackageDto(updated, updateTransportation);
   }
 
-  async trendingPackages(){
-    let fetchTrendingPackages = await this._agencyPackageRepo.trendinPackages()
-    return PackageMapper.toTrendingPackageDto(fetchTrendingPackages)
+  async trendingPackages(): Promise<TrendingDestinationDto[]> {
+    const fetchTrendingPackages =
+      await this._agencyPackageRepo.trendinPackages();
+    return PackageMapper.toTrendingPackageDto(fetchTrendingPackages);
   }
-  async updatePackageStatus(id: string, status: PackageStatus):Promise<UpdatePackageDto|null> {
-  const pkg = await this._agencyPackageRepo.findById(id);
-  if (!pkg) return null;
-   let transportation = await this._transportationRepo.findById(pkg.transportationId)
-   if(!transportation) return null
-  const updated = pkg.update({ status });
-  console.log(updated,'updateeddd paackage status')
-  let updatedPackage = await this._agencyPackageRepo.update(id, updated);
-  if(!updatedPackage) return null
-  return PackageMapper.toPackageDto(updatedPackage,transportation)
-}
-
+  async updatePackageStatus(
+    id: string,
+    status: PackageStatus,
+  ): Promise<UpdatePackageDto | null> {
+    const pkg = await this._agencyPackageRepo.findById(id);
+    if (!pkg) return null;
+    const transportation = await this._transportationRepo.findById(
+      pkg.transportationId,
+    );
+    if (!transportation) return null;
+    const updated = pkg.update({ status });
+    console.log(updated, 'updateeddd paackage status');
+    const updatedPackage = await this._agencyPackageRepo.update(id, updated);
+    if (!updatedPackage) return null;
+    return PackageMapper.toPackageDto(updatedPackage, transportation);
+  }
 }

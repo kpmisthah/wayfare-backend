@@ -16,5 +16,5 @@ export interface IProfileRepository {
     userId: string,
     data: UserProfileEntity,
   ): Promise<UserProfileEntity | null>;
-  findByUserId(userId:string):Promise<UserProfileEntity|null>
+  findByUserId(userId: string): Promise<UserProfileEntity | null>;
 }

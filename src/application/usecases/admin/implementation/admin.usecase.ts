@@ -37,9 +37,9 @@ export class AdminService implements IAdminService {
     const agencies = await this._agencyRepo.findAll();
     return AgencyMapper.toListAgencies(users, agencies);
   }
-  async findAdmin():Promise<SafeUser|null>{
-    const admin = await this._adminRepo.findAdmin()
-    if(!admin) return null
-    return UserMapper.toSafeUserDto(admin)
+  async findAdmin(): Promise<SafeUser | null> {
+    const admin = await this._adminRepo.findAdmin();
+    if (!admin) return null;
+    return UserMapper.toSafeUserDto(admin);
   }
 }

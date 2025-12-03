@@ -103,7 +103,6 @@ export class AgencyController {
     @Body() addPackageDto: PackageDto,
     @UploadedFiles() files: Express.Multer.File[],
     @Req() req: RequestWithUser,
-    @Res({ passthrough: true }) res: Response,
   ) {
     console.log('post--------------------------adikkndoooo-------------');
     const userId = req.user['userId'];
@@ -145,18 +144,14 @@ export class AgencyController {
   }
 
   @Get('/agencies')
-  async findAll(
-    @Query('page', new DefaultValuePipe(1)) page: string,
-    @Query('limit', new DefaultValuePipe(10)) limit: string,
-    @Query('search') search: string,
-  ) {
+  async findAll() {
     return this._adminUsecase.getAllAgencies();
   }
   @Get('/filter/packages')
   async filterPackages(@Query() filterPackageDto: FilterPackageDto) {
     console.log('hello');
 
-    return this._agencyPackageUsecase.filterPackages(filterPackageDto);
+    return await this._agencyPackageUsecase.filterPackages(filterPackageDto);
   }
   @Put('/package/:id')
   async updatePackage(
@@ -171,12 +166,12 @@ export class AgencyController {
     @Param('id') id: string,
     @Body('status') status: PackageStatus,
   ) {
-    return this._agencyPackageUsecase.updatePackageStatus(id, status);
+    return await this._agencyPackageUsecase.updatePackageStatus(id, status);
   }
 
   @Get('/trending/packages')
   async trendingPackages() {
-    let result = await this._agencyPackageUsecase.trendingPackages();
+    const result = await this._agencyPackageUsecase.trendingPackages();
     console.log(result, 'result');
     return result;
   }
@@ -185,7 +180,7 @@ export class AgencyController {
   async getAgency(@Req() req: RequestWithUser) {
     const agencyId = req.user['userId'];
     console.log(agencyId, 'agencyIddd');
-    return this._agencyProfileUsecase.findProfile(agencyId);
+    return await this._agencyProfileUsecase.findProfile(agencyId);
   }
 
   @Get('/search')
@@ -202,7 +197,7 @@ export class AgencyController {
 
   @Get('/wallet')
   async getWalletSummary(@Req() req: RequestWithUser) {
-    let userId = req.user['userId'];
+    const userId = req.user['userId'];
     return await this._walletUseCase.getWalletSummary(userId);
   }
   @Get('/recent-booking')
@@ -232,7 +227,7 @@ export class AgencyController {
     const limitNumber = limit ? Number(limit) : 1;
     console.log(limitNumber, 'limitNumber');
 
-    let data = await this._agencyPackageUsecase.getPackagesByAgencyId(
+    const data = await this._agencyPackageUsecase.getPackagesByAgencyId(
       agencyId,
       pageNumber,
       limitNumber,
@@ -248,7 +243,6 @@ export class AgencyController {
 
   @Get('/:agencyId')
   async getAgencyById(@Param('agencyId') agencyId: string) {
-    console.log("<.................iviide verundoo---------------------------->")
     return this._agencyUsecase.findById(agencyId);
   }
 
@@ -266,8 +260,8 @@ export class AgencyController {
   }
   @Get('/bank/details')
   async getAgencyBankDetails(@Req() req: RequestWithUser) {
-    let userId = req.user['userId'];
-    console.log(userId,'userIddd')
+    const userId = req.user['userId'];
+    console.log(userId, 'userIddd');
     return await this._bankingDetailsUsecase.getBankDetailsByAgency(userId);
   }
   @Post('/bank-details')
@@ -276,10 +270,10 @@ export class AgencyController {
   }
   @Patch('/update/bankdetails')
   async updateBankDetails(
-    @Req() req:RequestWithUser,
+    @Req() req: RequestWithUser,
     @Body() updateBankDetailsDto: Partial<BankDetailsDto>,
   ) {
-    let userId = req.user['userId']
+    const userId = req.user['userId'];
     return await this._bankingDetailsUsecase.updateBankDetails(
       userId,
       updateBankDetailsDto,

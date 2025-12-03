@@ -15,7 +15,7 @@ export class AgencyBankDetailsRepository
   }
   async findByAgencyId(agencyId: string): Promise<BankingEntity | null> {
     const result = await this._prisma.agencyBankDetails.findFirst({
-        where:{agencyId}
+      where: { agencyId },
     });
     if (!result) return null;
 

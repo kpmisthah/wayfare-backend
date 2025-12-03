@@ -1,5 +1,4 @@
-import { PaymentStatus } from "../enums/payment-status.enum";
-import { PayoutStatus } from "../enums/payout-status.enum";
+import { PayoutStatus } from '../enums/payout-status.enum';
 
 // domain/entities/payout-request.entity.ts
 export class PayoutRequestEntity {
@@ -19,8 +18,16 @@ export class PayoutRequestEntity {
     );
   }
 
-  get id() { return this._id; }
-  get agencyId() { return this._agencyId; }
-  get amount() { return this._amount; }
-  get status() { return this._status; }
+  get id() {
+    return this._id;
+  }
+  get agencyId() {
+    return this._agencyId;
+  }
+  get amount() {
+    return this._amount;
+  }
+  get status() {
+    return this._status;
+  }
 }

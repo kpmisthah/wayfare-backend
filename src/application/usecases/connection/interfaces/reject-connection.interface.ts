@@ -1,3 +1,3 @@
-export interface IRejectConnection{
-    execute(id:string)
+export interface IRejectConnection {
+  execute(id: string);
 }

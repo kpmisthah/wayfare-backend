@@ -8,7 +8,6 @@ import {
   Res,
   Inject,
   ForbiddenException,
-  NotFoundException,
   Patch,
 } from '@nestjs/common';
 import { LoginDto, SignupDto } from 'src/application/dtos/auth.dto';
@@ -40,38 +39,34 @@ export class AuthController {
     private readonly _authUsecase: IAuthUsecase,
     @Inject('IUserService')
     private readonly userService: IUserUsecase,
-    private readonly _googleLoginUsecase:GoogleLoginUseCase
+    private readonly _googleLoginUsecase: GoogleLoginUseCase,
   ) {}
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  async googleAuth(@Req() req) {}
+  async googleAuth() {}
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
-  async googleAuthRedirect(
-    @Req() req,
-    @Res() res:Response
-  ) {
-    const result = await this._googleLoginUsecase.execute(req.user)
-      res
-    .cookie('accessToken', result.accessToken, {
-      httpOnly: true,
-      sameSite: 'lax',
-      maxAge: 2 * 60 * 60 * 1000,
-      path: '/',
-      secure: false, 
-    })
-    .cookie('refreshToken', result.refreshToken, {
-      httpOnly: true,
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000, 
-      path: '/',
-      secure: false, 
-    });
-     res.redirect('http://localhost:3000/');
+  async googleAuthRedirect(@Req() req, @Res() res: Response) {
+    const result = await this._googleLoginUsecase.execute(req.user);
+    res
+      .cookie('accessToken', result.accessToken, {
+        httpOnly: true,
+        sameSite: 'lax',
+        maxAge: 2 * 60 * 60 * 1000,
+        path: '/',
+        secure: false,
+      })
+      .cookie('refreshToken', result.refreshToken, {
+        httpOnly: true,
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        path: '/',
+        secure: false,
+      });
+    res.redirect('http://localhost:3000/');
   }
-
 
   @Post('signin')
   // @Roles(userRole.User,userRole.Agency)
@@ -82,7 +77,7 @@ export class AuthController {
   ) {
     const { user, accessToken, refreshToken } =
       await this._authUsecase.signIn(loginDto);
-      console.log(user,'iuser')
+    console.log(user, 'iuser');
     res
       .cookie('refreshToken', refreshToken, {
         httpOnly: true,
@@ -100,7 +95,7 @@ export class AuthController {
   }
 
   @Post('signup')
-  signup(@Body() singupDto: SignupDto, @Req() req: Request) {
+  signup(@Body() singupDto: SignupDto) {
     console.log(singupDto, 'signupDto gooys');
     return this._authUsecase.signUp(singupDto);
   }
@@ -192,7 +187,7 @@ export class AuthController {
     res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
     const result = await this._authUsecase.logout(req.user.userId);
-    console.log(result,'resultttt')
+    console.log(result, 'resultttt');
     return result;
   }
   @UseGuards(RefreshTokenGuard)
@@ -227,9 +222,11 @@ export class AuthController {
 
   @Patch('change-password')
   @UseGuards(AccessTokenGuard)
-  async changePassword(@Req() req: RequestWithUser,@Body() changePassword:ChangePassword){
+  async changePassword(
+    @Req() req: RequestWithUser,
+    @Body() changePassword: ChangePassword,
+  ) {
     const userId = req.user['userId'];
-    return this._authUsecase.changePassword(userId,changePassword);
+    return await this._authUsecase.changePassword(userId, changePassword);
   }
-
 }

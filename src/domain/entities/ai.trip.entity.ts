@@ -10,11 +10,11 @@ export class AiTripEntity {
     private readonly _travelerType: string,
     private readonly _hotels: Hotel[],
     private readonly _itinerary: DayPlan[],
-    private readonly _startDate:string,
-    private readonly _visibility:boolean,
+    private readonly _startDate: string,
+    private readonly _visibility: boolean,
     private readonly _userName?: string,
     private readonly _profileImage?: string,
-    private readonly _location?: string
+    private readonly _location?: string,
   ) {}
 
   static create(props: {
@@ -25,8 +25,8 @@ export class AiTripEntity {
     travelerType: string;
     hotels: Hotel[];
     itinerary: DayPlan[];
-    startDate:string,
-    visibility:boolean
+    startDate: string;
+    visibility: boolean;
   }) {
     console.log(props, 'in entrity');
 
@@ -40,7 +40,7 @@ export class AiTripEntity {
       props.hotels,
       props.itinerary,
       props.startDate,
-      props.visibility
+      props.visibility,
     );
   }
   get id() {
@@ -70,22 +70,22 @@ export class AiTripEntity {
   }
 
   get startDate() {
-    return this._startDate
+    return this._startDate;
   }
 
-  get visibility(){
-    return this._visibility
+  get visibility() {
+    return this._visibility;
   }
 
-  get userName(){
-    return this._userName
+  get userName() {
+    return this._userName;
   }
 
-  get profileImage(){
-    return this._profileImage
+  get profileImage() {
+    return this._profileImage;
   }
 
-  get location(){
-    return this._location
+  get location() {
+    return this._location;
   }
 }

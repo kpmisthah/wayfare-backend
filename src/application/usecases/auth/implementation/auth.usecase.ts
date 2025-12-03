@@ -18,7 +18,7 @@ import { ResetPasswordDto } from 'src/application/dtos/resetPassword.dto';
 import { UserEntity } from 'src/domain/entities/user.entity';
 import { Otp } from 'src/domain/entities/otp.entity';
 import { JwtTokenFactory } from './jwt-token.factory';
-import {IUserUsecase } from 'src/application/usecases/users/interfaces/user.usecase.interface';
+import { IUserUsecase } from 'src/application/usecases/users/interfaces/user.usecase.interface';
 import { IOtpService } from 'src/application/usecases/otp/interfaces/otp.usecase.interface';
 import { IAuthRepository } from 'src/domain/repositories/auth/auth.repository.interface';
 import { IUserVerification } from 'src/domain/repositories/user/user-verification.repository.interface';
@@ -54,7 +54,7 @@ export class AuthService implements IAuthUsecase {
     private readonly argonService: IArgonService,
     private readonly jwtFactory: JwtTokenFactory,
     @Inject('IUserRepository')
-    private readonly _userRepo:IUserRepository
+    private readonly _userRepo: IUserRepository,
   ) {}
 
   async signUp(signupDto: SignupDto) {
@@ -67,7 +67,7 @@ export class AuthService implements IAuthUsecase {
         signupDto.password,
         signupDto.confirmPassword,
       );
-      console.log(signupDto.password,'passwordddddd before hashing')
+      console.log(signupDto.password, 'passwordddddd before hashing');
       const hashPassword = await this.hash(signupDto.password);
       console.log(hashPassword, 'hashPassword');
       await this.otpService.sendOtp(
@@ -116,7 +116,7 @@ export class AuthService implements IAuthUsecase {
       user.role,
     );
 
-    await this.updateRefreshToken(user?.id, tokens?.refreshToken, user.role);
+    await this.updateRefreshToken(user?.id, tokens?.refreshToken);
     return {
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
@@ -189,7 +189,7 @@ export class AuthService implements IAuthUsecase {
         'Password reset not allowed for this account',
       );
     }
-    console.log(resetPassword,'password resett')
+    console.log(resetPassword, 'password resett');
     const hashedPassword = await this.hash(resetPassword.password);
     await this.authRepo.resetPassword(resetPassword.email, {
       password: hashedPassword,
@@ -200,7 +200,7 @@ export class AuthService implements IAuthUsecase {
       user.name,
       user.role,
     );
-    await this.updateRefreshToken(user.id, tokens.refreshToken, user.role);
+    await this.updateRefreshToken(user.id, tokens.refreshToken);
 
     await this._userUsecase.findByEmail(resetPassword.email);
 
@@ -219,9 +219,9 @@ export class AuthService implements IAuthUsecase {
 
   async signIn(loginDto: LoginDto) {
     try {
-      console.log(loginDto,'loginDto')
+      console.log(loginDto, 'loginDto');
       const userEntity = await this._userUsecase.findByEmail(loginDto.email);
-      console.log(userEntity,'userEntity')
+      console.log(userEntity, 'userEntity');
       if (!userEntity) {
         throw new BadRequestException('User does not exist');
       }
@@ -243,11 +243,7 @@ export class AuthService implements IAuthUsecase {
         userEntity.role,
       );
       if (!tokens) return new BadRequestException('Token not found');
-      await this.updateRefreshToken(
-        userEntity.id,
-        tokens?.refreshToken,
-        userEntity.role,
-      );
+      await this.updateRefreshToken(userEntity.id, tokens?.refreshToken);
       return {
         userEntity,
         accessToken: tokens.accessToken,
@@ -259,11 +255,11 @@ export class AuthService implements IAuthUsecase {
     }
   }
 
-  async logout(userId: string) {
+  async logout(userId: string): Promise<{ success: boolean }> {
     try {
       const user = await this.authRepo.logout(userId);
-      console.log(user,'in logout')
-      return user;
+      console.log(user, 'in logout');
+      return { success: user };
     } catch (err) {
       console.error('Logout service failed:', err);
       throw err;
@@ -296,7 +292,7 @@ export class AuthService implements IAuthUsecase {
       user.name,
       user.role,
     );
-    await this.updateRefreshToken(user?.id, tokens?.refreshToken, user.role);
+    await this.updateRefreshToken(user?.id, tokens?.refreshToken);
 
     return {
       message: 'Access token refreshed',
@@ -305,7 +301,7 @@ export class AuthService implements IAuthUsecase {
     };
   }
 
-  async updateRefreshToken(userId: string, refreshToken: string, role: Role) {
+  async updateRefreshToken(userId: string, refreshToken: string) {
     const hashRereshToken = await this.argonService.hashPassword(refreshToken);
     await this._userUsecase.update(userId, { refreshToken: hashRereshToken });
   }
@@ -333,10 +329,13 @@ export class AuthService implements IAuthUsecase {
       .redirect('http://localhost:3000');
   }
 
-  async changePassword(userId: string, changePasswordDto: ChangePassword): Promise<{ message: string }>  {
+  async changePassword(
+    userId: string,
+    changePasswordDto: ChangePassword,
+  ): Promise<{ message: string }> {
     const user = await this._userRepo.findById(userId);
     console.log(user);
-    
+
     if (!user) {
       throw new BadRequestException('User not found');
     }
@@ -344,17 +343,17 @@ export class AuthService implements IAuthUsecase {
       user.password,
       changePasswordDto.oldPassword,
     );
-    console.log(isOldPasswordMatch,'oldmatch');
-    
+    console.log(isOldPasswordMatch, 'oldmatch');
+
     if (!isOldPasswordMatch) {
       throw new BadRequestException('Old password is incorrect');
     }
     const hashedNewPassword = await this.hash(changePasswordDto.newPassword);
-    let userEntity = user.update({
-      password:hashedNewPassword
-    })
-    console.log(userEntity,'user entity');
-    await this._userUsecase.update(userId,userEntity);
+    const userEntity = user.update({
+      password: hashedNewPassword,
+    });
+    console.log(userEntity, 'user entity');
+    await this._userUsecase.update(userId, userEntity);
     return { message: 'Password changed successfully' };
-  } 
+  }
 }

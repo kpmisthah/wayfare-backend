@@ -23,48 +23,64 @@ export class TripRepository
     return TripMapper.toDomain(createPlan);
   }
 
-  async findByUserId(userId:string):Promise<AiTripEntity[]> {
+  async findByUserId(userId: string): Promise<AiTripEntity[]> {
     const result = await this._prisma.tripPlan.findMany({
-      where:{userId}
-    })
-    return TripMapper.toDomainMany(result)
+      where: { userId },
+    });
+    return TripMapper.toDomainMany(result);
   }
 
-  async findTravellersByDestination(destination:string,userId:string):Promise<AiTripEntity[]>{
+  async findTravellersByDestination(
+    destination: string,
+    userId: string,
+  ): Promise<AiTripEntity[]> {
     const result = await this._prisma.tripPlan.findMany({
-      where:{destination,visibility:true,userId:{not:userId}},
-      take:6
-    })
-    return TripMapper.toDomainMany(result)
+      where: { destination, visibility: true, userId: { not: userId } },
+      take: 6,
+    });
+    return TripMapper.toDomainMany(result);
   }
 
-  async findDestinationByUserId(userId:string):Promise<string[]>{
-    const destination = await this._prisma.tripPlan.findMany({where:{userId}})
-    return destination.map((dst)=>dst.destination)
+  async findDestinationByUserId(userId: string): Promise<string[]> {
+    const destination = await this._prisma.tripPlan.findMany({
+      where: { userId },
+    });
+    return destination.map((dst) => dst.destination);
   }
-  async findTravellersByDestinations(destinations:string[],userId:string):Promise<AiTripEntity[]>{
+  async findTravellersByDestinations(
+    destinations: string[],
+    userId: string,
+  ): Promise<AiTripEntity[]> {
     const travellers = await this._prisma.tripPlan.findMany({
-      where:{
-        destination:{in:destinations},
-        visibility:true,
-        userId:{not:userId},
+      where: {
+        destination: { in: destinations },
+        visibility: true,
+        userId: { not: userId },
         user: {
-        NOT: {
-          OR: [
-            { connectionsSent: { some: { receiverId: userId,status:"ACCEPTED"} } },
-            { connectionsReceived: { some: { senderId: userId ,status:"ACCEPTED"} } }
-          ]
-        }
-      }
-    },
-      include:{
-        user:{
-          include:{
-            userProfile:true
-          }
-        }
-      }
-    })
-    return TripMapper.toTravellersDomain(travellers)
+          NOT: {
+            OR: [
+              {
+                connectionsSent: {
+                  some: { receiverId: userId, status: 'ACCEPTED' },
+                },
+              },
+              {
+                connectionsReceived: {
+                  some: { senderId: userId, status: 'ACCEPTED' },
+                },
+              },
+            ],
+          },
+        },
+      },
+      include: {
+        user: {
+          include: {
+            userProfile: true,
+          },
+        },
+      },
+    });
+    return TripMapper.toTravellersDomain(travellers);
   }
 }

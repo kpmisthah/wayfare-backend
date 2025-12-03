@@ -54,7 +54,7 @@ export class UserEntity {
     password?: string;
     isVerified?: boolean;
     refreshToken?: string;
-    isBlock?:boolean
+    isBlock?: boolean;
   }): UserEntity {
     if (props.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(props.email)) {
       throw new Error('Invalid email format');

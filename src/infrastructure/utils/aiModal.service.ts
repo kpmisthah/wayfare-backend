@@ -6,13 +6,13 @@ import { IAiModel } from 'src/domain/interfaces/aiModal.interface';
 export class AiModal implements IAiModel {
   private openai = new OpenAI({
     baseURL: 'https://openrouter.ai/api/v1',
-    apiKey: process.env.OPEN_ROUTER_API,     
+    apiKey: process.env.OPEN_ROUTER_API,
     timeout: 60000,
   });
 
   async askModal(prompt: string): Promise<string> {
-    console.log(prompt,'promptttttt in askModaaaalll');
-    
+    console.log(prompt, 'promptttttt in askModaaaalll');
+
     const completion = await this.openai.chat.completions.create({
       model: 'nvidia/nemotron-nano-9b-v2:free',
       messages: [
@@ -28,16 +28,15 @@ export class AiModal implements IAiModel {
       ],
       // response_format: { type: 'json_object' },
     });
-    console.log(completion,'complettionnnnn');
-    
+    console.log(completion, 'complettionnnnn');
+
     const message = completion.choices?.[0].message?.content || '';
-    console.log(message,'message');
+    console.log(message, 'message');
     const jsonMatch = message.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       console.error('Could not extract JSON from AI response:', message);
       return '{}';
     }
-    return jsonMatch[0]
-    
+    return jsonMatch[0];
   }
 }

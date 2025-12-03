@@ -1,4 +1,4 @@
 export class ApprovePayoutDto {
-  adminReference?: string; 
+  adminReference?: string;
   adminNote?: string;
 }

@@ -4,8 +4,7 @@ import { BaseRepository } from '../base.repository';
 import { ConnectionEntity } from 'src/domain/entities/connection.entity';
 import { PrismaService } from '../../prisma.service';
 import { ConnectionMapper } from 'src/infrastructure/mappers/connection.mapper';
-import { $Enums } from '@prisma/client';
-
+import { AcceptedConnection } from 'src/domain/interfaces/accepted-connection.interface';
 @Injectable()
 export class ConnectionRepository
   extends BaseRepository<ConnectionEntity>
@@ -26,7 +25,7 @@ export class ConnectionRepository
   }
 
   async getUserConnection(userId: string): Promise<ConnectionEntity[]> {
-    let getConnection = await this._prisma.connectionRequest.findMany({
+    const getConnection = await this._prisma.connectionRequest.findMany({
       where: {
         receiverId: userId,
         status: 'PENDING',
@@ -40,7 +39,7 @@ export class ConnectionRepository
     console.log(getConnection, 'getConnnection in connectionRepo');
     return ConnectionMapper.toConnectDomains(getConnection);
   }
-  async findAcceptedConnections(userId: string) {
+  async findAcceptedConnections(userId: string): Promise<AcceptedConnection[]> {
     const connections = await this._prisma.connectionRequest.findMany({
       where: {
         status: 'ACCEPTED',
@@ -51,13 +50,13 @@ export class ConnectionRepository
         receiver: { select: { id: true, name: true, profileImage: true } },
       },
     });
-    console.log(connections,'connectionsssss')
+    console.log(connections, 'connectionsssss');
     const conversations = await this._prisma.conversation.findMany({
       where: { participants: { some: { userId } } },
       include: { participants: true },
     });
-    console.log(conversations,'cnverdsattionnnssss in repo');
-    
+    console.log(conversations, 'cnverdsattionnnssss in repo');
+
     const result = connections.map((conn) => {
       const otherUser = conn.senderId === userId ? conn.receiver : conn.sender;
 
@@ -70,11 +69,10 @@ export class ConnectionRepository
         name: otherUser.name,
         profileImage: otherUser.profileImage,
         conversationId: conv?.id || null,
-        type:'direct'
+        type: 'direct',
       };
     });
-    console.log(result,'in resulttt');
-    
+    console.log(result, 'in resulttt');
 
     return result;
   }

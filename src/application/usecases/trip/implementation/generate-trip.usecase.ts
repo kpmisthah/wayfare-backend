@@ -68,7 +68,7 @@ Rules:
 }
 `;
 
-    let aiService = await this.aiService.askModal(prompt);
+    const aiService = await this.aiService.askModal(prompt);
     console.log(aiService, 'aiServiceee');
     return aiService;
   }

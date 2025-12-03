@@ -1,18 +1,18 @@
-import { Type } from "class-transformer";
-import { IsNumber, IsOptional, IsString } from "class-validator";
-import { PayoutStatus } from "src/domain/enums/payout-status.enum";
+import { Type } from 'class-transformer';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { PayoutStatus } from 'src/domain/enums/payout-status.enum';
 
 export class PayoutRequestDto {
-  @IsString()  
+  @IsString()
   @IsOptional()
   id?: string;
-  
+
   @IsString()
   agencyId: string;
 
-  @Type(()=>Number)
+  @Type(() => Number)
   @IsNumber()
   amount: number;
-  
-  status:PayoutStatus
+
+  status: PayoutStatus;
 }

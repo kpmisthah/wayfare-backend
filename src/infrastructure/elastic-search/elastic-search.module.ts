@@ -24,11 +24,11 @@
 //           node: nodeUrl,
 //           auth: { username, password },
 //             tls: {
-//                 rejectUnauthorized: false, 
+//                 rejectUnauthorized: false,
 //             },
 //         };
 //       },
-//     Inject:[ConfigService]      
+//     Inject:[ConfigService]
 //     }),
 
 //   ],

@@ -1,4 +1,4 @@
-import { $Enums, Agency, Package, Prisma } from '@prisma/client';
+import { Agency, Prisma } from '@prisma/client';
 import { AgencyEntity } from 'src/domain/entities/agency.entity';
 
 export class AgencyMapper {
@@ -18,11 +18,10 @@ export class AgencyMapper {
       agency.ownerName ?? '',
       agency.websiteUrl ?? '',
       agency.transactionId ?? '',
-      agency.rejectionReason
+      agency.rejectionReason,
     );
   }
 
-  
   static toDomainMany(agencies: Agency[]): AgencyEntity[] {
     return agencies.map((agency) => {
       return AgencyMapper.toDomain(agency);
@@ -44,7 +43,7 @@ export class AgencyMapper {
       user: {
         connect: { id: agency.userId },
       },
-      rejectionReason:agency.reason
+      rejectionReason: agency.reason,
     };
   }
   static toProfile(agencies: Agency[]): AgencyEntity[] {
@@ -52,17 +51,23 @@ export class AgencyMapper {
       return AgencyMapper.toDomain(agency);
     });
   }
-    static fromPrisma(a: any) {
-      console.log(a.user,'in frompirsma')
+  static fromPrisma(
+    a: Prisma.AgencyGetPayload<{
+      include: { user: true; package: true };
+    }>,
+  ) {
+    console.log(a.user, 'in frompirsma');
     return {
       domain: new AgencyEntity(
         a.id,
         a.description,
         a.userId,
+        a.pendingPayouts,
+        a.totalEarnings,
         a.address,
-        a.licenseNumber,
-        a.ownerName,
-        a.websiteUrl
+        a.licenseNumber ?? '',
+        a.ownerName ?? '',
+        a.websiteUrl ?? '',
       ),
 
       user: {
@@ -70,11 +75,11 @@ export class AgencyMapper {
         name: a.user.name,
         email: a.user.email,
         isVerified: a.user.isVerified ?? false,
-        profileImage: a.user.profileImage||'',
+        profileImage: a.user.profileImage || '',
         isBlock: a.user.isBlock,
       },
 
-      packageCount: a.package.length
+      packageCount: a.package.length,
     };
   }
 }

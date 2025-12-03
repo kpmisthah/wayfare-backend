@@ -98,10 +98,10 @@ export class MessageRepository
     });
   }
   async getMessagesByGroup(groupId: string): Promise<MessageEntity[]> {
-  const msgs = await this._prisma.message.findMany({
-    where: { groupId },
-    orderBy: { createdAt: 'asc' },
-  });
-  return MessageMapper.toDomains(msgs);
-}
+    const msgs = await this._prisma.message.findMany({
+      where: { groupId },
+      orderBy: { createdAt: 'asc' },
+    });
+    return MessageMapper.toDomains(msgs);
+  }
 }

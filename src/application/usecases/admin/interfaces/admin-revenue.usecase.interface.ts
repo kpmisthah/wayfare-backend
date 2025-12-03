@@ -1,7 +1,7 @@
 export interface IAdminRevenue {
-    getTotalRevenue()
-    getAllCommission()
-    getWalletBalance()
-    activeAgencyCount()
-    getTransactionSummary()
+  getTotalRevenue();
+  getAllCommission();
+  getWalletBalance();
+  activeAgencyCount();
+  getTransactionSummary();
 }
