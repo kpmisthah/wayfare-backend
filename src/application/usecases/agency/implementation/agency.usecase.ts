@@ -87,7 +87,12 @@ export class AgencyService implements IAgencyService {
     }
     return AgencyMapper.toAgencyManagement(updatedUser, updatedAgency);
   }
-
+  async getAllAgencies(): Promise<AgencyManagementDto[] | null> {
+    const users = await this._userRepo.findAllAgencies();
+    if (!users) return null;
+    const agencies = await this._agencyRepo.findAlll();
+    return AgencyMapper.toListAgencies(users, agencies);
+  }
   async findById(id: string): Promise<AgencyProfileDto | null> {
     const agency = await this._agencyRepo.findById(id);
     if (!agency) return null;
@@ -104,7 +109,7 @@ export class AgencyService implements IAgencyService {
   }
 
   async findAll(): Promise<AgencyManagementDto[] | null> {
-    const agency = await this._agencyRepo.findAll();
+    const agency = await this._agencyRepo.findAlll();
     if (!agency) return null;
     const user = await this._userRepo.findAll();
     if (!user.data) return null;
