@@ -10,6 +10,7 @@ import { AgencyMapper } from 'src/application/usecases/mapper/agency.mapper';
 import { IUserRepository } from 'src/domain/repositories/user/user.repository.interface';
 import { SafeUser } from 'src/application/dtos/safe-user.dto';
 import { UserMapper } from '../../mapper/user.mapper';
+import { AgencyStatus } from 'src/domain/enums/agency-status.enum';
 
 @Injectable()
 export class AdminService implements IAdminService {
@@ -31,11 +32,21 @@ export class AdminService implements IAdminService {
     return await this._adminRepo.getAllPreferences();
   }
 
-  async getAllAgencies(): Promise<AgencyManagementDto[] | null> {
+  async getAllAgencies(dto: {
+    page: number;
+    limit: number;
+    search?: string;
+    status?: AgencyStatus;
+  }): Promise<{data:AgencyManagementDto[];total:number} | null> {
+    const { page, limit, search, status } = dto;
+    const skip = (page - 1) * limit;
+    let take = limit
     const users = await this._userRepo.findAllAgencies();
     if (!users) return null;
-    const agencies = await this._agencyRepo.findAll();
-    return AgencyMapper.toListAgencies(users, agencies);
+    const agencies = await this._agencyRepo.findAll({skip,take,status,search});
+    if(!agencies) return null
+    let data = AgencyMapper.toListAgencies(users, agencies.data);
+    return {data,total:agencies.total}
   }
   async findAdmin(): Promise<SafeUser | null> {
     const admin = await this._adminRepo.findAdmin();
