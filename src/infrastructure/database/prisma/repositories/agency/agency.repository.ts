@@ -5,6 +5,8 @@ import { AgencyEntity } from 'src/domain/entities/agency.entity';
 import { AgencyMapper } from 'src/infrastructure/mappers/agency.mapper';
 import { BaseRepository } from '../base.repository';
 import { AgencyManageDto } from 'src/application/dtos/AgencyManagement.dto';
+import { AgencyStatus } from 'src/domain/enums/agency-status.enum';
+import { $Enums, Prisma } from '@prisma/client';
 
 @Injectable()
 export class AgencyRepository
@@ -35,14 +37,48 @@ export class AgencyRepository
   //   })
   //   return AgencyMapper.toDomain(createAgency)
   // }
-
-  async findAll(): Promise<AgencyEntity[] | null> {
+  async findAlll(): Promise<AgencyEntity[] | null> {
     const agency = await this._prisma.agency.findMany();
     console.log(agency, 'agency in repo getAllAgencies');
     if (!agency) {
       return null;
     }
     return AgencyMapper.toProfile(agency);
+  }
+  async findAll(options: {
+    skip: number;
+    take: number;
+    status?: AgencyStatus;
+    search?: string;
+  }): Promise<{data:AgencyEntity[],total:number}|null> {
+    const { skip, take, status, search } = options;
+    const where: Prisma.AgencyWhereInput = {};
+    if (status) {
+      where.status = status as $Enums.AgencyStatus;
+    }
+    if (search) {
+      where.OR = [
+        { id: { contains: search, mode: 'insensitive' } },
+        {
+          user: {
+            name: { contains: search, mode: 'insensitive' },
+            email: { contains: search, mode: 'insensitive' },
+          },
+        },
+      ];
+    }
+    const total = await this._prisma.agency.count({where})
+    const agency = await this._prisma.agency.findMany({
+      skip,
+      take,
+      where
+    });
+    console.log(agency, 'agency in repo getAllAgencies');
+    if (!agency) {
+      return null;
+    }
+    let data = AgencyMapper.toProfile(agency);
+    return {data,total}
   }
 
   async findAlls(
