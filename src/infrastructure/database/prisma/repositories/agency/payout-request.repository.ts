@@ -5,6 +5,9 @@ import { IPayoutRequestRepository } from 'src/domain/interfaces/payout-request.i
 import { PayoutRequestEntity } from 'src/domain/entities/payout-request.entity';
 import { PayoutRequestMapper } from 'src/infrastructure/mappers/payout-request.mapper';
 import { BaseRepository } from '../base.repository';
+import { PayoutDetailsDTO } from 'src/application/dtos/payout-details.dto';
+import { PayoutStatus } from 'src/domain/enums/payout-status.enum';
+import { $Enums, Prisma } from '@prisma/client';
 
 @Injectable()
 export class PayoutRequestRepository
@@ -22,4 +25,54 @@ export class PayoutRequestRepository
 
     return result.map(PayoutRequestMapper.toDomain);
   }
+
+async payoutDetails(options: {
+  skip: number;
+  take: number;
+  status?: PayoutStatus;
+  search?: string;
+}): Promise<{ data: PayoutDetailsDTO[], total: number }> {
+    
+  const { skip, take, status, search } = options;
+
+  const where: Prisma.PayoutRequestWhereInput = {};
+
+  if (status) {
+    where.status = status as $Enums.PayoutStatus; 
+  }
+
+  if (search) {
+    where.OR = [
+      { id: { contains: search, mode: 'insensitive' } },
+      { 
+        agency: { 
+          user: { 
+            name:{contains:search,mode:"insensitive"},
+            email: { contains: search, mode: 'insensitive' } 
+          } 
+        } 
+      },
+    ];
+  }
+
+  const total = await this._prisma.payoutRequest.count({ where });
+
+  const result = await this._prisma.payoutRequest.findMany({
+    skip: skip,
+    take: take,
+    where: where,
+    include: {
+      agency: {
+        include: {
+          user: true,
+          bankDetails: true,
+        },
+      },
+    },
+  });
+  
+  const data = PayoutRequestMapper.toDtos(result);
+  
+  return { data, total };
+}
 }
