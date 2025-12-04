@@ -332,6 +332,7 @@ model PayoutRequest {
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
   agency    Agency       @relation(fields: [agencyId], references: [id])
+  rejectionReason String?
 }
 
 enum PayoutStatus {

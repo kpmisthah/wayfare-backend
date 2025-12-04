@@ -6,9 +6,10 @@ import { AdminRevenue } from 'src/application/usecases/admin/implementation/tota
 import { AgencyRevenue } from 'src/application/usecases/admin/implementation/agency.revenue';
 import { GetAdminSummaryUseCase } from 'src/application/usecases/admin/implementation/get-admin-summary-usecase';
 import { BookingModule } from '../booking/booking.module';
+import { PaymentModule } from '../payment/payment.module';
 
 @Module({
-  imports: [BookingModule],
+  imports: [BookingModule,PaymentModule],
   controllers: [AdminController],
   providers: [
     {

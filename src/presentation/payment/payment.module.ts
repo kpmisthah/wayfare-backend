@@ -17,6 +17,6 @@ import { CreatePayoutRequestUsecase } from 'src/application/usecases/payment/imp
       useClass: CreatePayoutRequestUsecase,
     },
   ],
-  exports: ['IWalletPaymentStatus'],
+  exports: ['IWalletPaymentStatus','ICreatePayoutRequestUsecase'],
 })
 export class PaymentModule {}

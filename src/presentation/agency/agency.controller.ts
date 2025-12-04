@@ -145,7 +145,7 @@ export class AgencyController {
 
   @Get('/agencies')
   async findAll() {
-    return this._adminUsecase.getAllAgencies();
+    return this._agencyUsecase.getAllAgencies();
   }
   @Get('/filter/packages')
   async filterPackages(@Query() filterPackageDto: FilterPackageDto) {

@@ -30,6 +30,8 @@ export class BaseRepository<T> {
       where: { id },
       data: this.mapper.toPrisma(update),
     });
+    console.log(data,'in updateee');
+    
     return this.mapper.toDomain(data);
   }
 }

@@ -14,6 +14,16 @@ import { Server, Socket } from 'socket.io';
 import { ChatUsecase } from 'src/application/usecases/chat/implementation/message.usecase';
 import { MessageDto } from 'src/application/dtos/message.dto';
 
+interface JwtPayload {
+  sub: string;
+  iat?: number;
+  exp?: number;
+}
+
+interface AuthenticatedSocket extends Socket {
+  userId: string;
+}
+
 @WebSocketGateway({
   cors: { origin: 'http://localhost:3000', credentials: true },
   path: '/ws',
@@ -40,14 +50,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         const decoded = jwt.verify(
           token,
           process.env.JWT_ACCESS_SECRET!,
-        ) as any;
+        ) as JwtPayload
         const userId = decoded.sub;
 
         if (!userId) {
           return next(new Error('Invalid token: no sub'));
         }
 
-        (socket as any).userId = userId;
+        (socket as AuthenticatedSocket).userId = userId;
         socket.join(userId);
         console.log(`Authenticated socket ${socket.id} → user ${userId}`);
         next(); // success

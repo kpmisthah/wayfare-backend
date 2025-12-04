@@ -1,10 +1,26 @@
-import { Body, Controller, Get, Inject, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  DefaultValuePipe,
+  Get,
+  Inject,
+  Optional,
+  Param,
+  ParseEnumPipe,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { PreferenceDto } from 'src/application/dtos/preferences.dto';
 import { IAdminRevenue } from 'src/application/usecases/admin/interfaces/admin-revenue.usecase.interface';
 import { IAdminSumaryUsecase } from 'src/application/usecases/admin/interfaces/admin-summary-usecase.interface';
 import { IAdminService } from 'src/application/usecases/admin/interfaces/admin.usecase.interface';
 import { IAgencyRevenue } from 'src/application/usecases/admin/interfaces/agency-revenue.usecase.interface';
 import { IBookingUseCase } from 'src/application/usecases/booking/interfaces/bookiing.usecase.interface';
+import { ICreatePayoutRequestUsecase } from 'src/application/usecases/payment/interfaces/create-payout.usecase.interface';
+import { AgencyStatus } from 'src/domain/enums/agency-status.enum';
+import { PayoutStatus } from 'src/domain/enums/payout-status.enum';
 import { ADMIN_TYPE } from 'src/domain/types';
 
 @Controller('admin')
@@ -20,6 +36,8 @@ export class AdminController {
     private readonly _getAdminSummaryUsecase: IAdminSumaryUsecase,
     @Inject('IBookingUseCase')
     private readonly _bookingUseCase: IBookingUseCase,
+    @Inject('ICreatePayoutRequestUsecase')
+    private readonly _payoutRequestUsecase: ICreatePayoutRequestUsecase,
   ) {}
   @Get('/preferences')
   getAllPreferences() {
@@ -30,8 +48,17 @@ export class AdminController {
     return this._adminUsecase.createPreference(preferenceDto);
   }
   @Get('/agencies')
-  getAgencies() {
-    return this._adminUsecase.getAllAgencies();
+  getAgencies(
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+    @Query('search') search?: string,
+    @Query('status') status?: AgencyStatus,
+  ) {
+    return this._adminUsecase.getAllAgencies({page: +page,
+    limit: +limit,
+    search,
+    status}
+  )
   }
   @Get('/finance/dashboard')
   async getTotalRevenue() {
@@ -68,5 +95,34 @@ export class AdminController {
   @Get('recent-bookings')
   async getRecentBookings() {
     return await this._bookingUseCase.getRecentBookings();
+  }
+  @Get('payout-details')
+  async payoutDetails(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Optional()
+    @Query('status', new ParseEnumPipe(PayoutStatus))
+    status?: PayoutStatus,
+    @Optional() @Query('search') search?: string,
+  ) {
+    return await this._payoutRequestUsecase.payoutDetails(
+      page,
+      limit,
+      status,
+      search,
+    );
+  }
+  @Patch('/payout/approve/:id')
+  async approvePayout(
+    @Param('id') id: string,
+    @Body('status') status: PayoutStatus,
+  ) {
+    console.log(status, 'statuss');
+    return await this._payoutRequestUsecase.approvePayout(id, status);
+  }
+
+  @Patch('/payout/reject/:id')
+  async rejectPayout(@Param('id') id: string, @Body('reason') reason: string) {
+    return this._payoutRequestUsecase.rejectPayout(id, reason);
   }
 }
