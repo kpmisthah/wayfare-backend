@@ -1,5 +1,6 @@
 import { UserEntity } from 'src/domain/entities/user.entity';
-export interface IUserRepository {
+import { IBaseRepository } from '../base.repository';
+export interface IUserRepository extends IBaseRepository<UserEntity> {
   findByEmail(email: string): Promise<UserEntity | null>;
   create(userEntity: UserEntity): Promise<UserEntity | null>;
   findAll(
