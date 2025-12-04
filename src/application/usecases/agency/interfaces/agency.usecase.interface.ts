@@ -35,4 +35,5 @@ export interface IAgencyService {
     totalPages: number;
     currentPage: number;
   } | null>;
+  getAllAgencies(): Promise<AgencyManagementDto[] | null>
 }
