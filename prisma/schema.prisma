@@ -31,6 +31,7 @@ model User {
   connectionsSent     ConnectionRequest[]  @relation("SentConnections")
   connectionsReceived ConnectionRequest[]  @relation("ReceivedConnections")
   Message             Message[]
+  Notification        Notification[]       @relation("UserNotifications")
 
   groupMembers  GroupMember[]
   createdGroups Group[]       @relation("GroupCreator")
@@ -54,19 +55,6 @@ model preference {
   id    String        @id @default(uuid())
   name  String
   users UserProfile[] @relation("UserPreferences")
-}
-
-model UserVerification {
-  id         String   @id @default(uuid())
-  name       String?
-  email      String   @unique
-  otp        String   @unique
-  otp_expiry DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  password   String?
-  role       Role     @default(USER)
-  phone      String?
 }
 
 model Booking {
@@ -325,14 +313,27 @@ model AgencyBankDetails {
 }
 
 model PayoutRequest {
-  id        String       @id @default(uuid())
-  agencyId  String
-  amount    Float
-  status    PayoutStatus @default(PENDING)
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  agency    Agency       @relation(fields: [agencyId], references: [id])
+  id              String       @id @default(uuid())
+  agencyId        String
+  amount          Float
+  status          PayoutStatus @default(PENDING)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  agency          Agency       @relation(fields: [agencyId], references: [id])
   rejectionReason String?
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  title     String
+  message   String
+  isRead    Boolean
+  createdAt DateTime @default(now())
+  types NotificationStatus @default(CONNECTION_REQUEST)
+  userId String
+  user   User   @relation("UserNotifications", fields: [userId], references: [id])
+
+  @@index([userId])
 }
 
 enum PayoutStatus {
@@ -340,6 +341,12 @@ enum PayoutStatus {
   APPROVED
   REJECTED
   COMPLETED
+}
+
+enum NotificationStatus {
+  CONNECTION_REQUEST
+  ACCEPTED
+  REJECTED
 }
 
 enum GroupRole {

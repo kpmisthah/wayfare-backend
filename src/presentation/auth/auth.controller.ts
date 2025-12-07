@@ -11,7 +11,6 @@ import {
   Patch,
 } from '@nestjs/common';
 import { LoginDto, SignupDto } from 'src/application/dtos/auth.dto';
-// import { Request } from 'express';
 import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
 import { RefreshTokenGuard } from 'src/infrastructure/common/guard/refreshToken.guard';
 import { RequestWithUser } from 'src/application/usecases/auth/interfaces/request-with-user';
@@ -20,17 +19,12 @@ import { ResendOtpDto } from 'src/application/dtos/resendOtp.dto';
 import { ForgotPasswordDto } from 'src/application/dtos/forgotPassword.dto';
 import { VerifyForgotPasswordDto } from 'src/application/dtos/verifyForgotPasswordDto';
 import { ResetPasswordDto } from 'src/application/dtos/resetPassword.dto';
-// import { GoogleOAuthGuard } from 'src/infrastructure/common/guard/google-oauth.guard';
 import { Request, Response } from 'express';
-// import { GoogleLoginDto } from 'src/application/dtos/googleLogin.dto';
 import { IAuthUsecase } from 'src/application/usecases/auth/interfaces/auth.usecase.interface';
 import { IUserUsecase } from 'src/application/usecases/users/interfaces/user.usecase.interface';
 import { AuthGuard } from '@nestjs/passport';
 import { GoogleLoginUseCase } from 'src/application/usecases/auth/implementation/google-login.usecase';
 import { ChangePassword } from 'src/application/dtos/change-password.dto';
-// import { Role as userRole } from 'src/domain/enums/role.enum';
-// import { Roles } from '../roles/roles.decorator';
-// import { RolesGuard } from '../roles/auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -126,10 +120,10 @@ export class AuthController {
   @Post('resend-otp')
   async resendOtp(
     @Body() resendOtpDto: ResendOtpDto,
-    @Res({ passthrough: true }) res: Response,
   ) {
     const result = await this._authUsecase.resendOtp(resendOtpDto);
-    return res.json({ result });
+    return result
+
   }
 
   @Post('forgot-password')

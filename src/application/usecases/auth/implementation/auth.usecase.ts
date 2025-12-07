@@ -16,18 +16,17 @@ import { ForgotPasswordDto } from 'src/application/dtos/forgotPassword.dto';
 import { VerifyForgotPasswordDto } from 'src/application/dtos/verifyForgotPasswordDto';
 import { ResetPasswordDto } from 'src/application/dtos/resetPassword.dto';
 import { UserEntity } from 'src/domain/entities/user.entity';
-import { Otp } from 'src/domain/entities/otp.entity';
 import { JwtTokenFactory } from './jwt-token.factory';
 import { IUserUsecase } from 'src/application/usecases/users/interfaces/user.usecase.interface';
 import { IOtpService } from 'src/application/usecases/otp/interfaces/otp.usecase.interface';
 import { IAuthRepository } from 'src/domain/repositories/auth/auth.repository.interface';
-import { IUserVerification } from 'src/domain/repositories/user/user-verification.repository.interface';
 import { IAuthUsecase } from 'src/application/usecases/auth/interfaces/auth.usecase.interface';
 import { IAgencyService } from 'src/application/usecases/agency/interfaces/agency.usecase.interface';
-import { Role } from 'src/domain/enums/role.enum';
 import { IArgonService } from 'src/domain/interfaces/argon.service.interface';
 import { IUserRepository } from 'src/domain/repositories/user/user.repository.interface';
 import { ChangePassword } from 'src/application/dtos/change-password.dto';
+import { IRedisService } from 'src/domain/interfaces/redis-service.interface';
+import { NodemailerService } from 'src/infrastructure/utils/nodemailer.service';
 @Injectable()
 export class AuthService implements IAuthUsecase {
   constructor(
@@ -45,16 +44,21 @@ export class AuthService implements IAuthUsecase {
     @Inject('IAuthRepository')
     private readonly authRepo: IAuthRepository,
 
-    @Inject('IUserVerification')
-    private readonly userVerificationRepo: IUserVerification,
-
     @Inject('IAgencyService')
     private readonly agencyService: IAgencyService,
+
     @Inject('IArgonService')
     private readonly argonService: IArgonService,
+
     private readonly jwtFactory: JwtTokenFactory,
     @Inject('IUserRepository')
     private readonly _userRepo: IUserRepository,
+
+    @Inject('IRedisService')
+    private readonly _redisService: IRedisService,
+
+    @Inject('INodemailerService')
+    private readonly nodemailerService: NodemailerService,
   ) {}
 
   async signUp(signupDto: SignupDto) {
@@ -88,28 +92,33 @@ export class AuthService implements IAuthUsecase {
   }
 
   async verifyOtp(verifyOtpDto: VerifyOtpDto) {
-    const record = await this.authRepo.findByOtp(verifyOtpDto.otp);
+    console.log(verifyOtpDto, 'verify otp dto');
 
-    if (!record || record?.otp != verifyOtpDto.otp) {
-      throw new BadRequestException('Invalid Otp');
+    const key = `otp:${verifyOtpDto.email}`;
+    console.log(key, 'key from verify otpp');
+    const data = await this._redisService.get(key);
+    console.log(data, 'dataaaa from verify otp');
+    if (!data) {
+      throw new BadRequestException('OTP expired or invalid');
     }
-    const otp = new Otp(record.otp, record.otp_expiry);
+    const parsed = JSON.parse(data);
+    if (parsed.otp !== verifyOtpDto.otpCode) {
+      throw new BadRequestException('Invalid OTP');
+    }
 
-    if (!otp.isValid(verifyOtpDto.otp))
-      throw new BadRequestException('Otp expired or invalid');
+    await this._redisService.del(key);
     const createUser = {
-      name: record.name,
-      email: record.email,
-      password: record.password,
-      role: record.role,
-      phone: record.phone,
+      name: parsed.name,
+      email: verifyOtpDto.email,
+      password: parsed.password,
+      role: parsed.role,
+      phone: parsed.phone || '',
     };
     const user = await this._userUsecase.create(createUser);
 
     if (!user) {
       throw new BadRequestException('User Creation is failed');
     }
-    await this.authRepo.deleteTempUser(record.id);
     const tokens = await this.jwtFactory.generateTokens(
       user?.id,
       user?.name,
@@ -126,49 +135,73 @@ export class AuthService implements IAuthUsecase {
 
   async resendOtp(resendOtpDto: ResendOtpDto) {
     try {
-      const existingUser = await this.userVerificationRepo.findEmail(
-        resendOtpDto.email,
-      );
-      if (!existingUser) {
-        throw new UnauthorizedException('Please signup again');
+      console.log(resendOtpDto);
+      
+      const key = `otp:${resendOtpDto.email}`;
+      const existingData = await this._redisService.get(key);
+      console.log(existingData,'existnifData');
+      
+      if (!existingData) {
+        throw new UnauthorizedException(
+          'No active signup found for this email',
+        );
+      }
+      const oldPayload = JSON.parse(existingData);
+      const rateKey = `otp-resend-rate:${resendOtpDto.email}`;
+      console.log(oldPayload,'oldpayload');
+      
+      let currentCount = await this._redisService.get(rateKey);
+      console.log(currentCount,'coutn');
+      
+      const count = currentCount ? parseInt(currentCount) : 0;
+
+      if (count >= 3) {
+        throw new BadRequestException(
+          'Too many resend attempts. Please wait 1 hour.',
+        );
       }
 
-      await this.otpService.sendOtp(
-        existingUser.email,
-        existingUser.password,
-        existingUser.name,
-        existingUser.role,
+      // Step 3: Generate new OTP
+      const newOtp = await this.nodemailerService.sendOtpToEmail(
+        resendOtpDto.email,
       );
-      return 'otp send successfully';
+      console.log(newOtp,'new Opt');
+      
+      const newPayload = {
+        ...oldPayload,
+        otp: newOtp,
+      };
+      console.log(newPayload,'newpyaloaad');
+      
+      await this._redisService.set(key, JSON.stringify(newPayload), 300);
+      console.log(`Resend OTP for ${resendOtpDto.email}: ${newOtp} (Attempt)`);
+
+      return { message: 'New OTP sent successfully' };
     } catch (error) {
-      return `resend otp failed,${error}`;
+      console.log('Resend OTP failed:', error);
+      throw error;
     }
   }
 
   async forgotPassword(forgotPassword: ForgotPasswordDto) {
     const user = await this._userUsecase.findByEmail(forgotPassword.email);
     console.log(forgotPassword, 'in auth service of forgot password');
-
-    if (user && user.password) {
-      return this.otpService.sendOtp(
-        user.email,
-        user.name,
-        user.password,
-        user.role,
-      );
+    if (!user) {
+      throw new BadRequestException('This email does not exist');
     }
 
-    throw new BadRequestException('This email does not exist');
+    await this.otpService.sendForgotPasswordOtp(user.email);
   }
 
   async verifyForgotPassword(verifyForgotPassword: VerifyForgotPasswordDto) {
     try {
-      const findUser = await this.authRepo.findByOtp(verifyForgotPassword.otp);
-      if (!findUser || findUser.otp != verifyForgotPassword.otp) {
-        throw new BadRequestException('Invalid Otp');
-      }
-      if (findUser.otp_expiry < new Date()) {
-        throw new Error('Otp is Expired');
+      console.log(verifyForgotPassword,"Verify forgot password dtooooo")
+      const key = `forgot:${verifyForgotPassword.email}`;
+      const data = await this._redisService.get(key);
+      if (!data) throw new BadRequestException('OTP expired or not found');
+      const { otp } = JSON.parse(data);
+      if (otp !== verifyForgotPassword.otp) {
+        throw new BadRequestException('Invalid OTP');
       }
       return { message: 'Reset password page loaded successfully' };
     } catch (error) {

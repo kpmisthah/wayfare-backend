@@ -23,6 +23,8 @@ import { ChatModule } from './presentation/chat/chat.module';
 import { ConversationModule } from './presentation/conversation/conversation.module';
 import { ConnectionModule } from './presentation/connection/connection.module';
 import { PaymentModule } from './presentation/payment/payment.module';
+import { RedisModule } from './infrastructure/common/redis/redis.module';
+import { NotificationModule } from './presentation/notification/notification.module';
 
 const customLogger = new Logging();
 @Module({
@@ -46,6 +48,8 @@ const customLogger = new Logging();
     ConversationModule,
     ConnectionModule,
     PaymentModule,
+    RedisModule,
+    NotificationModule
     // ElasticsearchModule
   ],
   controllers: [AppController],

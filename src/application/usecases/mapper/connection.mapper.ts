@@ -1,4 +1,5 @@
 import { ConnectionDto } from 'src/application/dtos/connection.dto';
+import { ResponseConnectionDto } from 'src/application/dtos/response-connection.dto';
 import { ConnectionEntity } from 'src/domain/entities/connection.entity';
 
 export class ConnectionMapper {
@@ -18,5 +19,14 @@ export class ConnectionMapper {
     return connectionEntities.map((connection) => {
       return ConnectionMapper.toConnectionDto(connection);
     });
+  }
+
+  static mappedConnection(connection:ConnectionEntity):ResponseConnectionDto{
+    return{
+      id:connection.id,
+      senderId:connection.senderId,
+      receieverId:connection.receiverId,
+      status:connection.status ?? ''
+    }
   }
 }

@@ -7,4 +7,5 @@ export interface IOtpService {
     phone?: string,
   ): Promise<void>;
   agencyVerification(email: string, loginLink: string): Promise<void>;
+  sendForgotPasswordOtp(email: string):Promise<void>
 }
