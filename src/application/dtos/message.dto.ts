@@ -24,4 +24,8 @@ export class MessageDto {
   @IsString()
   @IsOptional()
   senderProfileImage?: string;
+
+  @IsString()
+  @IsOptional()
+  status?: 'sent' | 'delivered' | 'read';
 }

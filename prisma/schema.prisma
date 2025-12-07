@@ -32,7 +32,7 @@ model User {
   connectionsReceived ConnectionRequest[]  @relation("ReceivedConnections")
   Message             Message[]
   Notification        Notification[]       @relation("UserNotifications")
-
+  lastSeen        DateTime?    @default(now())
   groupMembers  GroupMember[]
   createdGroups Group[]       @relation("GroupCreator")
 }
@@ -249,6 +249,7 @@ model Conversation {
 model UserOnConversation {
   userId         String
   conversationId String
+  unreadCount    Int       @default(0)
   user           User         @relation(fields: [userId], references: [id])
   conversation   Conversation @relation(fields: [conversationId], references: [id])
 
@@ -291,11 +292,14 @@ model GroupMember {
   userId   String
   role     GroupRole @default(MEMBER) // ADMIN, MODERATOR, MEMBER
   joinedAt DateTime  @default(now())
+  unreadCount Int      @default(0)
 
   group Group @relation(fields: [groupId], references: [id])
   user  User  @relation(fields: [userId], references: [id])
 
   @@unique([groupId, userId])
+  @@index([groupId])
+  @@index([userId])
 }
 
 model AgencyBankDetails {

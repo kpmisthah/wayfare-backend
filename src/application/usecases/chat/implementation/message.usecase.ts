@@ -30,6 +30,14 @@ export class ChatUsecase implements IChatUsecase {
     console.log(content, 'in content in app');
     const chat = await this._chatRepo.createChat(messageEntity);
     console.log(chat, 'chattter in app');
+    const participants =
+      await this._chatRepo.getConversationParticipants(conversationId);
+    const receiverId = participants.find((id) => id !== senderId);
+
+    if (receiverId) {
+      await this._chatRepo.incrementUnreadCount(conversationId, receiverId);
+    }
+
     if (!chat) return null;
     return MessageMapper.toMessageDto(chat);
   }
@@ -122,6 +130,12 @@ export class ChatUsecase implements IChatUsecase {
     });
 
     const chat = await this._chatRepo.createChat(messageEntity);
+    const members = await this._chatRepo.getGroupMembers(groupId);
+    for (const memberId of members) {
+      if (memberId !== senderId) {
+        await this._chatRepo.incrementUnreadCountForGroup(groupId, memberId);
+      }
+    }
     return MessageMapper.toMessageDto(chat);
   }
   async getUserGroups(userId: string) {
@@ -136,4 +150,14 @@ export class ChatUsecase implements IChatUsecase {
     const messages = await this._chatRepo.getMessagesByGroup(groupId);
     return MessageMapper.toMessageDtos(messages);
   }
+  async markChatAsRead(userId: string, chatId: string): Promise<void> {
+  await this._chatRepo.markChatAsRead(userId, chatId);
+}
+async updateLastSeen(userId: string, date: Date): Promise<void> {
+  await this._chatRepo.updateLastSeen(userId, date);
+}
+
+async getLastSeen(userId: string): Promise<Date | null> {
+  return this._chatRepo.getLastSeen(userId);
+}
 }

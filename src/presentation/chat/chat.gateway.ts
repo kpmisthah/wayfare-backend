@@ -35,7 +35,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     @Inject(forwardRef(() => 'IChatUsecase'))
     private readonly _chatUsecase: ChatUsecase,
-  ) {}
+  ) { }
   afterInit(server: Server) {
     server.use((socket: Socket, next) => {
       const cookies = cookie.parse(socket.handshake.headers.cookie || '');
@@ -67,7 +67,33 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
     });
   }
+  @SubscribeMessage('typing')
+  handleTyping(
+    @MessageBody()
+    data: { conversationId?: string; groupId?: string; isTyping: boolean },
+    @ConnectedSocket() client: AuthenticatedSocket,
+  ) {
+    const roomId = data.conversationId || data.groupId;
+    if (!roomId) return;
 
+    client.to(roomId).emit('userTyping', {
+      userId: client.userId,
+      isTyping: data.isTyping,
+    });
+  }
+  @SubscribeMessage('getStatus')
+  async handleGetStatus(
+    @MessageBody() targetUserId: string,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const isOnline = this.server.sockets.adapter.rooms.has(targetUserId);
+    const lastSeen = await this._chatUsecase.getLastSeen(targetUserId);
+    client.emit('userStatus', {
+      userId: targetUserId,
+      isOnline,
+      lastSeen: lastSeen ? lastSeen.toISOString() : null,
+    });
+  }
   async handleConnection(client: Socket) {
     const userId = (client as any).userId;
     if (!userId) {
@@ -77,6 +103,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
     client.join(userId);
     console.log(`User ${userId} connected with socket ${client.id}`);
+    client.broadcast.emit('userOnline', { userId });
     try {
       const groups = await this._chatUsecase.getUserGroups(userId);
       console.log(
@@ -91,6 +118,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     } catch (err) {
       console.error('Failed to fetch groups on connect:', err);
     }
+    client.on('disconnect', () => {
+      this.server.emit('userOffline', {
+        userId,
+        lastSeen: new Date().toISOString(),
+
+      });
+      this._chatUsecase.updateLastSeen(userId, new Date()).catch(console.error);
+    });
   }
 
   handleDisconnect(client: Socket) {
@@ -104,10 +139,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.to(receiverId).emit('connectionRequest', payload);
   }
 
-  notifyConnectionAccepted(senderId: string, payload: { accepterId: string; accepterName: string }) {
+  notifyConnectionAccepted(
+    senderId: string,
+    payload: { accepterId: string; accepterName: string },
+  ) {
     this.server.to(senderId).emit('connectionAccepted', payload);
   }
-  
+
   broadcastMessageToChat(
     conversationId: string,
     message: any,
@@ -203,10 +241,33 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       );
       // Broadcast to all sockets in that conversation room
       // this.server.to(data.conversationId).emit('receiveMessage', saved);
-      this.server.to(data.conversationId).emit('receiveMessage', saved);
+
+      const messageWithStatus = { ...saved, status: 'sent' };
+      this.server.to(data.conversationId).emit('receiveMessage', messageWithStatus);
       console.log('emit event sender');
       // client.to(data.conversationId).emit('receiveMessage', saved);
     }
+  }
+
+  @SubscribeMessage('markRead')
+  handleMarkRead(
+    @ConnectedSocket() client: Socket,
+    @MessageBody()
+    data: { conversationId?: string; groupId?: string; messageIds: string[] },
+  ) {
+    const roomId = data.conversationId || data.groupId;
+    if (!roomId) return;
+
+    // Ideally, update DB here using usecase
+    // await this._chatUsecase.markMessagesAsRead(data.messageIds);
+
+    // Broadcast to the room (so the sender sees blue ticks)
+    client.to(roomId).emit('messagesRead', {
+      conversationId: data.conversationId,
+      groupId: data.groupId,
+      messageIds: data.messageIds,
+      readerId: (client as any).userId,
+    });
   }
   @SubscribeMessage('startCall')
   handleStartCall(

@@ -9,10 +9,12 @@ export class UserEntity {
     private readonly _role: Role,
     private readonly _isBlock: boolean,
     private readonly _isVerified: boolean,
+    private readonly _lastSeen: Date | null = null,
     private readonly _phone?: string | null,
     private readonly _profileImage?: string,
     private readonly _bannerImage?: string,
     private readonly _refreshToken?: string,
+    
   ) {
     // if (!email.includes('@')) throw new Error('Invalid Email');
   }
@@ -41,6 +43,7 @@ export class UserEntity {
       props.role,
       props.isBlock ?? false,
       props.isVerified ?? false,
+      null,
       props.phone ?? '',
       props.refreshToken,
       '',
@@ -71,6 +74,7 @@ export class UserEntity {
       this._role,
       props.isBlock ?? this._isBlock,
       props.isVerified ?? this._isVerified,
+      null,
       this._phone,
       this._profileImage,
       this._bannerImage,
@@ -86,6 +90,7 @@ export class UserEntity {
       this._role,
       props.isBlock,
       this._isVerified,
+      null,
       this._phone,
       this._profileImage,
       this._bannerImage,
@@ -135,6 +140,9 @@ export class UserEntity {
   }
   get phone(): string {
     return this._phone ?? '';
+  }
+  get lastSeen(){
+    return this._lastSeen
   }
 
   // getHashedPassword(): string | null {

@@ -11,6 +11,7 @@ export class UserMapper {
       user.role as Role,
       user.isBlock,
       user.isVerified,
+       user.lastSeen || null,
       user.phone,
       user.profileImage ?? '',
       user.bannerImage ?? '',
@@ -34,6 +35,7 @@ export class UserMapper {
       refreshToken: user.refreshToken,
       isVerified: user.isVerified,
       phone: user.phone,
+      lastSeen: user.lastSeen || new Date()
     };
     console.log(saveTodb, 'in prisma saveToDb');
     return saveTodb;

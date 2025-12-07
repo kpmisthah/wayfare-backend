@@ -17,4 +17,7 @@ export interface IChatUsecase {
   getUserGroups(userId: string);
   isGroupId(id: string): Promise<boolean>;
   getGroupMessages(groupId: string): Promise<MessageDto[]>;
+  markChatAsRead(userId: string, chatId: string): Promise<void>
+  updateLastSeen(userId: string, date: Date): Promise<void>
+  getLastSeen(userId: string): Promise<Date | null>
 }

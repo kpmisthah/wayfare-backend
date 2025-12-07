@@ -14,6 +14,7 @@ import { IChatUsecase } from 'src/application/usecases/chat/interfaces/message.i
 import { ISendConnection } from 'src/application/usecases/connection/interfaces/send-connection.interface';
 import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
 import { ChatGateway } from './chat.gateway';
+import { IChatRepository } from 'src/domain/repositories/chat/chat.repository.interface';
 
 @Controller('messages')
 @UseGuards(AccessTokenGuard)
@@ -23,6 +24,8 @@ export class MessageController {
     private readonly _chatUsecase: IChatUsecase,
     @Inject('ISendConnectionUseCase')
     private readonly _connectionUsecase: ISendConnection,
+    @Inject('IMessageRepository')
+    private readonly _chatRepo: IChatRepository,    
     private readonly _chatGateway: ChatGateway,
   ) {}
 
@@ -55,6 +58,28 @@ export class MessageController {
     const directChats =
       await this._connectionUsecase.getAcceptedConnections(userId);
 
+    const formattedDirect = await Promise.all(
+      directChats.map(async (c) => {
+        const lastMsg =
+          await this._chatRepo.getLastMessageForConversation(
+            c.conversationId,
+          );
+        const unread =
+          await this._chatRepo.getUnreadCountForConversation(
+            c.conversationId,
+            userId,
+          );
+        const lastSeen = await this._chatUsecase.getLastSeen(c.userId);
+        return {
+          ...c,
+          type: 'direct',
+          lastMessage: lastMsg,
+          unreadCount: unread,
+          lastSeen: lastSeen ? lastSeen.toISOString() : null,
+        };
+      }),
+    );
+
     // Get groups
     const groups = await this._chatUsecase.getUserGroups(userId);
     console.log(groups, 'grpupssssss');
@@ -70,7 +95,13 @@ export class MessageController {
       createdAt: g.createdAt,
     }));
 
-    return [...directChats, ...formattedGroups];
+    let allChats = [...formattedDirect, ...formattedGroups];
+    allChats.sort((a, b) => {
+    const timeA = a.lastMessage?.createdAt || a.createdAt || '0';
+    const timeB = b.lastMessage?.createdAt || b.createdAt || '0';
+    return new Date(timeB).getTime() - new Date(timeA).getTime();
+  });
+  return allChats;
   }
   @Get(':conversationId')
   async getMessages(
@@ -88,5 +119,12 @@ export class MessageController {
       return await this._chatUsecase.getMessages(conversationId);
     }
   }
-  // Controller
+  @Post(':chatId/read')
+  async markAsRead(
+    @Param('chatId') chatId: string,
+    @Req() req: RequestWithUser,
+  ) {
+    await this._chatUsecase.markChatAsRead(req.user.userId, chatId);
+    return { success: true };
+  }
 }
