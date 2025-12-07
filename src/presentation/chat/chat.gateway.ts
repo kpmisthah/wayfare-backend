@@ -50,7 +50,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         const decoded = jwt.verify(
           token,
           process.env.JWT_ACCESS_SECRET!,
-        ) as JwtPayload
+        ) as JwtPayload;
         const userId = decoded.sub;
 
         if (!userId) {
@@ -97,12 +97,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log('Socket disconnected:', client.id);
   }
 
-  notifyConnectionAccepted(
-    senderId: string,
-    payload: { conversationId: string; accepterName: string },
+  notifyConnectionRequest(
+    receiverId: string,
+    payload: { senderId: string; senderName: string },
   ) {
-    this.server.to(senderId).emit('connectionAcceptedNotification', payload);
+    this.server.to(receiverId).emit('connectionRequest', payload);
   }
+
+  notifyConnectionAccepted(senderId: string, payload: { accepterId: string; accepterName: string }) {
+    this.server.to(senderId).emit('connectionAccepted', payload);
+  }
+  
   broadcastMessageToChat(
     conversationId: string,
     message: any,
