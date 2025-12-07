@@ -5,9 +5,10 @@ import { AcceptConnectionUseCase } from 'src/application/usecases/connection/imp
 import { RejectConnectionUseCase } from 'src/application/usecases/connection/implementation/reject-connection.usecase';
 import { ConversationModule } from '../conversation/conversation.module';
 import { ChatModule } from '../chat/chat.module';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
-  imports: [ConversationModule, forwardRef(() => ChatModule)],
+  imports: [ConversationModule, forwardRef(() => ChatModule),NotificationModule],
   controllers: [ConnectionController],
   providers: [
     {
