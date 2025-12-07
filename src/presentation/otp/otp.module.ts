@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { UserVerificationRepository } from 'src/infrastructure/database/prisma/repositories/user/userVerification.repository';
 import { OtpService } from 'src/application/usecases/otp/implementation/otp.usecase';
 import { NodemailerService } from 'src/infrastructure/utils/nodemailer.service';
 import { PrismaModule } from 'src/infrastructure/database/prisma/prisma.module';
@@ -15,8 +14,7 @@ import { PrismaModule } from 'src/infrastructure/database/prisma/prisma.module';
       provide: 'INodemailerService',
       useClass: NodemailerService,
     },
-    UserVerificationRepository,
   ],
-  exports: ['IOtpService'],
+  exports: ['IOtpService','INodemailerService'],
 })
 export class OtpModule {}

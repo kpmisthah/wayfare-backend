@@ -37,4 +37,31 @@ export class NodemailerService implements INodeMailerService {
       throw new Error('Failed to send OTP via email');
     }
   }
+
+  async sendForgotPasswordOtp(email: string, name: string): Promise<string> {
+    const otp = this.generateOtp();
+    try {
+      await this.emailTransporter.sendMail({
+        from: this.configService.get<string>('EMAIL_USER'),
+        to: email,
+        subject: 'Reset Your Password - OTP',
+        text: `Hi ${name}, Your password reset OTP is ${otp}. It expires in 10 minutes.`,
+        html: `
+        <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 500px;">
+          <h2>Hi ${name},</h2>
+          <p>You requested to reset your password.</p>
+          <p style="font-size: 24px; font-weight: bold; color: #2563eb; letter-spacing: 4px;">
+            ${otp}
+          </p>
+          <p>This OTP will expire in <strong>10 minutes</strong>.</p>
+          <p>If you didn't request this, please ignore this email.</p>
+        </div>
+      `,
+      });
+      return otp;
+    } catch (error) {
+      console.log(error);
+      throw new Error('Failed to send forgot password OTP');
+    }
+  }
 }

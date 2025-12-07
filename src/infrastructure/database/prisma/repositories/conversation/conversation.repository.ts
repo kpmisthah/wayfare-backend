@@ -16,6 +16,7 @@ export class ConversationRepository implements IConversationRepository {
         },
       },
     });
+    console.log(conversation,'conersation in conversationr repo')
     return new ConversationEntity(
       conversation.id,
       userIds,

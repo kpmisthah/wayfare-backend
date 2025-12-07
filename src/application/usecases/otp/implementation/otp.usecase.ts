@@ -1,20 +1,21 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IOtpService } from 'src/application/usecases/otp/interfaces/otp.usecase.interface';
 import { IUserVerification } from 'src/domain/repositories/user/user-verification.repository.interface';
 import { UserVerificationEntity } from 'src/domain/entities/user-verification';
 import { Role } from 'src/domain/enums/role.enum';
 import { NodemailerService } from 'src/infrastructure/utils/nodemailer.service';
+import { IRedisService } from 'src/domain/interfaces/redis-service.interface';
 
 @Injectable()
 export class OtpService implements IOtpService {
   private readonly emailTransporter;
   constructor(
     private readonly configService: ConfigService,
-    @Inject('IUserVerification')
-    private readonly userverificationRepo: IUserVerification,
     @Inject('INodemailerService')
     private readonly nodemailerService: NodemailerService,
+    @Inject('IRedisService')
+    private readonly _redisService: IRedisService,
   ) {}
 
   async sendOtp(
@@ -27,29 +28,13 @@ export class OtpService implements IOtpService {
     try {
       const otp = await this.nodemailerService.sendOtpToEmail(email);
       console.log(otp, 'otp');
-      const existingUser = await this.userverificationRepo.findEmail(email);
-      if (existingUser) {
-        const updateOtp = existingUser.updateUserOtp({
-          otp,
-          otp_expiry: new Date(Date.now() + 5 * 60 * 1000),
-        });
-        await this.userverificationRepo.updateOtp(
-          existingUser.email,
-          updateOtp,
-        );
-      } else {
-        const otpEntity = new UserVerificationEntity(
-          '',
-          name,
-          email,
-          otp,
-          new Date(Date.now() + 5 * 60 * 100),
-          password,
-          role,
-          phone,
-        );
-        await this.userverificationRepo.create(otpEntity);
-      }
+      const key = `otp:${email}`;
+      await this._redisService.set(
+        key,
+        JSON.stringify({ otp, password, name, role, phone }),
+        300,
+      );
+      console.log(`OTP for ${email}: ${otp}`);
     } catch (error) {
       console.log(error);
     }
@@ -65,5 +50,20 @@ export class OtpService implements IOtpService {
     } catch (error) {
       console.error('Failed to send agency verification email:', error);
     }
+  }
+
+  async sendForgotPasswordOtp(email: string) {
+    const otp = await this.nodemailerService.sendOtpToEmail(email);
+    const key = `forgot:${email}`;
+
+    await this._redisService.set(
+      key,
+      JSON.stringify({ otp }),
+      300,
+    );
+
+    console.log(`Forgot Password OTP for ${email}: ${otp}`);
+    console.log(key,'forgot_password_otp_key');
+    
   }
 }

@@ -1,5 +1,6 @@
 export class VerifyOtpDto {
   // @IsString()
   // @IsNotEmpty()
-  otp: string;
+  email:string
+  otpCode: string;
 }

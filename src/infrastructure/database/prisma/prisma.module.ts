@@ -2,7 +2,6 @@ import { Global, Module } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { UserRepository } from './repositories/user/user.repository';
 import { AuthRepository } from './repositories/auth/auth.repository';
-import { UserVerificationRepository } from './repositories/user/userVerification.repository';
 import { AgencyRepository } from './repositories/agency/agency.repository';
 import { ProfileRepository } from './repositories/user/profile.repository';
 import {
@@ -33,6 +32,7 @@ import { ConversationRepository } from './repositories/conversation/conversation
 import { MessageRepository } from './repositories/chat/message.repository';
 import { AgencyBankDetailsRepository } from './repositories/agency/agency-bank-details.repository';
 import { PayoutRequestRepository } from './repositories/agency/payout-request.repository';
+import { NotificationRepository } from './repositories/notification/notification.repository';
 
 @Global()
 @Module({
@@ -46,10 +46,6 @@ import { PayoutRequestRepository } from './repositories/agency/payout-request.re
     {
       provide: 'IAuthRepository',
       useClass: AuthRepository,
-    },
-    {
-      provide: 'IUserVerification',
-      useClass: UserVerificationRepository,
     },
     {
       provide: 'IAgencyRepository',
@@ -143,13 +139,16 @@ import { PayoutRequestRepository } from './repositories/agency/payout-request.re
       provide: 'IPayoutRequestRepository',
       useClass: PayoutRequestRepository,
     },
+    {
+      provide:"INotificationRepository",
+      useClass:NotificationRepository
+    }
   ],
   exports: [
     PrismaService,
     GoogleStrategy,
     'IUserRepository',
     'IAuthRepository',
-    'IUserVerification',
     'IAgencyRepository',
     'IArgonService',
     'INodeMailerService',
@@ -169,6 +168,7 @@ import { PayoutRequestRepository } from './repositories/agency/payout-request.re
     'IMessageRepository',
     'IBankingDetailsRepository',
     'IPayoutRequestRepository',
+    'INotificationRepository',
     PROFILE_TYPE.IProfileRepository,
     ADMIN_TYPE.IAdminRepository,
     AGENCY_PACKAGE_TYPE.IAgencyPackageRepository,
