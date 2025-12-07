@@ -1,0 +1,5 @@
+export enum NotificationStatus {
+    CONNECTION_REQUEST = 'CONNECTION_REQUEST',
+    ACCEPTED = 'ACCEPTED',
+    REJECTED = 'REJECTED'
+}
