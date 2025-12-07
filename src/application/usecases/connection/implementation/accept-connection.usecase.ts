@@ -3,6 +3,10 @@ import { IConnectionRepository } from 'src/domain/repositories/connection/connec
 import { IAcceptConnection } from '../interfaces/accept-connection.interface';
 import { IConversationUsecase } from '../../conversation/interfaces/conversation.interface';
 import { ChatGateway } from 'src/presentation/chat/chat.gateway';
+import { IUserRepository } from 'src/domain/repositories/user/user.repository.interface';
+import { INotifactionUsecase } from '../../notification/interfaces/notifcation.interface';
+import { NotificationStatus } from 'src/domain/enums/notification-status.enum';
+import { ConnectionMapper } from '../../mapper/connection.mapper';
 
 @Injectable()
 export class AcceptConnectionUseCase implements IAcceptConnection {
@@ -12,23 +16,46 @@ export class AcceptConnectionUseCase implements IAcceptConnection {
     @Inject('IConversationUseCase')
     private readonly _conversationUsecase: IConversationUsecase,
     private readonly _chatGateWay: ChatGateway,
+    @Inject('IUserRepository')
+    private readonly _userRepo: IUserRepository,
+    @Inject('INotificationUsecase')
+    private readonly _notificationUsecase: INotifactionUsecase,
   ) {}
 
   async execute(id: string) {
+    console.log(id,'stringgg iffd');
+    
     const connection = await this._connectionRepo.findById(id);
-    console.log(connection, 'connection in accept-connectino.usecase');
     if (!connection) throw new NotFoundException('Connection not found');
+    let mappedConnection = ConnectionMapper.mappedConnection(connection)
+    console.log(mappedConnection,'mapped_cinnection')
     const connectionUpdate = connection.update({ status: 'ACCEPTED' });
+    console.log(connectionUpdate,'updated connectionsss');
+    
     await this._connectionRepo.update(id, connectionUpdate);
     const conversation = await this._conversationUsecase.execute(
       connection.senderId,
       connection.receiverId,
     );
-    (this._chatGateWay as any).notifyConnectionAccepted(connection.senderId, {
-      conversationId: conversation.id,
-      accepterName: connection.recieverName,
+    console.log('<<=====================>>',conversation,'<<========================>>');
+    
+    const receiver = await this._userRepo.findById(mappedConnection.receieverId);
+    if (!receiver) throw new NotFoundException('Receiver not found');
+    // Create notification for the ORIGINAL SENDER
+    let n = await this._notificationUsecase.createNotification(
+      {
+        title: 'Connection Accepted',
+        message: `${receiver.name} accepted your connection request`,
+        type:NotificationStatus.ACCEPTED
+      },
+      mappedConnection.senderId
+    );
+    console.log(n,'in accepted connection');
+    
+    this._chatGateWay.notifyConnectionAccepted(mappedConnection.senderId, {
+      accepterId: mappedConnection.receieverId,
+      accepterName: receiver.name,
     });
-    console.log(conversation, 'conversation room created when click accpet');
     return {
       message: 'Connection accepted',
       conversationId: conversation.id,
