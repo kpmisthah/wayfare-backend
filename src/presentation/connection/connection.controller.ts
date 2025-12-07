@@ -28,8 +28,6 @@ export class ConnectionController {
   @Get()
   async getConnections(@Req() req: RequestWithUser) {
     const userId = req.user['userId'];
-    //ivide userId parine enthaannn vechaaal recieverId (athaayath ashiq nte id)
-    //jalva aan ashiq n request itte
     return await this._sendConnection.getConnectionForUser(userId);
   }
   @Get('/accepted')
@@ -52,6 +50,7 @@ export class ConnectionController {
   }
   @Patch(':id/accept')
   async accept(@Param('id') id: string) {
+    console.log(id,'acceptance id in accept method')
     return await this._acceptConnection.execute(id);
   }
   @Patch(':id/reject')
