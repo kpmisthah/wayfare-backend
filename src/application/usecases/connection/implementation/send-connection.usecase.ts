@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, Inject } from '@nestjs/common';
+import { Injectable, BadRequestException, Inject, NotFoundException } from '@nestjs/common';
 import { ConnectionEntity } from 'src/domain/entities/connection.entity';
 import { IConnectionRepository } from 'src/domain/repositories/connection/connection.repository';
 import { ISendConnection } from '../interfaces/send-connection.interface';
@@ -7,6 +7,10 @@ import { ConnectionDto } from 'src/application/dtos/connection.dto';
 import { IConversationUsecase } from '../../conversation/interfaces/conversation.interface';
 import { IConversationRepository } from 'src/domain/repositories/conversation/conversation.repository.interface';
 import { AcceptedConnection } from 'src/domain/interfaces/accepted-connection.interface';
+import { ChatGateway } from 'src/presentation/chat/chat.gateway';
+import { IUserRepository } from 'src/domain/repositories/user/user.repository.interface';
+import { INotifactionUsecase } from '../../notification/interfaces/notifcation.interface';
+import { NotificationStatus } from 'src/domain/enums/notification-status.enum';
 
 @Injectable()
 export class SendConnectionUseCase implements ISendConnection {
@@ -17,34 +21,49 @@ export class SendConnectionUseCase implements ISendConnection {
     private readonly _conversationUsecase: IConversationUsecase,
     @Inject('IConversationRepository')
     private readonly _conversationRepo: IConversationRepository,
+    @Inject('IUserRepository')
+    private readonly _userRepo: IUserRepository,    
+    @Inject('INotificationUsecase')
+    private readonly _notificationUsecase:INotifactionUsecase,    
+    private readonly _chatGateway: ChatGateway,
+
   ) {}
 
   async execute(senderId: string, receiverId: string) {
-    console.log(senderId, 'sernderIdddd in application layer');
-    console.log(receiverId, 'reciever iddd in appplication layer');
+
     const existing = await this._connectionRepo.findConnection(
       senderId,
       receiverId,
     );
-    console.log(existing, 'exisitnggg');
 
     if (existing)
       throw new BadRequestException('Connection request already sent');
-    // const connection = new ConnectionEntity({ senderId, receiverId, status: "pending" });
     const connection = ConnectionEntity.create({
       senderId,
       receiverId,
       status: 'PENDING',
     });
-    console.log(connection, 'connectionEntity in connection');
 
     const cn = await this._connectionRepo.create(connection);
-    console.log(cn, 'cnnn');
+    const sender = await this._userRepo.findById(senderId);
+    if (!sender) throw new NotFoundException('Sender not found');
+
+    await this._notificationUsecase.createNotification(
+    {
+      title: "Connection Request",
+      message: `${sender.name} wants to connect with you`,
+      type:NotificationStatus.CONNECTION_REQUEST
+    },
+    receiverId, 
+  );
+    this._chatGateway.notifyConnectionRequest(receiverId, {
+      senderId,
+      senderName: sender.name,
+    });
     return cn;
   }
 
   async getConnectionForUser(userId: string): Promise<ConnectionDto[]> {
-    console.log(userId, 'athaayath aashiqnte id reciever id');
     const connection = await this._connectionRepo.getUserConnection(userId);
     console.log(connection, 'connection');
     return ConnectionMapper.toConnectionsDto(connection);
