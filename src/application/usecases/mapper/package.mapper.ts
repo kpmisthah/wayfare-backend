@@ -27,7 +27,6 @@ export class PackageMapper {
   static toTrendingPackageDto(
     travelPackages: PackageEntity[],
   ): TrendingDestinationDto[] {
-    console.log(travelPackages, 'travelPackages in mapper');
     return travelPackages.map((pkg) => ({
       id: pkg.id,
       title: pkg.itineraryName,

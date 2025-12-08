@@ -211,7 +211,7 @@ export class AuthController {
         secure: false,
         expires: new Date(Date.now() + 1.5 * 60 * 60 * 1000),
       })
-      .json(message);
+      .json({ success: true });
   }
 
   @Patch('change-password')
