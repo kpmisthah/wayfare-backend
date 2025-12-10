@@ -50,11 +50,6 @@ export class BookingRepository
     return BookingMapper.toDomain(updateBooking);
   }
 
-  //customer name
-  //customer email
-  //phone number
-  //people count
-  //totalamount
   async findByPackageId(packageId: string): Promise<BookingEntity[]> {
     const bookings = await this._prisma.booking.findMany({
       where: { packageId },

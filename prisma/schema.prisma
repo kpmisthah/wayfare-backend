@@ -73,6 +73,7 @@ model Booking {
   agencyEarning         Float
   commissionRate        Float
   platformEarning       Float
+  bookingCode String
   agency                Agency              @relation(fields: [agencyId], references: [id])
   package               Package             @relation(fields: [packageId], references: [id])
   user                  User                @relation(fields: [userId], references: [id])

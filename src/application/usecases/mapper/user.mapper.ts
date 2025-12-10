@@ -16,6 +16,7 @@ export class UserMapper {
       isVerified: userEntity.isVerified,
       phone: userEntity.phone,
       refreshToken: userEntity.refreshToken,
+      profileImage:userEntity.profileImage
     };
   }
 

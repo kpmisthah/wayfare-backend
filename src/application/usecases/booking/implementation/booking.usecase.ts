@@ -226,6 +226,12 @@ export class BookingUseCase implements IBookingUseCase {
         );
         existingWallet = newWallet;
       }
+      await this._walletUsecase.deductAgency(
+        bookingEntity.agencyId,
+        refundAmount,
+        PaymentStatus.SUCCEEDED,
+        bookingEntity.id,
+      );
       const walletTransactionEntity = WalletTransactionEntity.create({
         walletId: existingWallet?.id ?? '',
         amount: refundAmount,

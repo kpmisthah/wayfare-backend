@@ -9,4 +9,5 @@ export type SafeUser = {
   isVerified: boolean;
   phone?: string;
   readonly refreshToken: string;
+  profileImage?:string
 };

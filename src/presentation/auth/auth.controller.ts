@@ -32,7 +32,8 @@ export class AuthController {
     @Inject('IAuthService')
     private readonly _authUsecase: IAuthUsecase,
     @Inject('IUserService')
-    private readonly userService: IUserUsecase,
+    private readonly _userUsecase: IUserUsecase,
+    @Inject('IGoogleLoginUsecase')
     private readonly _googleLoginUsecase: GoogleLoginUseCase,
   ) {}
 
@@ -43,19 +44,22 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req, @Res() res: Response) {
+    console.log('ACCESS_EXPIRES:', process.env.JWT_ACCESS_EXPIRES);
+    console.log('PARSED:', Number(process.env.JWT_ACCESS_EXPIRES));
+
     const result = await this._googleLoginUsecase.execute(req.user);
     res
       .cookie('accessToken', result.accessToken, {
         httpOnly: true,
         sameSite: 'lax',
-        maxAge: 2 * 60 * 60 * 1000,
+        maxAge: Number(process.env.JWT_ACCESS_EXPIRES),
         path: '/',
         secure: false,
       })
       .cookie('refreshToken', result.refreshToken, {
         httpOnly: true,
         sameSite: 'lax',
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        maxAge: Number(process.env.JWT_REFRESH_EXPIRES),
         path: '/',
         secure: false,
       });
@@ -76,13 +80,13 @@ export class AuthController {
       .cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: false,
-        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        expires: new Date(Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!)),
         path: '/',
       })
       .cookie('accessToken', accessToken, {
         httpOnly: true,
         secure: false,
-        expires: new Date(Date.now() + 2 * 60 * 60 * 1000),
+        expires: new Date(Date.now() + Number(process.env.JWT_ACCESS_EXPIRES!)),
         path: '/',
       })
       .json({ message: 'Login Successfully', user });
@@ -105,25 +109,22 @@ export class AuthController {
       .cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: false,
-        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        expires: new Date(Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!)),
         path: '/',
       })
       .cookie('accessToken', accessToken, {
         httpOnly: true,
         secure: false,
-        expires: new Date(Date.now() + 2 * 60 * 60 * 1000),
+        expires: new Date(Date.now() + Number(process.env.JWT_ACCESS_EXPIRES!)),
         path: '/',
       })
       .json({ message: 'Signup verified successfully', user });
   }
 
   @Post('resend-otp')
-  async resendOtp(
-    @Body() resendOtpDto: ResendOtpDto,
-  ) {
+  async resendOtp(@Body() resendOtpDto: ResendOtpDto) {
     const result = await this._authUsecase.resendOtp(resendOtpDto);
-    return result
-
+    return result;
   }
 
   @Post('forgot-password')
@@ -151,13 +152,13 @@ export class AuthController {
       .cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: false,
-        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        expires: new Date(Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!)),
         path: '/',
       })
       .cookie('accessToken', accessToken, {
         httpOnly: true,
         secure: false,
-        expires: new Date(Date.now() + 2 * 60 * 60 * 1000),
+        expires: new Date(Date.now() + Number(process.env.JWT_ACCESS_EXPIRES!)),
         path: '/',
       })
       .json({ message, user });
@@ -167,7 +168,7 @@ export class AuthController {
   @Get('me')
   async getMe(@Req() req: RequestWithUser) {
     const userId = req.user['userId'];
-    const user = await this.userService.findById(userId);
+    const user = await this._userUsecase.findById(userId);
     console.log(user, 'user in /me');
     return user;
   }
@@ -194,7 +195,7 @@ export class AuthController {
     const role = req.user['role'];
     const refreshToken = req.user['refreshToken'];
     console.log('user id is there', userId);
-    const user = await this.userService.findById(userId);
+    const user = await this._userUsecase.findById(userId);
     if (user?.isBlock) {
       throw new ForbiddenException('Account is Blocked');
     }
@@ -204,12 +205,14 @@ export class AuthController {
       .cookie('refreshToken', refreshTokenResponse, {
         httpOnly: true,
         secure: false,
-        expires: new Date(Date.now() + 5 * 60 * 1000),
+        expires: new Date(Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!)),
+        path: '/',
       })
       .cookie('accessToken', accessTokenResponse, {
         httpOnly: true,
         secure: false,
-        expires: new Date(Date.now() + 1.5 * 60 * 60 * 1000),
+        expires: new Date(Date.now() + Number(process.env.JWT_ACCESS_EXPIRES!)),
+        path: '/',
       })
       .json({ success: true });
   }

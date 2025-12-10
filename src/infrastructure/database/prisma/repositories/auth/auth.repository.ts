@@ -36,12 +36,12 @@ export class AuthRepository implements IAuthRepository {
       return null;
     }
   }
-  async logout(userId: string): Promise<boolean> {
+  async logout(userId: string): Promise<UserEntity> {
     const d = await this._prisma.user.update({
       where: { id: userId },
       data: { refreshToken: null },
     });
     console.log(d, 'ddddd');
-    return true;
+    return UserMapper.toDomain(d)
   }
 }

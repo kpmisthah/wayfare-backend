@@ -37,9 +37,13 @@ import { PackageStatus } from 'src/domain/enums/package-status.enum';
 import { BankDetailsDto } from 'src/application/dtos/request-payout.dto';
 import { IBankingDetailsUsecase } from 'src/application/usecases/agency/interfaces/agnecy-banking-details.usecase.interface';
 import { IWalletUseCase } from 'src/application/usecases/wallet/interfaces/wallet.usecase.interface';
+import { RolesGuard } from '../roles/auth.guard';
+import { Roles } from '../roles/roles.decorator';
+import { Role } from 'src/domain/enums/role.enum';
 
 @Controller('agency')
-@UseGuards(AccessTokenGuard)
+@UseGuards(AccessTokenGuard,RolesGuard)
+@Roles(Role.Agency)
 export class AgencyController {
   constructor(
     @Inject('IAgencyService')
@@ -55,20 +59,6 @@ export class AgencyController {
     @Inject('IWalletUseCase')
     private readonly _walletUseCase: IWalletUseCase,
   ) {}
-
-  // @Post('/signin')
-  // async signin(
-  //   @Body() createAgencyDto:CreateAgencyDto,
-  //   @Res({passthrough:true}) res:Response
-  // ){
-  //   return this.agencyService.createAgency(createAgencyDto)
-  // }
-
-  // @Get()
-  // findAll() {
-  //   return this.agencyService.findAll();
-  // }
-
   @Post('/agency-profile')
   async createAgencyProfile(
     @Body() createAgencyDto: CreateAgencyDto,

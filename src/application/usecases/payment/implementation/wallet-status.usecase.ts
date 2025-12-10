@@ -31,7 +31,7 @@ export class WalletPaymentStatus implements IWalletPaymentStatus {
         );
       }
       console.log(
-        `💰 Auto release: Booking ${booking.id}, credited: ${txn.amount}`,
+        `Auto release: Booking ${booking.id}, credited: ${txn.amount}`,
       );
     }
   }

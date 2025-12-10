@@ -14,6 +14,12 @@ export class WalletTransactionRepository
   constructor(private readonly _prisma: PrismaService) {
     super(_prisma.walletTransaction, WalletTransactionMapper);
   }
+
+  async findByBookingId(bookingId:string):Promise<WalletTransactionEntity|null>{
+    let walletTransaciton = await this._prisma.walletTransaction.findFirst({where:{bookingId}})
+    if(!walletTransaciton) return null
+    return WalletTransactionMapper.toDomain(walletTransaciton)
+  }
   async getTransactionsByWalletId(
     walletId: string,
   ): Promise<WalletTransactionEntity[]> {

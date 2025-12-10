@@ -9,4 +9,5 @@ export interface IWalletTransactionRepository
   findAgencyByCredits(): Promise<WalletTransactionEntity[]>;
   getWalletSummary(agencyId: string);
   getRecentAgencyWalletTransactions(agencyId: string, limit: number);
+  findByBookingId(bookingId:string):Promise<WalletTransactionEntity|null>
 }

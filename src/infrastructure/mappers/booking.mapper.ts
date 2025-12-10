@@ -1,6 +1,7 @@
 import { $Enums, Booking, Prisma } from '@prisma/client';
 import { BookingEntity } from 'src/domain/entities/booking.entity';
 import { BookingStatus } from 'src/domain/enums/booking-status.enum';
+import { BookingCode } from 'src/domain/value-objects/booking.code';
 
 type BookingWithUser = Prisma.BookingGetPayload<{
   include: { user: true; package: true };
@@ -20,6 +21,7 @@ export class BookingMapper {
       booking.commissionRate,
       booking.platformEarning,
       booking.agencyEarning,
+      BookingCode.fromString(booking.bookingCode)
     );
   }
 
@@ -37,6 +39,7 @@ export class BookingMapper {
       commissionRate: booking.commission,
       platformEarning: booking.platformEarning,
       agencyEarning: booking.agencyEarning,
+      bookingCode:booking.bookingCode.toString()
     };
   }
 
@@ -60,6 +63,7 @@ export class BookingMapper {
       booking.commissionRate,
       booking.platformEarning,
       booking.agencyEarning,
+      BookingCode.fromString(booking.bookingCode),
       booking.user.name,
       booking.user.email,
       booking.user.phone ?? '',

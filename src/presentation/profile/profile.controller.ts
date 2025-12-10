@@ -22,9 +22,9 @@ import { UploadProfileUseCase } from 'src/application/usecases/profile/implement
 export class ProfileController {
   constructor(
     @Inject(PROFILE_TYPE.IProfileService)
-    @Inject('IProfileService')
     private readonly profileService: IProfileService,
-
+    
+    @Inject('IUploadProfileUsecase')
     private readonly uploadProfile: UploadProfileUseCase,
   ) {}
 

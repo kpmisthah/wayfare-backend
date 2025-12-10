@@ -13,8 +13,11 @@ import { CloudinaryModule } from 'src/infrastructure/cloudinary/cloudinary.modul
       provide: PROFILE_TYPE.IProfileService,
       useClass: ProfileService,
     },
-    UploadProfileUseCase,
+    {
+      provide:"IUploadProfileUsecase",
+      useClass:UploadProfileUseCase,
+    }
   ],
-  exports: [PROFILE_TYPE.IProfileService, UploadProfileUseCase],
+  exports: [PROFILE_TYPE.IProfileService, "IUploadProfileUsecase"],
 })
 export class ProfileModule {}

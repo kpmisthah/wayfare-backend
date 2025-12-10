@@ -9,5 +9,5 @@ export interface IAuthRepository {
     email: string,
     data: { password: string },
   ): Promise<UserEntity | null>;
-  logout(userId);
+  logout(userId: string): Promise<UserEntity>
 }

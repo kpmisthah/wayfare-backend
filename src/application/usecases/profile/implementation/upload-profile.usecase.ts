@@ -3,9 +3,10 @@ import { ICloudinaryService } from 'src/domain/repositories/cloudinary/cloudinar
 import { PROFILE_TYPE } from 'src/domain/types';
 import { IUserRepository } from 'src/domain/repositories/user/user.repository.interface';
 import { IProfileRepository } from 'src/domain/repositories/user/profile.repository.interface';
+import { IUploadProfileUseCase } from '../interfaces/uplaod-profile.usecase.interface';
 
 @Injectable()
-export class UploadProfileUseCase {
+export class UploadProfileUseCase implements IUploadProfileUseCase{
   constructor(
     @Inject('ICloudinaryService')
     private readonly cloudinaryService: ICloudinaryService,

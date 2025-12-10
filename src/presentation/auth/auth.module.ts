@@ -20,11 +20,13 @@ import { AgencyModule } from '../agency/agency.module';
     UsersModule,
     OtpModule,
     AgencyModule,
-    
   ],
   controllers: [AuthController],
   providers: [
-    GoogleLoginUseCase,
+    {
+      provide:"IGoogleLoginUsecase",
+      useClass:GoogleLoginUseCase,
+    },
     {
       provide: 'IAuthService',
       useClass: AuthService,

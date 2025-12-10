@@ -27,6 +27,8 @@ import { IUserRepository } from 'src/domain/repositories/user/user.repository.in
 import { ChangePassword } from 'src/application/dtos/change-password.dto';
 import { IRedisService } from 'src/domain/interfaces/redis-service.interface';
 import { NodemailerService } from 'src/infrastructure/utils/nodemailer.service';
+import { StatusCode } from 'src/domain/enums/status-code.enum';
+import { Role } from 'src/domain/enums/role.enum';
 @Injectable()
 export class AuthService implements IAuthUsecase {
   constructor(
@@ -288,11 +290,11 @@ export class AuthService implements IAuthUsecase {
     }
   }
 
-  async logout(userId: string): Promise<{ success: boolean }> {
+  async logout(userId: string): Promise<{ success:StatusCode,role:Role }> {
     try {
       const user = await this.authRepo.logout(userId);
       console.log(user, 'in logout');
-      return { success: user };
+      return { success: StatusCode.SUCCESS,role:user.role };
     } catch (err) {
       console.error('Logout service failed:', err);
       throw err;

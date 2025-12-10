@@ -13,6 +13,7 @@ import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
 import { IWalletTransactionRepository } from 'src/domain/repositories/wallet/wallet-transaction.repository.interface';
 import { WalletTransactionEnum } from 'src/domain/enums/wallet-transaction.enum';
 import { WalletTransferDto } from 'src/application/dtos/wallet-tranfer.dto';
+import { StatusCode } from 'src/domain/enums/status-code.enum';
 
 @Injectable()
 export class WalletUsecase implements IWalletUseCase {
@@ -56,15 +57,7 @@ export class WalletUsecase implements IWalletUseCase {
     bookingId: string,
     paymentStatus: PaymentStatus = PaymentStatus.SUCCEEDED,
   ): Promise<WalletDto | null> {
-    console.log(
-      balance,
-      'balance',
-      userId,
-      'userId',
-      category,
-      'Categoryyy00 in addBalance',
-    );
-
+  
     const existingWallet = await this._walletRepo.findByUserId(userId);
     console.log(existingWallet, 'existingWallet in addBalance');
     if (!existingWallet) {
@@ -130,6 +123,24 @@ export class WalletUsecase implements IWalletUseCase {
     console.log(updateWallet, 'wallet froo agency');
 
     return updateWallet;
+  }
+
+  async deductAgency(agencyId:string,deductAmount:number,status:PaymentStatus.PENDING|PaymentStatus.SUCCEEDED,bookingId:string):Promise<{ status: StatusCode } | null> {
+    const agencyUser = await this._agencyRepo.findById(agencyId)
+    if (!agencyUser) return null;
+    const wallet = await this._walletRepo.findByUserId(agencyUser.userId)
+    let walletTransaction = await this._walletTransactionRepo.findByBookingId(bookingId)
+    if(walletTransaction?.paymentStatus == PaymentStatus.PENDING){
+      let updateWalletTransaction = walletTransaction.updateWalletTransaction({status,deductAmount})
+       let c = await this._walletTransactionRepo.update(updateWalletTransaction.id,updateWalletTransaction)
+       console.log(c,'udoatewallettracnsactuinenety deduct');
+       
+    }
+    let updateWallet = wallet.updateWallet({balance:wallet.balance-deductAmount})
+    let d = await this._walletRepo.update(wallet.id,updateWallet)
+    console.log(d,'udedecut wallet amount ==========');
+    
+    return {status:StatusCode.SUCCESS}
   }
   async creditAdmin(
     earning: number,

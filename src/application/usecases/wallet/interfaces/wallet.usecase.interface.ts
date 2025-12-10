@@ -1,6 +1,7 @@
 import { WalletTransferDto } from 'src/application/dtos/wallet-tranfer.dto';
 import { WalletDto } from 'src/application/dtos/wallet.dto';
 import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
+import { StatusCode } from 'src/domain/enums/status-code.enum';
 import { WalletTransactionEnum } from 'src/domain/enums/wallet-transaction.enum';
 
 export interface IWalletUseCase {
@@ -24,4 +25,5 @@ export interface IWalletUseCase {
   findByUserId(userId: string): Promise<WalletDto | null>;
   getWalletSummary(userId: string);
   getRecentTransaction(userId: string);
+  deductAgency(agencyId:string,deductAmount:number,status:PaymentStatus.PENDING|PaymentStatus.SUCCEEDED,bookingId:string):Promise<{ status: StatusCode } | null>
 }

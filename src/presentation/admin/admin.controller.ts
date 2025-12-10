@@ -11,6 +11,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { PreferenceDto } from 'src/application/dtos/preferences.dto';
 import { IAdminRevenue } from 'src/application/usecases/admin/interfaces/admin-revenue.usecase.interface';
@@ -22,7 +23,13 @@ import { ICreatePayoutRequestUsecase } from 'src/application/usecases/payment/in
 import { AgencyStatus } from 'src/domain/enums/agency-status.enum';
 import { PayoutStatus } from 'src/domain/enums/payout-status.enum';
 import { ADMIN_TYPE } from 'src/domain/types';
+import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
+import { RolesGuard } from '../roles/auth.guard';
+import { Roles } from '../roles/roles.decorator';
+import { Role } from 'src/domain/enums/role.enum';
 
+@UseGuards(AccessTokenGuard,RolesGuard)
+@Roles(Role.Admin)
 @Controller('admin')
 export class AdminController {
   constructor(

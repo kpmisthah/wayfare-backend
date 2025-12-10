@@ -6,12 +6,12 @@ import { IWalletPaymentStatus } from 'src/application/usecases/payment/interface
 export class WalletSchedulerService {
   constructor(
     @Inject('IWalletPaymentStatus')
-    private readonly walletStatusService: IWalletPaymentStatus,
+    private readonly _walletStatusService: IWalletPaymentStatus,
   ) {}
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async handleDailyWalletRelease() {
-    console.log('⏱ Running daily wallet pending credit release...');
-    await this.walletStatusService.releasePendingCredits();
+    console.log('Running daily wallet pending credit release...');
+    await this._walletStatusService.releasePendingCredits();
   }
 }

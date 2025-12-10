@@ -14,7 +14,12 @@ import { CreateUserDto } from 'src/application/dtos/create-user.dto';
 import { UpdateUserDto } from 'src/application/dtos/update-user.dto';
 import { IUserUsecase } from 'src/application/usecases/users/interfaces/user.usecase.interface';
 import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
+import { RolesGuard } from '../roles/auth.guard';
+import { Roles } from '../roles/roles.decorator';
+import { Role } from 'src/domain/enums/role.enum';
 
+@UseGuards(AccessTokenGuard,RolesGuard)
+@Roles(Role.User)
 @Controller('users')
 export class UsersController {
   constructor(
@@ -45,8 +50,6 @@ export class UsersController {
   findByEmail(@Query('email') email: string) {
     return this.userService.findByEmail(email);
   }
-
-  @UseGuards(AccessTokenGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     console.log(updateUserDto, 'update dto in controller');
