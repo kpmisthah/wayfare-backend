@@ -8,8 +8,7 @@ import { ITripRepository } from 'src/domain/repositories/trip/trip.repository.in
 @Injectable()
 export class TripRepository
   extends BaseRepository<AiTripEntity>
-  implements ITripRepository
-{
+  implements ITripRepository {
   constructor(private _prisma: PrismaService) {
     super(_prisma.tripPlan, TripMapper);
   }
@@ -51,9 +50,22 @@ export class TripRepository
     destinations: string[],
     userId: string,
   ): Promise<AiTripEntity[]> {
+    // Build OR conditions for partial destination matching
+    // This allows "Goa" to match "Goa, India" and vice versa
+    const destinationConditions = destinations.map((dest) => {
+      // Extract the main destination name (before any comma)
+      const mainDestination = dest.split(',')[0].trim();
+      return {
+        destination: {
+          contains: mainDestination,
+          mode: 'insensitive' as const,
+        },
+      };
+    });
+
     const travellers = await this._prisma.tripPlan.findMany({
       where: {
-        destination: { in: destinations },
+        OR: destinationConditions,
         visibility: true,
         userId: { not: userId },
         user: {
@@ -61,17 +73,21 @@ export class TripRepository
             OR: [
               {
                 connectionsSent: {
-                  some: { receiverId: userId, status: 'ACCEPTED' },
+                  some: { receiverId: userId },
                 },
               },
               {
                 connectionsReceived: {
-                  some: { senderId: userId, status: 'ACCEPTED' },
+                  some: { senderId: userId },
                 },
               },
             ],
           },
         },
+      },
+      distinct: ['userId'], 
+      orderBy: {
+        startDate: 'desc',
       },
       include: {
         user: {
