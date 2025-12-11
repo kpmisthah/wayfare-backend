@@ -62,7 +62,7 @@ export class AuthService implements IAuthUsecase {
 
     @Inject('INodemailerService')
     private readonly nodemailerService: NodemailerService,
-  ) { }
+  ) {}
 
   async signUp(signupDto: SignupDto) {
     try {
@@ -74,7 +74,9 @@ export class AuthService implements IAuthUsecase {
         signupDto.password,
         signupDto.confirmPassword,
       );
-      this.logger.debug?.('Hashing password for signup', { email: signupDto.email });
+      this.logger.debug?.('Hashing password for signup', {
+        email: signupDto.email,
+      });
       const hashPassword = await this.hash(signupDto.password);
       await this.otpService.sendOtp(
         signupDto.email,
@@ -83,7 +85,9 @@ export class AuthService implements IAuthUsecase {
         signupDto.role,
         signupDto.mobile ?? '',
       );
-      this.logger.log('Signup OTP sent successfully', { email: signupDto.email });
+      this.logger.log('Signup OTP sent successfully', {
+        email: signupDto.email,
+      });
       return { message: 'Otp sent to your email verify that otp' };
     } catch (error) {
       this.logger.error('Signup failed', { email: signupDto.email, error });
@@ -130,7 +134,10 @@ export class AuthService implements IAuthUsecase {
     );
 
     await this.updateRefreshToken(user?.id, tokens?.refreshToken);
-    this.logger.log('User verified and created', { userId: user.id, email: user.email });
+    this.logger.log('User verified and created', {
+      userId: user.id,
+      email: user.email,
+    });
     return {
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
@@ -182,7 +189,10 @@ export class AuthService implements IAuthUsecase {
 
       return { message: 'New OTP sent successfully' };
     } catch (error) {
-      this.logger.error('Resend OTP failed', { email: resendOtpDto.email, error });
+      this.logger.error('Resend OTP failed', {
+        email: resendOtpDto.email,
+        error,
+      });
       throw error;
     }
   }

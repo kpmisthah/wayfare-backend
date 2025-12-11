@@ -59,25 +59,32 @@ export class BookingUseCase implements IBookingUseCase {
     private readonly _walletTransactionRepo: IWalletTransactionRepository,
     @Inject(ADMIN_TYPE.IAdminRepository)
     private readonly _adminRepo: IAdminRepository,
-  ) { }
+  ) {}
   @UseGuards(AccessTokenGuard)
   async createBooking(
     createBookingDto: BookingDto,
     userId: string,
   ): Promise<{ booking: CreateBookingDto; checkoutUrl: string } | null> {
-    this._logger.log('Creating booking', { userId, packageId: createBookingDto.packageId });
+    this._logger.log('Creating booking', {
+      userId,
+      packageId: createBookingDto.packageId,
+    });
 
     const bookingPackage = await this._packageRepo.findById(
       createBookingDto.packageId,
     );
     if (!bookingPackage) {
-      this._logger.error('Package not found', { packageId: createBookingDto.packageId });
+      this._logger.error('Package not found', {
+        packageId: createBookingDto.packageId,
+      });
       throw new Error('Package not found');
     }
 
     const agency = await this._agencyRepo.findById(bookingPackage.agencyId);
     if (!agency) {
-      this._logger.error('Agency not found', { agencyId: bookingPackage.agencyId });
+      this._logger.error('Agency not found', {
+        agencyId: bookingPackage.agencyId,
+      });
       return null;
     }
 
@@ -95,7 +102,10 @@ export class BookingUseCase implements IBookingUseCase {
 
     const booking = await this._bookingRepo.create(bookingEntity);
     if (!booking) {
-      this._logger.error('Failed to create booking', { userId, packageId: createBookingDto.packageId });
+      this._logger.error('Failed to create booking', {
+        userId,
+        packageId: createBookingDto.packageId,
+      });
       return null;
     }
 
@@ -103,7 +113,7 @@ export class BookingUseCase implements IBookingUseCase {
       bookingId: booking.id,
       userId,
       amount: booking.totalAmount,
-      paymentType: createBookingDto.paymentType
+      paymentType: createBookingDto.paymentType,
     });
 
     const handler = this._paymentRegistry.get(createBookingDto.paymentType!);
@@ -154,7 +164,16 @@ export class BookingUseCase implements IBookingUseCase {
     page: number;
     total: number;
   }> {
-    console.log(page, 'pageee', limit, 'limitttt', search, 'searchhh', status, 'statuss');
+    console.log(
+      page,
+      'pageee',
+      limit,
+      'limitttt',
+      search,
+      'searchhh',
+      status,
+      'statuss',
+    );
 
     const result = await this._bookingRepo.findByUserId(userId, {
       search,
@@ -221,12 +240,15 @@ export class BookingUseCase implements IBookingUseCase {
 
     const bookingEntity = await this._bookingRepo.findById(id);
     if (!bookingEntity) {
-      this._logger.warn('Booking not found for cancellation', { bookingId: id });
+      this._logger.warn('Booking not found for cancellation', {
+        bookingId: id,
+      });
       return null;
     }
 
     const travelStartDate = new Date(bookingEntity.travelDate);
-    const refundPercentage = RefundPolicyEntity.calculateRefund(travelStartDate);
+    const refundPercentage =
+      RefundPolicyEntity.calculateRefund(travelStartDate);
 
     const updateBookingStatus = bookingEntity.updateBooking({
       status: BookingStatus.CANCELLED,
@@ -241,7 +263,7 @@ export class BookingUseCase implements IBookingUseCase {
     this._logger.log('Booking cancelled', {
       bookingId: id,
       userId: bookingEntity.userId,
-      refundPercentage
+      refundPercentage,
     });
 
     if (refundPercentage > 0) {
@@ -250,7 +272,7 @@ export class BookingUseCase implements IBookingUseCase {
       this._logger.log('Processing refund', {
         bookingId: id,
         refundAmount,
-        refundPercentage
+        refundPercentage,
       });
 
       let existingWallet = await this._walletUsecase.findByUserId(
@@ -295,7 +317,7 @@ export class BookingUseCase implements IBookingUseCase {
       this._logger.log('Refund processed', {
         bookingId: id,
         userId: bookingEntity.userId,
-        refundAmount
+        refundAmount,
       });
     }
 

@@ -10,7 +10,7 @@ import {
   ForbiddenException,
   Patch,
 } from '@nestjs/common';
-import { Throttle, SkipThrottle } from '@nestjs/throttler';
+import { Throttle } from '@nestjs/throttler';
 import { LoginDto, SignupDto } from 'src/application/dtos/auth.dto';
 import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
 import { RefreshTokenGuard } from 'src/infrastructure/common/guard/refreshToken.guard';
@@ -36,11 +36,11 @@ export class AuthController {
     private readonly _userUsecase: IUserUsecase,
     @Inject('IGoogleLoginUsecase')
     private readonly _googleLoginUsecase: GoogleLoginUseCase,
-  ) { }
+  ) {}
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  async googleAuth() { }
+  async googleAuth() {}
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))

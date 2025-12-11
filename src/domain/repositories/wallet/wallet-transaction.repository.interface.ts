@@ -7,7 +7,12 @@ export interface IWalletTransactionRepository
     walletId: string,
     page?: number,
     limit?: number,
-  ): Promise<{ data: unknown[]; total: number; page: number; totalPages: number }>;
+  ): Promise<{
+    data: unknown[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }>;
   findAgencyByCredits(): Promise<WalletTransactionEntity[]>;
   getWalletSummary(agencyId: string): Promise<unknown>;
   getRecentAgencyWalletTransactions(

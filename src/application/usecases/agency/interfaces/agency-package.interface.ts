@@ -28,9 +28,7 @@ export interface IAgencyPackageService {
     limit: number,
     search?: string,
   ): Promise<{ data: PackageDto[]; total: number; totalPages: number }>;
-  filterPackages(
-    filterPackages: FilterPackageDto,
-  ): Promise<{
+  filterPackages(filterPackages: FilterPackageDto): Promise<{
     data: PackageDto[];
     total: number;
     page: number;

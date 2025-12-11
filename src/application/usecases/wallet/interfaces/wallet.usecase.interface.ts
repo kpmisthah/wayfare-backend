@@ -25,7 +25,12 @@ export interface IWalletUseCase {
     userId: string,
     page?: number,
     limit?: number,
-  ): Promise<{ data: WalletTransferDto[]; total: number; page: number; totalPages: number }>;
+  ): Promise<{
+    data: WalletTransferDto[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }>;
   findByUserId(userId: string): Promise<WalletDto | null>;
   getWalletSummary(userId: string): Promise<unknown>;
   getRecentTransaction(userId: string): Promise<unknown>;

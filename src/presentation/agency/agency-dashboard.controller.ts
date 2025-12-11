@@ -3,8 +3,6 @@ import {
   Get,
   UseGuards,
   Req,
-  HttpStatus,
-  Res,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';

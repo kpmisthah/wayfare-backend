@@ -182,7 +182,6 @@ export class AdminRevenueRepository implements IAdminRevenueRepository {
       take: limit,
     });
 
-    
     const data = transactions.map((tx) =>
       this.toDomainWithRelations(tx as WalletTransactionWithRelations),
     );

@@ -50,7 +50,6 @@ export class AgencyProfilService implements IAgencyProfileService {
   }
 
   async getAgencyProfile(): Promise<AgencyProfileDto[] | null> {
-    
     const agencies = await this.agencyProfileRepo.getAgencyProfile();
     if (!agencies) return null;
 

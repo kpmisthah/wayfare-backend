@@ -6,7 +6,7 @@ import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import { UnauthorizedExceptionFilter } from './infrastructure/filters/unauthorized.filter';
 import { json, urlencoded, Request, Response } from 'express';
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   // const customLoggerService = new Logging();

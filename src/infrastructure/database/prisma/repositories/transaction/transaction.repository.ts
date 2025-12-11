@@ -10,7 +10,8 @@ import { BookingStatus } from '@prisma/client';
 @Injectable()
 export class TransactionRepository
   extends BaseRepository<TransactionEntity>
-  implements ITransactionRepository {
+  implements ITransactionRepository
+{
   constructor(private readonly _prisma: PrismaService) {
     super(_prisma.transaction, TransactionMapper);
   }

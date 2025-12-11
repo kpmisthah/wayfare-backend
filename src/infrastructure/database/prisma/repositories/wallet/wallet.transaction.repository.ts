@@ -9,7 +9,8 @@ import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
 @Injectable()
 export class WalletTransactionRepository
   extends BaseRepository<WalletTransactionEntity>
-  implements IWalletTransactionRepository {
+  implements IWalletTransactionRepository
+{
   constructor(private readonly _prisma: PrismaService) {
     super(_prisma.walletTransaction, WalletTransactionMapper);
   }

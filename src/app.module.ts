@@ -33,10 +33,12 @@ const customLogger = new Logging();
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    ThrottlerModule.forRoot([{
-      ttl: 60000, 
-      limit: 10,  
-    }]),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 10,
+      },
+    ]),
 
     StripeModule.forRootAsync(),
     PrismaModule,
@@ -73,5 +75,4 @@ const customLogger = new Logging();
   ],
   exports: [WINSTON_MODULE_NEST_PROVIDER],
 })
-export class AppModule { }
-
+export class AppModule {}

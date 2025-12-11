@@ -24,14 +24,14 @@ import { Roles } from '../roles/roles.decorator';
 import { Response } from 'express';
 
 @Controller('booking')
-@UseGuards(AccessTokenGuard, RolesGuard) 
+@UseGuards(AccessTokenGuard, RolesGuard)
 export class BookingController {
   constructor(
     @Inject('IBookingUseCase')
     private readonly _bookingUseCase: IBookingUseCase,
     @Inject('ICreateCheckoutSessionUseCase')
     private readonly _createCheckoutSessionUseCase: ICreateCheckoutSession,
-  ) { }
+  ) {}
   @Post('/package')
   @Roles(Role.User)
   async createBooking(
@@ -54,14 +54,14 @@ export class BookingController {
   }
 
   @Get('/get-bookings')
-  @Roles(Role.Agency) 
+  @Roles(Role.Agency)
   async fetchBookings(@Req() req: RequestWithUser) {
     const userId = req.user['userId'];
     return await this._bookingUseCase.fetchBookings(userId);
   }
 
   @Get('/user')
-  @Roles(Role.User) 
+  @Roles(Role.User)
   async getUserBookings(
     @Req() req: RequestWithUser,
     @Query('page') page?: string,
@@ -82,14 +82,14 @@ export class BookingController {
   }
 
   @Post('/cancel/:id')
-  @Roles(Role.User) 
+  @Roles(Role.User)
   async cancelBooking(@Param('id') id: string) {
     console.log(id, 'in booking.controller.ts');
     return await this._bookingUseCase.cancelBooking(id);
   }
 
   @Patch('/update-status/:id')
-  @Roles(Role.Agency) 
+  @Roles(Role.Agency)
   async updateBookingStatus(
     @Param('id') bookingId: string,
     @Body() body: { status: BookingStatus },
@@ -105,7 +105,7 @@ export class BookingController {
     );
   }
   @Post('retry-payment')
-  @Roles(Role.User) 
+  @Roles(Role.User)
   async retryPayment(
     @Req() req: RequestWithUser,
     @Body() { bookingId }: { bookingId: string },
@@ -122,7 +122,7 @@ export class BookingController {
     return this._bookingUseCase.getUserBookingDetails(id);
   }
   @Get(':id/bookings')
-  @Roles(Role.Agency) 
+  @Roles(Role.Agency)
   async getBookings(
     @Param('id') packageId: string,
     @Query('page') page?: string,

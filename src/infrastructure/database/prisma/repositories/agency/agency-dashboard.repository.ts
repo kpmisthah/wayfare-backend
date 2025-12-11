@@ -3,9 +3,7 @@ import { PrismaService } from '../../prisma.service';
 import {
   IAgencyDashboardRepository,
   AgencyDashboardData,
-  DashboardStats,
   RecentBooking,
-  RecentReview,
 } from '../../../../../domain/repositories/agency/agency-dashboard.repository.interface';
 import { BookingStatus, PaymentStatus } from '@prisma/client';
 
@@ -29,10 +27,9 @@ export class AgencyDashboardRepository implements IAgencyDashboardRepository {
     const agencyId = agency.id;
     console.log(`[AgencyDashboard] Found agencyId: ${agencyId}`);
 
-    // 1. Stats
-    // Remove status filter for debugging if needed, but typically only ACTIVE packages count.
+
     const totalPackages = await this.prisma.package.count({
-      where: { agencyId }, // Relaxed filter: count all packages for now to see if data exists
+      where: { agencyId },
     });
     console.log(`[AgencyDashboard] Total Packages: ${totalPackages}`);
 
@@ -50,13 +47,12 @@ export class AgencyDashboardRepository implements IAgencyDashboardRepository {
       },
       where: {
         agencyId,
-        status: { in: [BookingStatus.COMPLETED, BookingStatus.CONFIRMED] }, // Include CONFIRMED for projected revenue
+        status: { in: [BookingStatus.COMPLETED, BookingStatus.CONFIRMED] }, 
       },
     });
     const totalRevenue = revenueResult._sum.agencyEarning || 0;
     console.log(`[AgencyDashboard] Total Revenue: ${totalRevenue}`);
 
-    // 2. Recent Bookings (Limit 5)
     const bookings = await this.prisma.booking.findMany({
       where: { agencyId },
       take: 5,
@@ -69,7 +65,7 @@ export class AgencyDashboardRepository implements IAgencyDashboardRepository {
     console.log(`[AgencyDashboard] Found ${bookings.length} recent bookings`);
 
     const recentBookings: RecentBooking[] = bookings.map((b) => ({
-      id: b.bookingCode || b.id, // Prefer bookingCode if available
+      id: b.bookingCode || b.id, 
       customerName: b.user.name,
       destination: b.package?.destination || 'Unknown',
       date: b.createdAt,
@@ -82,10 +78,10 @@ export class AgencyDashboardRepository implements IAgencyDashboardRepository {
         totalPackages,
         activeBookings,
         totalRevenue,
-        happyCustomers: 0, // Removed feature
+        happyCustomers: 0, 
       },
       recentBookings,
-      recentReviews: [], // Removed feature
+      recentReviews: [], 
     };
   }
 }

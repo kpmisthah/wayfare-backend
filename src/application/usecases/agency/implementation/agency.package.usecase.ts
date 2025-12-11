@@ -33,7 +33,7 @@ export class AgencyPackageService implements IAgencyPackageService {
     private readonly _userRepo: IUserRepository,
     @Inject('ITransportationRepository')
     private readonly _transportationRepo: ITransportationRepository,
-  ) { }
+  ) {}
   async addPackages(
     addPackageDto: PackageDto,
     userId: string,
@@ -242,9 +242,7 @@ export class AgencyPackageService implements IAgencyPackageService {
     return AgencyMapper.toPackageDto(pack, itinerary, trans ?? undefined);
   }
 
-  async filterPackages(
-    filterPackages: FilterPackageDto,
-  ): Promise<{
+  async filterPackages(filterPackages: FilterPackageDto): Promise<{
     data: PackageDto[];
     total: number;
     page: number;
@@ -280,7 +278,10 @@ export class AgencyPackageService implements IAgencyPackageService {
     }
 
     // Duration filter (short: 1-3, medium: 4-7, long: 8+)
-    if (filterPackages.durationFilter && filterPackages.durationFilter !== 'all') {
+    if (
+      filterPackages.durationFilter &&
+      filterPackages.durationFilter !== 'all'
+    ) {
       packageRepo = packageRepo.filter((pkg) => {
         if (filterPackages.durationFilter === 'short') {
           return pkg.duration <= 3;

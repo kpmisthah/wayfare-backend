@@ -70,29 +70,29 @@ export class WalletMapper {
       agencyId: transaction.agencyId ?? undefined,
       booking: transaction.booking
         ? {
-          id: transaction.booking.id,
-          bookingCode: transaction.booking.bookingCode,
-          travelDate: transaction.booking.travelDate,
-          package: transaction.booking.package
-            ? {
-              id: transaction.booking.package.id,
-              itineraryName:
-                transaction.booking.package.itineraryName ?? undefined,
-              destination:
-                transaction.booking.package.destination ?? undefined,
-            }
-            : undefined,
-        }
+            id: transaction.booking.id,
+            bookingCode: transaction.booking.bookingCode,
+            travelDate: transaction.booking.travelDate,
+            package: transaction.booking.package
+              ? {
+                  id: transaction.booking.package.id,
+                  itineraryName:
+                    transaction.booking.package.itineraryName ?? undefined,
+                  destination:
+                    transaction.booking.package.destination ?? undefined,
+                }
+              : undefined,
+          }
         : undefined,
       agency: transaction.agency
         ? {
-          id: transaction.agency.id,
-          user: transaction.agency.user
-            ? {
-              name: transaction.agency.user.name,
-            }
-            : undefined,
-        }
+            id: transaction.agency.id,
+            user: transaction.agency.user
+              ? {
+                  name: transaction.agency.user.name,
+                }
+              : undefined,
+          }
         : undefined,
     };
   }

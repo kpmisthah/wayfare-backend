@@ -25,7 +25,7 @@ export class WalletUsecase implements IWalletUseCase {
     private readonly _adminRepo: IAdminRepository,
     @Inject('IWalletTransactionRepo')
     private readonly _walletTransactionRepo: IWalletTransactionRepository,
-  ) { }
+  ) {}
   async createWallet(balance: number, userId: string): Promise<WalletDto> {
     console.log(userId, 'userId');
 

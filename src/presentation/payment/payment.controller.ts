@@ -24,7 +24,7 @@ export class PaymentController {
     private readonly _bookingUsecase: IBookingUseCase,
     @Inject('ICreatePayoutRequestUsecase')
     private readonly _payoutRequestUsecase: ICreatePayoutRequestUsecase,
-  ) { }
+  ) {}
 
   @Get(':id')
   @Roles(Role.User, Role.Agency) // Both can verify payments

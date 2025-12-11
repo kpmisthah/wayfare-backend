@@ -32,7 +32,7 @@ export class ProfileController {
 
     @Inject('IUploadProfileUsecase')
     private readonly uploadProfile: UploadProfileUseCase,
-  ) { }
+  ) {}
 
   @Get('/profile')
   async getProfileData(@Req() req: RequestWithUser) {
@@ -73,7 +73,10 @@ export class ProfileController {
     return { imageUrl };
   }
   @Put('/update-profile-image')
-  async updateProfileImage(@Req() req: RequestWithUser, @Body('imageUrl') imageUrl: string) {
+  async updateProfileImage(
+    @Req() req: RequestWithUser,
+    @Body('imageUrl') imageUrl: string,
+  ) {
     console.log('profile controller');
     const userId = req.user['userId'];
     console.log(userId, 'profile controller l userId');

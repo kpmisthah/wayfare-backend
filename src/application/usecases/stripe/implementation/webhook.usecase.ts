@@ -19,7 +19,7 @@ export class StripeWebhookUsecase {
     private readonly _bookingRepo: IBookingRepository,
     @Inject('IWalletUseCase')
     private readonly _walletUseCase: IWalletUseCase,
-  ) { }
+  ) {}
 
   async handle(rawBody: Buffer, sig: string, secret: string) {
     const event = this._paymentProvider.constructEvent(rawBody, sig, secret);
@@ -38,7 +38,9 @@ export class StripeWebhookUsecase {
         const session = event.data.object;
 
         if (session.payment_status !== 'paid') {
-          this._logger.warn(`Session completed but not paid`, { sessionId: session.id });
+          this._logger.warn(`Session completed but not paid`, {
+            sessionId: session.id,
+          });
           break;
         }
 
@@ -48,11 +50,17 @@ export class StripeWebhookUsecase {
           break;
         }
 
-        this._logger.log('Payment successful - Processing booking', { bookingId, sessionId: session.id });
+        this._logger.log('Payment successful - Processing booking', {
+          bookingId,
+          sessionId: session.id,
+        });
 
-        const TransactionEntity = await this._transactionRepo.findByBookingId(bookingId);
+        const TransactionEntity =
+          await this._transactionRepo.findByBookingId(bookingId);
         if (!TransactionEntity) {
-          this._logger.error('Transaction not found for booking', { bookingId });
+          this._logger.error('Transaction not found for booking', {
+            bookingId,
+          });
           return null;
         }
 
@@ -67,10 +75,14 @@ export class StripeWebhookUsecase {
         );
 
         if (updateTransactionStatus?.status == PaymentStatus.SUCCEEDED) {
-          const bookingEntity = await this._bookingRepo.findById(updateTransaction.bookingId);
+          const bookingEntity = await this._bookingRepo.findById(
+            updateTransaction.bookingId,
+          );
 
           if (!bookingEntity) {
-            this._logger.error('Booking not found after payment success', { bookingId });
+            this._logger.error('Booking not found after payment success', {
+              bookingId,
+            });
             return null;
           }
 
@@ -78,13 +90,21 @@ export class StripeWebhookUsecase {
             status: BookingStatus.CONFIRMED,
           });
 
-          const updatedBooking = await this._bookingRepo.update(bookingEntity.id, updateBooking);
+          const updatedBooking = await this._bookingRepo.update(
+            bookingEntity.id,
+            updateBooking,
+          );
           if (!updatedBooking) {
-            this._logger.error('Failed to update booking status', { bookingId });
+            this._logger.error('Failed to update booking status', {
+              bookingId,
+            });
             return null;
           }
 
-          this._logger.log('Booking confirmed', { bookingId, status: BookingStatus.CONFIRMED });
+          this._logger.log('Booking confirmed', {
+            bookingId,
+            status: BookingStatus.CONFIRMED,
+          });
 
           // Credit agency wallet
           const agencyWalletStatus = bookingEntity.getAgencyCreditStatus();
@@ -96,7 +116,7 @@ export class StripeWebhookUsecase {
           );
           this._logger.log('Agency credited', {
             agencyId: bookingEntity.agencyId,
-            amount: bookingEntity.agencyEarning
+            amount: bookingEntity.agencyEarning,
           });
 
           // Credit platform wallet
@@ -104,7 +124,9 @@ export class StripeWebhookUsecase {
             bookingEntity.platformEarning,
             bookingEntity.id,
           );
-          this._logger.log('Platform credited', { amount: bookingEntity.platformEarning });
+          this._logger.log('Platform credited', {
+            amount: bookingEntity.platformEarning,
+          });
         }
         break;
       }
@@ -113,22 +135,32 @@ export class StripeWebhookUsecase {
         const session = event.data.object;
         const bookingId = session.metadata?.bookingId;
 
-        this._logger.warn('Checkout session expired', { sessionId: session.id, bookingId });
+        this._logger.warn('Checkout session expired', {
+          sessionId: session.id,
+          bookingId,
+        });
 
         if (!bookingId) {
           this._logger.warn('No bookingId in expired session metadata');
           break;
         }
 
-        const TransactionEntity = await this._transactionRepo.findByBookingId(bookingId);
+        const TransactionEntity =
+          await this._transactionRepo.findByBookingId(bookingId);
         if (!TransactionEntity) return null;
 
         const updateTransaction = TransactionEntity.update({
           bookingId,
           status: PaymentStatus.FAILED,
         });
-        await this._transactionRepo.update(TransactionEntity.id, updateTransaction);
-        this._logger.log('Transaction marked as failed', { bookingId, transactionId: TransactionEntity.id });
+        await this._transactionRepo.update(
+          TransactionEntity.id,
+          updateTransaction,
+        );
+        this._logger.log('Transaction marked as failed', {
+          bookingId,
+          transactionId: TransactionEntity.id,
+        });
         break;
       }
 
@@ -139,4 +171,3 @@ export class StripeWebhookUsecase {
     return { received: true };
   }
 }
-

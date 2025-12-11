@@ -27,7 +27,7 @@ export class TripController {
     private readonly _generateAndSaveTrip: IGenerateAndSaveTrip,
     @Inject('IAiTripPlanUsecase')
     private readonly _tripPlan: IAiTripPlanUsecase,
-  ) { }
+  ) {}
 
   @Post('generate')
   async generateTripPlan(

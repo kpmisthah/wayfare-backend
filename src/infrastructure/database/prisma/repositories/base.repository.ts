@@ -1,12 +1,9 @@
 import { Injectable } from '@nestjs/common';
-// import { PrismaService } from "../prisma.service";
 
 export interface IMapper<T, U> {
   toPrisma(entity: T): U;
   toDomain(data: unknown): T;
 }
-
-// Using 'any' to allow Prisma delegates to satisfy this interface
 
 export interface IModel<U = any> {
   create(args: any): Promise<unknown>;

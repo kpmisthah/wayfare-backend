@@ -59,7 +59,7 @@ export class AgencyController {
     private readonly _bankingDetailsUsecase: IBankingDetailsUsecase,
     @Inject('IWalletUseCase')
     private readonly _walletUseCase: IWalletUseCase,
-  ) { }
+  ) {}
   @Post('/agency-profile')
   async createAgencyProfile(
     @Body() createAgencyDto: CreateAgencyDto,

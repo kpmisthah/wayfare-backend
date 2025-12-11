@@ -13,7 +13,7 @@ export class WalletController {
   constructor(
     @Inject('IWalletUseCase')
     private readonly _walletUseCase: IWalletUseCase,
-  ) { }
+  ) {}
 
   @Get()
   getWallet(@Req() req: RequestWithUser) {
