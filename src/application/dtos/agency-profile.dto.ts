@@ -2,7 +2,8 @@ export class AgencyProfileDto {
   id: string;
   description: string | null;
   // isBlock: boolean;
-  // phone: string;
+  phone: string;
+  email: string;
   address: string | null;
   licenseNumber?: string;
   ownerName?: string;
@@ -12,5 +13,6 @@ export class AgencyProfileDto {
     email: string;
     verified: boolean;
     profileImage: string;
+    bannerImage: string;
   };
 }

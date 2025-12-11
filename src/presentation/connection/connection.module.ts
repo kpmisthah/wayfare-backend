@@ -8,7 +8,11 @@ import { ChatModule } from '../chat/chat.module';
 import { NotificationModule } from '../notification/notification.module';
 
 @Module({
-  imports: [ConversationModule, forwardRef(() => ChatModule),NotificationModule],
+  imports: [
+    ConversationModule,
+    forwardRef(() => ChatModule),
+    NotificationModule,
+  ],
   controllers: [ConnectionController],
   providers: [
     {

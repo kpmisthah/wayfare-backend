@@ -17,6 +17,8 @@ export class AgencyEntity {
     private readonly _websiteUrl?: string,
     private readonly _transactionId?: string | null,
     private readonly _reason?: string | null,
+    private readonly _bannerImage?: string | null,
+    private readonly _profileImage?: string | null,
   ) {}
 
   static create(props: {
@@ -154,5 +156,11 @@ export class AgencyEntity {
   }
   get reason() {
     return this._reason;
+  }
+  get bannerImage() {
+    return this._bannerImage;
+  }
+  get profileImage() {
+    return this._profileImage;
   }
 }

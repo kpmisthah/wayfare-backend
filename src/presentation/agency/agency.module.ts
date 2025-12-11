@@ -13,10 +13,22 @@ import { BankingDetailsUsecase } from 'src/application/usecases/agency/implement
 import { WalletModule } from '../wallet/wallet.module';
 // import { SearchModule } from 'src/infrastructure/elastic-search/elastic-search.module';
 
+import { AgencyDashboardController } from './agency-dashboard.controller';
+import { AgencyDashboardUseCase } from 'src/application/usecases/agency/implementation/agency-dashboard.usecase';
+import { AgencyDashboardRepository } from 'src/infrastructure/database/prisma/repositories/agency/agency-dashboard.repository';
+
 @Module({
   imports: [CloudinaryModule, UsersModule, AdminModule, WalletModule],
-  controllers: [AgencyController],
+  controllers: [AgencyDashboardController, AgencyController],
   providers: [
+    {
+      provide: 'IAgencyDashboardRepository',
+      useClass: AgencyDashboardRepository,
+    },
+    {
+      provide: AgencyDashboardUseCase,
+      useClass: AgencyDashboardUseCase,
+    },
     {
       provide: 'IAgencyService',
       useClass: AgencyService,

@@ -29,7 +29,9 @@ export class TravellersUsecase implements ITravellersUsecase {
       tripPlan.map((trip) => this._userRepo.findById(trip.userId)),
     );
     const userProfile = await Promise.all(
-      users.map((user) => user && this._profileRepo.findByUserId(user.id)),
+      users.map((user) =>
+        user ? this._profileRepo.findByUserId(user.id) : Promise.resolve(null),
+      ),
     );
     return TravellersMapper.toTravellersDto(users, tripPlan, userProfile);
   }

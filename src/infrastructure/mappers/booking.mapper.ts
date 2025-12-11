@@ -21,7 +21,7 @@ export class BookingMapper {
       booking.commissionRate,
       booking.platformEarning,
       booking.agencyEarning,
-      BookingCode.fromString(booking.bookingCode)
+      BookingCode.fromString(booking.bookingCode),
     );
   }
 
@@ -39,7 +39,7 @@ export class BookingMapper {
       commissionRate: booking.commission,
       platformEarning: booking.platformEarning,
       agencyEarning: booking.agencyEarning,
-      bookingCode:booking.bookingCode.toString()
+      bookingCode: booking.bookingCode.toString(),
     };
   }
 

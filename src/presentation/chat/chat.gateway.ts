@@ -24,6 +24,20 @@ interface AuthenticatedSocket extends Socket {
   userId: string;
 }
 
+interface Group {
+  id: string;
+  name?: string;
+}
+
+interface ChatMessage {
+  id?: string;
+  content: string;
+  senderId: string;
+  conversationId?: string;
+  groupId?: string;
+  createdAt?: Date;
+}
+
 @WebSocketGateway({
   cors: { origin: 'http://localhost:3000', credentials: true },
   path: '/ws',
@@ -35,7 +49,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     @Inject(forwardRef(() => 'IChatUsecase'))
     private readonly _chatUsecase: ChatUsecase,
-  ) { }
+  ) {}
   afterInit(server: Server) {
     server.use((socket: Socket, next) => {
       const cookies = cookie.parse(socket.handshake.headers.cookie || '');
@@ -58,7 +72,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
 
         (socket as AuthenticatedSocket).userId = userId;
-        socket.join(userId);
+        void socket.join(userId);
         console.log(`Authenticated socket ${socket.id} → user ${userId}`);
         next(); // success
       } catch (err) {
@@ -95,13 +109,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
   }
   async handleConnection(client: Socket) {
-    const userId = (client as any).userId;
+    const userId = (client as unknown as AuthenticatedSocket).userId;
     if (!userId) {
       console.log(`Unauthorized socket ${client.id} → disconnecting`);
       client.disconnect(true);
       return;
     }
-    client.join(userId);
+    void client.join(userId);
     console.log(`User ${userId} connected with socket ${client.id}`);
     client.broadcast.emit('userOnline', { userId });
     try {
@@ -110,11 +124,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         groups,
         'ee grp s l entha vera noikknmonmofffdsdfsdfsd---0123024===================',
       );
-      groups.forEach((group: any) => {
-        client.join(group.id);
+      groups.forEach((group: Group) => {
+        void client.join(group.id);
         console.log(`[AUTO-JOIN] ${userId} → group ${group.id}`);
       });
-      client.join(userId);
+      void client.join(userId);
     } catch (err) {
       console.error('Failed to fetch groups on connect:', err);
     }
@@ -122,9 +136,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.server.emit('userOffline', {
         userId,
         lastSeen: new Date().toISOString(),
-
       });
-      this._chatUsecase.updateLastSeen(userId, new Date()).catch(console.error);
+      void this._chatUsecase
+        .updateLastSeen(userId, new Date())
+        .catch(console.error);
     });
   }
 
@@ -148,7 +163,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   broadcastMessageToChat(
     conversationId: string,
-    message: any,
+    message: ChatMessage,
     receiverId?: string,
   ) {
     this.server.to(conversationId).emit('newMessage', message);
@@ -174,7 +189,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return;
     }
     if (!client.rooms.has(roomId)) {
-      client.join(roomId);
+      void client.join(roomId);
       console.log(`[JOIN] Client ${client.id} → room: ${roomId}`);
       console.log('Rooms:', client.rooms); // <-- debug
       console.log(
@@ -196,7 +211,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     const roomId = payload.conversationId || payload.groupId;
     if (roomId) {
-      client.leave(roomId);
+      void client.leave(roomId);
     }
     // client.emit('left', { conversationId: payload.conversationId });
   }
@@ -213,7 +228,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log(
       `[GATEWAY] Message received: "${data.content}" from socket ${client.id}`,
     );
-    const senderId = (client as any).userId;
+    const senderId = (client as unknown as AuthenticatedSocket).userId;
     console.log(senderId, 'sernderIdddd');
     console.log(`[GATEWAY] Message from ${senderId}:`, data.content);
     console.log(`         → conversationId: ${data.conversationId || 'null'}`);
@@ -243,7 +258,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       // this.server.to(data.conversationId).emit('receiveMessage', saved);
 
       const messageWithStatus = { ...saved, status: 'sent' };
-      this.server.to(data.conversationId).emit('receiveMessage', messageWithStatus);
+      this.server
+        .to(data.conversationId)
+        .emit('receiveMessage', messageWithStatus);
       console.log('emit event sender');
       // client.to(data.conversationId).emit('receiveMessage', saved);
     }
@@ -266,7 +283,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       conversationId: data.conversationId,
       groupId: data.groupId,
       messageIds: data.messageIds,
-      readerId: (client as any).userId,
+      readerId: (client as unknown as AuthenticatedSocket).userId,
     });
   }
   @SubscribeMessage('startCall')
@@ -277,10 +294,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       toUserId: string;
       conversationId: string;
       callType: 'video' | 'audio';
-      signalData: any;
+      signalData: unknown;
     },
   ) {
-    const fromUserId = (client as any).userId;
+    const fromUserId = (client as AuthenticatedSocket).userId;
     console.log(
       `----------<><><>${fromUserId} is calling ${data.toUserId} (${data.callType})----------------->`,
     );
@@ -298,9 +315,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('acceptCall')
   handleAcceptCall(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { callerId: string; signal: any },
+    @MessageBody() data: { callerId: string; signal: unknown },
   ) {
-    console.log(`Call accepted by ${(client as any).userId}`);
+    console.log(`Call accepted by ${(client as AuthenticatedSocket).userId}`);
     this.server.to(data.callerId).emit('callAccepted', { signal: data.signal });
   }
   @SubscribeMessage('rejectCall')

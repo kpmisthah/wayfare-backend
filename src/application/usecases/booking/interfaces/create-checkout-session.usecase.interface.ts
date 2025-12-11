@@ -1,5 +1,3 @@
-import { RetryPaymentDto } from 'src/application/dtos/retry-payment.dto';
-
 export interface ICreateCheckoutSession {
   execute(
     command: {

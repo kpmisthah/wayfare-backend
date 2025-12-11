@@ -2,14 +2,14 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 // import * as cookieParser from 'cookie-parser'
-import { Logging } from './infrastructure/core/custom-logger';
+
 import helmet from 'helmet';
 import { UnauthorizedExceptionFilter } from './infrastructure/filters/unauthorized.filter';
-import { json, urlencoded } from 'express';
-const cookieParser = require('cookie-parser');
+import { json, urlencoded, Request, Response } from 'express';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
-  const customLoggerService = new Logging();
+  // const customLoggerService = new Logging();
   try {
     // const app = await NestFactory.create(AppModule, {
     //   logger: WinstonModule.createLogger(
@@ -21,7 +21,11 @@ async function bootstrap() {
     // app.useGlobalFilters(new GlobalExceptionFilter());
     app.use(
       json({
-        verify: (req: any, res, buf) => {
+        verify: (
+          req: Request & { rawBody?: string },
+          res: Response,
+          buf: Buffer,
+        ) => {
           if (req.originalUrl.includes('/webhook')) {
             req.rawBody = buf.toString();
           }
@@ -32,7 +36,11 @@ async function bootstrap() {
     app.use(
       urlencoded({
         extended: true,
-        verify: (req: any, res, buf) => {
+        verify: (
+          req: Request & { rawBody?: string },
+          res: Response,
+          buf: Buffer,
+        ) => {
           if (req.originalUrl.includes('/webhook')) {
             req.rawBody = buf.toString();
           }
@@ -63,4 +71,4 @@ async function bootstrap() {
   }
 }
 
-bootstrap();
+void bootstrap();

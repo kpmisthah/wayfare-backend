@@ -5,11 +5,11 @@ import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
 import { IBookingRepository } from 'src/domain/repositories/booking/booking.repository';
 import { BookingStatus } from 'src/domain/enums/booking-status.enum';
 import { IWalletUseCase } from '../../wallet/interfaces/wallet.usecase.interface';
-import Stripe from 'stripe';
 
 @Injectable()
 export class StripeWebhookUsecase {
   private readonly _logger = new Logger(StripeWebhookUsecase.name);
+
   constructor(
     @Inject('IStripeService')
     private readonly _paymentProvider: PaymentProvider,
@@ -19,9 +19,12 @@ export class StripeWebhookUsecase {
     private readonly _bookingRepo: IBookingRepository,
     @Inject('IWalletUseCase')
     private readonly _walletUseCase: IWalletUseCase,
-  ) {}
+  ) { }
+
   async handle(rawBody: Buffer, sig: string, secret: string) {
     const event = this._paymentProvider.constructEvent(rawBody, sig, secret);
+
+    // Ignore legacy Stripe events
     if (
       event.type.startsWith('payment_intent.') ||
       event.type.startsWith('charge.')
@@ -29,90 +32,111 @@ export class StripeWebhookUsecase {
       this._logger.log(`Ignored legacy event: ${event.type}`);
       return { received: true };
     }
+
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object;
-        // console.log(intent,'intent...................');
+
         if (session.payment_status !== 'paid') {
-          this._logger.warn(`Session completed but not paid: ${session.id}`);
+          this._logger.warn(`Session completed but not paid`, { sessionId: session.id });
           break;
         }
-        // this._logger.log(`Payment succeeded for ${intent.id}`);
+
         const bookingId = session.metadata?.bookingId;
         if (!bookingId) {
-          this._logger.warn('No bookingId in metadata');
+          this._logger.warn('Checkout completed but no bookingId in metadata');
           break;
         }
-        const TransactionEntity =
-          await this._transactionRepo.findByBookingId(bookingId);
-        if (!TransactionEntity) return null;
+
+        this._logger.log('Payment successful - Processing booking', { bookingId, sessionId: session.id });
+
+        const TransactionEntity = await this._transactionRepo.findByBookingId(bookingId);
+        if (!TransactionEntity) {
+          this._logger.error('Transaction not found for booking', { bookingId });
+          return null;
+        }
+
         const updateTransaction = TransactionEntity.update({
           bookingId: bookingId,
           status: PaymentStatus.SUCCEEDED,
         });
-        console.log(updateTransaction, 'updateTransactino');
 
         const updateTransactionStatus = await this._transactionRepo.update(
           TransactionEntity.id,
           updateTransaction,
         );
-        console.log(updateTransactionStatus, 'updateTransactionStatus');
 
         if (updateTransactionStatus?.status == PaymentStatus.SUCCEEDED) {
-          const bookingEntity = await this._bookingRepo.findById(
-            updateTransaction.bookingId,
-          );
-          console.log(bookingEntity, 'bookingEntity in stripeWebhook');
+          const bookingEntity = await this._bookingRepo.findById(updateTransaction.bookingId);
 
-          if (!bookingEntity) return null;
+          if (!bookingEntity) {
+            this._logger.error('Booking not found after payment success', { bookingId });
+            return null;
+          }
+
           const updateBooking = bookingEntity.updateBooking({
             status: BookingStatus.CONFIRMED,
           });
-          const u = await this._bookingRepo.update(
-            bookingEntity.id,
-            updateBooking,
-          );
-          if (!u) return null;
-          console.log(updateBooking, 'updateBooking');
-          //wallet creation for admin
+
+          const updatedBooking = await this._bookingRepo.update(bookingEntity.id, updateBooking);
+          if (!updatedBooking) {
+            this._logger.error('Failed to update booking status', { bookingId });
+            return null;
+          }
+
+          this._logger.log('Booking confirmed', { bookingId, status: BookingStatus.CONFIRMED });
+
+          // Credit agency wallet
           const agencyWalletStatus = bookingEntity.getAgencyCreditStatus();
-          const agencyWallet = await this._walletUseCase.creditAgency(
+          await this._walletUseCase.creditAgency(
             bookingEntity.agencyId,
             bookingEntity.agencyEarning,
             agencyWalletStatus,
             bookingEntity.id,
           );
-          console.log(agencyWallet, 'agencyWallet in agencyEWsllaer stripe');
+          this._logger.log('Agency credited', {
+            agencyId: bookingEntity.agencyId,
+            amount: bookingEntity.agencyEarning
+          });
 
-          const platformWallet = await this._walletUseCase.creditAdmin(
+          // Credit platform wallet
+          await this._walletUseCase.creditAdmin(
             bookingEntity.platformEarning,
             bookingEntity.id,
           );
-          console.log(platformWallet, 'platform wallet in stripe');
+          this._logger.log('Platform credited', { amount: bookingEntity.platformEarning });
         }
         break;
       }
+
       case 'checkout.session.expired': {
-        console.log('faieeeeeed aayoooooooooooooo');
         const session = event.data.object;
         const bookingId = session.metadata?.bookingId;
+
+        this._logger.warn('Checkout session expired', { sessionId: session.id, bookingId });
+
         if (!bookingId) {
-          this._logger.warn('No bookingId in metadata');
+          this._logger.warn('No bookingId in expired session metadata');
           break;
         }
-        const TransactionEntity =
-          await this._transactionRepo.findByBookingId(bookingId);
+
+        const TransactionEntity = await this._transactionRepo.findByBookingId(bookingId);
         if (!TransactionEntity) return null;
+
         const updateTransaction = TransactionEntity.update({
           bookingId,
           status: PaymentStatus.FAILED,
         });
-        await this._transactionRepo.update(bookingId, updateTransaction);
+        await this._transactionRepo.update(TransactionEntity.id, updateTransaction);
+        this._logger.log('Transaction marked as failed', { bookingId, transactionId: TransactionEntity.id });
         break;
       }
+
       default:
-        this._logger.log(`Unhandled event type ${event.type}`);
+        this._logger.log(`Unhandled event type: ${event.type}`);
     }
+
     return { received: true };
   }
 }
+

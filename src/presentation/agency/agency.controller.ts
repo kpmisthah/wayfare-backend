@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  DefaultValuePipe,
   Get,
   Inject,
   Param,
@@ -10,14 +9,16 @@ import {
   Put,
   Query,
   Req,
-  Res,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { PackageDto } from 'src/application/dtos/add-package.dto';
+import { AgencyProfileDto } from 'src/application/dtos/agency-profile.dto';
+import { itineraryDto } from 'src/application/dtos/create-itenerary.dto';
 import { UpdateAgencyProfileDto } from 'src/application/dtos/update-agency-profile.dto';
+import { AgencyManagementDto } from 'src/application/dtos/agency-management.dto';
 import { IAgencyPackageService } from 'src/application/usecases/agency/interfaces/agency-package.interface';
 import { IAgencyProfileService } from 'src/application/usecases/agency/interfaces/agency-profile.service.usecase';
 import { IAgencyService } from 'src/application/usecases/agency/interfaces/agency.usecase.interface';
@@ -42,7 +43,7 @@ import { Roles } from '../roles/roles.decorator';
 import { Role } from 'src/domain/enums/role.enum';
 
 @Controller('agency')
-@UseGuards(AccessTokenGuard,RolesGuard)
+@UseGuards(AccessTokenGuard, RolesGuard)
 @Roles(Role.Agency)
 export class AgencyController {
   constructor(
@@ -58,13 +59,12 @@ export class AgencyController {
     private readonly _bankingDetailsUsecase: IBankingDetailsUsecase,
     @Inject('IWalletUseCase')
     private readonly _walletUseCase: IWalletUseCase,
-  ) {}
+  ) { }
   @Post('/agency-profile')
   async createAgencyProfile(
     @Body() createAgencyDto: CreateAgencyDto,
     @Req() req: RequestWithUser,
   ) {
-    console.log('ee router l thanne aano avruune');
     const agencyId = req.user['userId'];
     console.log(createAgencyDto, 'update agency profile dto');
     return await this._agencyUsecase.createAgency(createAgencyDto, agencyId);
@@ -83,7 +83,7 @@ export class AgencyController {
   }
 
   @Get('/agency-profile')
-  async getAgencyProfile() {
+  async getAgencyProfile(): Promise<AgencyProfileDto[] | null> {
     return await this._agencyProfileUsecase.getAgencyProfile();
   }
 
@@ -99,7 +99,9 @@ export class AgencyController {
 
     const parsedBody: PackageDto = {
       ...addPackageDto,
-      itinerary: JSON.parse(addPackageDto.itinerary as unknown as string),
+      itinerary: JSON.parse(
+        addPackageDto.itinerary as unknown as string,
+      ) as itineraryDto[],
     };
     console.log(parsedBody, 'parsedBodyyyyyyyy');
     return await this._agencyPackageUsecase.addPackages(
@@ -114,11 +116,17 @@ export class AgencyController {
     @Req() req: RequestWithUser,
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '5',
+    @Query('search') search?: string,
   ) {
     console.log('get adikkndooo-------------------------');
 
     const userId = req.user['userId'];
-    return await this._agencyPackageUsecase.getPackages(userId, +page, +limit);
+    return await this._agencyPackageUsecase.getPackages(
+      userId,
+      +page,
+      +limit,
+      search,
+    );
   }
 
   @Get('/agencyPackages')
@@ -138,7 +146,10 @@ export class AgencyController {
     return this._agencyUsecase.getAllAgencies();
   }
   @Get('/filter/packages')
-  async filterPackages(@Query() filterPackageDto: FilterPackageDto) {
+  async filterPackages(
+    @Query() filterPackageDto: FilterPackageDto,
+  ): Promise<any> {
+    // Update return type in interface first if possible
     console.log('hello');
 
     return await this._agencyPackageUsecase.filterPackages(filterPackageDto);
@@ -179,7 +190,11 @@ export class AgencyController {
     @Query('page') page: string,
     @Query('limit') limit: string,
     @Query('sortBy') sortBy: string,
-  ) {
+  ): Promise<{
+    data: AgencyManagementDto[];
+    totalPages: number;
+    currentPage: number;
+  } | null> {
     const pageNum = parseInt(page) || 1;
     const limitNum = parseInt(limit) || 6;
     return this._agencyUsecase.searchAgencies(query, pageNum, limitNum, sortBy);
@@ -191,7 +206,7 @@ export class AgencyController {
     return await this._walletUseCase.getWalletSummary(userId);
   }
   @Get('/recent-booking')
-  async getRecent(@Req() req: RequestWithUser) {
+  async getRecent(@Req() req: RequestWithUser): Promise<unknown> {
     const userId = req.user['userId'];
     return await this._walletUseCase.getRecentTransaction(userId);
   }
@@ -209,30 +224,36 @@ export class AgencyController {
     @Param('agencyId') agencyId: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
-  ) {
+    @Query('search') search?: string,
+  ): Promise<{ data: PackageDto[]; total: number; totalPages: number }> {
     console.log('Hellooooooo agecnyId');
     const pageNumber = page ? Number(page) : 1;
     console.log(pageNumber, 'pageNumber');
 
-    const limitNumber = limit ? Number(limit) : 1;
+    const limitNumber = limit ? Number(limit) : 10;
     console.log(limitNumber, 'limitNumber');
 
     const data = await this._agencyPackageUsecase.getPackagesByAgencyId(
       agencyId,
       pageNumber,
       limitNumber,
+      search,
     );
     console.log(data, 'in agencyId/packages');
     return data;
   }
 
   @Get('/:packageId/package-details')
-  async getPackageDetails(@Param('packageId') packageId: string) {
+  async getPackageDetails(
+    @Param('packageId') packageId: string,
+  ): Promise<unknown> {
     return this._agencyPackageUsecase.getPackageDetails(packageId);
   }
 
   @Get('/:agencyId')
-  async getAgencyById(@Param('agencyId') agencyId: string) {
+  async getAgencyById(
+    @Param('agencyId') agencyId: string,
+  ): Promise<AgencyProfileDto | null> {
     return this._agencyUsecase.findById(agencyId);
   }
 

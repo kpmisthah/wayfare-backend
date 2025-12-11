@@ -9,29 +9,75 @@ import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
 @Injectable()
 export class WalletTransactionRepository
   extends BaseRepository<WalletTransactionEntity>
-  implements IWalletTransactionRepository
-{
+  implements IWalletTransactionRepository {
   constructor(private readonly _prisma: PrismaService) {
     super(_prisma.walletTransaction, WalletTransactionMapper);
   }
 
-  async findByBookingId(bookingId:string):Promise<WalletTransactionEntity|null>{
-    let walletTransaciton = await this._prisma.walletTransaction.findFirst({where:{bookingId}})
-    if(!walletTransaciton) return null
-    return WalletTransactionMapper.toDomain(walletTransaciton)
+  async findByBookingId(
+    bookingId: string,
+  ): Promise<WalletTransactionEntity | null> {
+    const walletTransaciton = await this._prisma.walletTransaction.findFirst({
+      where: { bookingId },
+    });
+    if (!walletTransaciton) return null;
+    return WalletTransactionMapper.toDomain(walletTransaciton);
   }
   async getTransactionsByWalletId(
     walletId: string,
-  ): Promise<WalletTransactionEntity[]> {
-    const transactions = await this._prisma.walletTransaction.findMany({
-      where: {
-        walletId,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
-    return transactions.map((txn) => WalletTransactionMapper.toEntity(txn));
+    page: number = 1,
+    limit: number = 10,
+  ) {
+    const skip = (page - 1) * limit;
+
+    const [transactions, total] = await Promise.all([
+      this._prisma.walletTransaction.findMany({
+        where: {
+          walletId,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+        skip,
+        take: limit,
+        include: {
+          booking: {
+            select: {
+              id: true,
+              bookingCode: true,
+              travelDate: true,
+              package: {
+                select: {
+                  id: true,
+                  itineraryName: true,
+                  destination: true,
+                },
+              },
+            },
+          },
+          agency: {
+            select: {
+              id: true,
+              user: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      }),
+      this._prisma.walletTransaction.count({
+        where: { walletId },
+      }),
+    ]);
+
+    return {
+      data: transactions,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async findAgencyByCredits(): Promise<WalletTransactionEntity[]> {

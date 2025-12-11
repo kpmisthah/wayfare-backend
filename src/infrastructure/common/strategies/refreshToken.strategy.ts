@@ -22,17 +22,20 @@ export class RefreshTokenStrategy extends PassportStrategy(
     }
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (req: Request) => req?.cookies?.refreshToken || null,
+        (req: Request & { cookies: Record<string, any> }) =>
+          (req?.cookies?.refreshToken as string) || null,
       ]),
       secretOrKey: refreshSecret,
       passReqToCallback: true,
     });
   }
 
-  async validate(req: Request, payload: any) {
+  async validate(req: Request, payload: { sub: string }) {
     console.log(payload, 'paypatti');
 
-    const refreshToken = req?.cookies?.refreshToken;
+    const refreshToken: string = (
+      req as Request & { cookies: Record<string, any> }
+    )?.cookies?.refreshToken as string;
     console.log(refreshToken, 'refreshToken');
 
     if (!refreshToken) {

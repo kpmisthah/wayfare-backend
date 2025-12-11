@@ -1,7 +1,7 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { MessageEntity } from 'src/domain/entities/message.entity';
 import { IChatRepository } from 'src/domain/repositories/chat/chat.repository.interface';
-import { IChatUsecase } from '../interfaces/message.interface';
+import { IChatUsecase, UserGroup } from '../interfaces/message.interface';
 import { MessageMapper } from '../../mapper/message.mapper';
 import { MessageDto } from 'src/application/dtos/message.dto';
 import { GroupChatDto } from 'src/application/dtos/group-chat.dto';
@@ -72,7 +72,7 @@ export class ChatUsecase implements IChatUsecase {
       if (userRoom) {
         userRoom.forEach((socketId) => {
           const socket = this._chatGateway.server.sockets.sockets.get(socketId);
-          socket?.join(groupId);
+          void socket?.join(groupId);
           console.log(`[SERVER] Auto-joined ${userId} → group ${groupId}`);
         });
       }
@@ -138,7 +138,7 @@ export class ChatUsecase implements IChatUsecase {
     }
     return MessageMapper.toMessageDto(chat);
   }
-  async getUserGroups(userId: string) {
+  async getUserGroups(userId: string): Promise<UserGroup[]> {
     return this._chatRepo.getUserGroups(userId);
   }
   async isGroupId(id: string): Promise<boolean> {
@@ -151,13 +151,13 @@ export class ChatUsecase implements IChatUsecase {
     return MessageMapper.toMessageDtos(messages);
   }
   async markChatAsRead(userId: string, chatId: string): Promise<void> {
-  await this._chatRepo.markChatAsRead(userId, chatId);
-}
-async updateLastSeen(userId: string, date: Date): Promise<void> {
-  await this._chatRepo.updateLastSeen(userId, date);
-}
+    await this._chatRepo.markChatAsRead(userId, chatId);
+  }
+  async updateLastSeen(userId: string, date: Date): Promise<void> {
+    await this._chatRepo.updateLastSeen(userId, date);
+  }
 
-async getLastSeen(userId: string): Promise<Date | null> {
-  return this._chatRepo.getLastSeen(userId);
-}
+  async getLastSeen(userId: string): Promise<Date | null> {
+    return this._chatRepo.getLastSeen(userId);
+  }
 }

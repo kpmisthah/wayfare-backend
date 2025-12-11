@@ -1,15 +1,30 @@
 import { Injectable } from '@nestjs/common';
 // import { PrismaService } from "../prisma.service";
 
+export interface IMapper<T, U> {
+  toPrisma(entity: T): U;
+  toDomain(data: unknown): T;
+}
+
+// Using 'any' to allow Prisma delegates to satisfy this interface
+
+export interface IModel<U = any> {
+  create(args: any): Promise<unknown>;
+
+  findUnique(args: any): Promise<unknown>;
+
+  update(args: any): Promise<unknown>;
+}
+
 @Injectable()
-export class BaseRepository<T> {
+export class BaseRepository<T, U = unknown> {
   constructor(
-    protected model,
-    protected mapper,
+    protected model: IModel<U>,
+    protected mapper: IMapper<T, U>,
   ) {}
   async create(entity: T): Promise<T | null> {
     console.log(entity, 'in Bankingcratio');
-    const data = await this.model.create({
+    const data: unknown = await this.model.create({
       data: this.mapper.toPrisma(entity),
     });
     console.log(data, 'for creating suer in base repo');
@@ -18,7 +33,7 @@ export class BaseRepository<T> {
   }
 
   async findById(id: string): Promise<T | null> {
-    const data = await this.model.findUnique({ where: { id } });
+    const data: unknown = await this.model.findUnique({ where: { id } });
 
     if (!data) return null;
     return this.mapper.toDomain(data);
@@ -26,12 +41,12 @@ export class BaseRepository<T> {
 
   async update(id: string, update: T): Promise<T> {
     console.log(id, 'iddd in base repo and update', update);
-    const data = await this.model.update({
+    const data: unknown = await this.model.update({
       where: { id },
       data: this.mapper.toPrisma(update),
     });
-    console.log(data,'in updateee');
-    
+    console.log(data, 'in updateee');
+
     return this.mapper.toDomain(data);
   }
 }

@@ -17,7 +17,7 @@ export class StripeService implements PaymentProvider {
   async createCheckoutSession(params: {
     amount: number;
     currency: string;
-    metadata: Record<string, any>;
+    metadata: Record<string, string>;
     successUrl: string;
     cancelUrl: string;
     expiresAt?: number;

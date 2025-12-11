@@ -9,7 +9,7 @@ import { BookingModule } from '../booking/booking.module';
 import { PaymentModule } from '../payment/payment.module';
 
 @Module({
-  imports: [BookingModule,PaymentModule],
+  imports: [BookingModule, PaymentModule],
   controllers: [AdminController],
   providers: [
     {

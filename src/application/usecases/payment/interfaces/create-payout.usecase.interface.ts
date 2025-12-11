@@ -10,7 +10,7 @@ export interface ICreatePayoutRequestUsecase {
     limit: number,
     status?: PayoutStatus,
     search?: string,
-  ): Promise<{ data: PayoutDetailsDTO[]; total: number }> 
-  approvePayout(id:string,status:PayoutStatus):Promise<ResponseDto|null>
-  rejectPayout(id: string, reason: string):Promise<ResponseDto|null>
+  ): Promise<{ data: PayoutDetailsDTO[]; total: number }>;
+  approvePayout(id: string, status: PayoutStatus): Promise<ResponseDto | null>;
+  rejectPayout(id: string, reason: string): Promise<ResponseDto | null>;
 }

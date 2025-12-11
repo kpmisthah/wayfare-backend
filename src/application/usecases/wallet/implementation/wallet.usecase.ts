@@ -12,7 +12,6 @@ import { Transaction } from 'src/domain/enums/transaction.enum';
 import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
 import { IWalletTransactionRepository } from 'src/domain/repositories/wallet/wallet-transaction.repository.interface';
 import { WalletTransactionEnum } from 'src/domain/enums/wallet-transaction.enum';
-import { WalletTransferDto } from 'src/application/dtos/wallet-tranfer.dto';
 import { StatusCode } from 'src/domain/enums/status-code.enum';
 
 @Injectable()
@@ -26,7 +25,7 @@ export class WalletUsecase implements IWalletUseCase {
     private readonly _adminRepo: IAdminRepository,
     @Inject('IWalletTransactionRepo')
     private readonly _walletTransactionRepo: IWalletTransactionRepository,
-  ) {}
+  ) { }
   async createWallet(balance: number, userId: string): Promise<WalletDto> {
     console.log(userId, 'userId');
 
@@ -57,7 +56,6 @@ export class WalletUsecase implements IWalletUseCase {
     bookingId: string,
     paymentStatus: PaymentStatus = PaymentStatus.SUCCEEDED,
   ): Promise<WalletDto | null> {
-  
     const existingWallet = await this._walletRepo.findByUserId(userId);
     console.log(existingWallet, 'existingWallet in addBalance');
     if (!existingWallet) {
@@ -125,22 +123,34 @@ export class WalletUsecase implements IWalletUseCase {
     return updateWallet;
   }
 
-  async deductAgency(agencyId:string,deductAmount:number,status:PaymentStatus.PENDING|PaymentStatus.SUCCEEDED,bookingId:string):Promise<{ status: StatusCode } | null> {
-    const agencyUser = await this._agencyRepo.findById(agencyId)
+  async deductAgency(
+    agencyId: string,
+    deductAmount: number,
+    status: PaymentStatus.PENDING | PaymentStatus.SUCCEEDED,
+    bookingId: string,
+  ): Promise<{ status: StatusCode } | null> {
+    const agencyUser = await this._agencyRepo.findById(agencyId);
     if (!agencyUser) return null;
-    const wallet = await this._walletRepo.findByUserId(agencyUser.userId)
-    let walletTransaction = await this._walletTransactionRepo.findByBookingId(bookingId)
-    if(walletTransaction?.paymentStatus == PaymentStatus.PENDING){
-      let updateWalletTransaction = walletTransaction.updateWalletTransaction({status,deductAmount})
-       let c = await this._walletTransactionRepo.update(updateWalletTransaction.id,updateWalletTransaction)
-       console.log(c,'udoatewallettracnsactuinenety deduct');
-       
+    const wallet = await this._walletRepo.findByUserId(agencyUser.userId);
+    const walletTransaction =
+      await this._walletTransactionRepo.findByBookingId(bookingId);
+    if (walletTransaction?.paymentStatus == PaymentStatus.PENDING) {
+      const updateWalletTransaction = walletTransaction.updateWalletTransaction(
+        { status, deductAmount },
+      );
+      const c = await this._walletTransactionRepo.update(
+        updateWalletTransaction.id,
+        updateWalletTransaction,
+      );
+      console.log(c, 'udoatewallettracnsactuinenety deduct');
     }
-    let updateWallet = wallet.updateWallet({balance:wallet.balance-deductAmount})
-    let d = await this._walletRepo.update(wallet.id,updateWallet)
-    console.log(d,'udedecut wallet amount ==========');
-    
-    return {status:StatusCode.SUCCESS}
+    const updateWallet = wallet.updateWallet({
+      balance: wallet.balance - deductAmount,
+    });
+    const d = await this._walletRepo.update(wallet.id, updateWallet);
+    console.log(d, 'udedecut wallet amount ==========');
+
+    return { status: StatusCode.SUCCESS };
   }
   async creditAdmin(
     earning: number,
@@ -160,12 +170,20 @@ export class WalletUsecase implements IWalletUseCase {
     );
     return updateWallet;
   }
-  async getTransactions(userId: string): Promise<WalletTransferDto[]> {
+  async getTransactions(userId: string, page: number = 1, limit: number = 10) {
     const wallet = await this._walletRepo.findByUserId(userId);
     if (!wallet) throw new Error('Wallet not found');
-    const transactions =
-      await this._walletTransactionRepo.getTransactionsByWalletId(wallet.id);
-    return WalletMapper.toWalletTransactionsDto(transactions);
+    const result = await this._walletTransactionRepo.getTransactionsByWalletId(
+      wallet.id,
+      page,
+      limit,
+    );
+    return {
+      data: WalletMapper.toWalletTransactionsDto(result.data),
+      total: result.total,
+      page: result.page,
+      totalPages: result.totalPages,
+    };
   }
 
   async findByUserId(userId: string): Promise<WalletDto | null> {
@@ -173,14 +191,14 @@ export class WalletUsecase implements IWalletUseCase {
     return WalletMapper.toWalletDto(wallet);
   }
 
-  async getWalletSummary(userId: string) {
+  async getWalletSummary(userId: string): Promise<unknown> {
     const agency = await this._agencyRepo.findByUserId(userId);
     console.log(agency, 'agencyyyy');
     if (!agency) return null;
     return await this._walletTransactionRepo.getWalletSummary(agency.id);
   }
 
-  async getRecentTransaction(userId: string) {
+  async getRecentTransaction(userId: string): Promise<unknown> {
     const agency = await this._agencyRepo.findByUserId(userId);
     const limit = 5;
     if (!agency) return null;
@@ -189,6 +207,18 @@ export class WalletUsecase implements IWalletUseCase {
         agency.id,
         limit,
       );
-    return WalletMapper.toRecentWalletTxListDto(tx);
+    // Cast tx to the expected type since the repository returns unknown
+    return WalletMapper.toRecentWalletTxListDto(
+      tx as {
+        id: string;
+        amount: number;
+        status: string;
+        createdAt: Date;
+        booking?: {
+          user?: { name?: string };
+          package?: { destination?: string };
+        };
+      }[],
+    );
   }
 }

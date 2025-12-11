@@ -11,5 +11,5 @@ export interface IPayoutRequestRepository
     take: number;
     status?: PayoutStatus;
     search?: string;
-  }): Promise<{ data: PayoutDetailsDTO[], total: number }>
+  }): Promise<{ data: PayoutDetailsDTO[]; total: number }>;
 }

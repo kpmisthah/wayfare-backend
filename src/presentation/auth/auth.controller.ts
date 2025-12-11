@@ -10,6 +10,7 @@ import {
   ForbiddenException,
   Patch,
 } from '@nestjs/common';
+import { Throttle, SkipThrottle } from '@nestjs/throttler';
 import { LoginDto, SignupDto } from 'src/application/dtos/auth.dto';
 import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
 import { RefreshTokenGuard } from 'src/infrastructure/common/guard/refreshToken.guard';
@@ -35,19 +36,29 @@ export class AuthController {
     private readonly _userUsecase: IUserUsecase,
     @Inject('IGoogleLoginUsecase')
     private readonly _googleLoginUsecase: GoogleLoginUseCase,
-  ) {}
+  ) { }
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  async googleAuth() {}
+  async googleAuth() { }
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
-  async googleAuthRedirect(@Req() req, @Res() res: Response) {
+  async googleAuthRedirect(
+    @Req() req: Request & { user: any },
+    @Res() res: Response,
+  ) {
     console.log('ACCESS_EXPIRES:', process.env.JWT_ACCESS_EXPIRES);
     console.log('PARSED:', Number(process.env.JWT_ACCESS_EXPIRES));
 
-    const result = await this._googleLoginUsecase.execute(req.user);
+    const result = await this._googleLoginUsecase.execute(
+      req.user as {
+        email: string;
+        firstName: string;
+        lastName: string;
+        picture: string;
+      },
+    );
     res
       .cookie('accessToken', result.accessToken, {
         httpOnly: true,
@@ -67,20 +78,23 @@ export class AuthController {
   }
 
   @Post('signin')
+  @Throttle({ default: { limit: 5, ttl: 60000 } }) // Stricter: 5 attempts per minute for login
   // @Roles(userRole.User,userRole.Agency)
   // @UseGuards(RolesGuard)
   async signin(
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) res: Response,
-  ) {
+  ): Promise<Response> {
     const { user, accessToken, refreshToken } =
       await this._authUsecase.signIn(loginDto);
     console.log(user, 'iuser');
-    res
+    return res
       .cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: false,
-        expires: new Date(Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!)),
+        expires: new Date(
+          Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!),
+        ),
         path: '/',
       })
       .cookie('accessToken', accessToken, {
@@ -93,23 +107,27 @@ export class AuthController {
   }
 
   @Post('signup')
+  @Throttle({ default: { limit: 5, ttl: 60000 } }) // Stricter: 5 signup attempts per minute
   signup(@Body() singupDto: SignupDto) {
     console.log(singupDto, 'signupDto gooys');
     return this._authUsecase.signUp(singupDto);
   }
 
   @Post('verify-otp')
+  @Throttle({ default: { limit: 3, ttl: 60000 } }) // Very strict: 3 OTP attempts per minute
   async verifyOtp(
     @Body() verifyOtpDto: VerifyOtpDto,
     @Res({ passthrough: true }) res: Response,
-  ) {
+  ): Promise<Response> {
     const { accessToken, refreshToken, user } =
       await this._authUsecase.verifyOtp(verifyOtpDto);
-    res
+    return res
       .cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: false,
-        expires: new Date(Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!)),
+        expires: new Date(
+          Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!),
+        ),
         path: '/',
       })
       .cookie('accessToken', accessToken, {
@@ -122,12 +140,14 @@ export class AuthController {
   }
 
   @Post('resend-otp')
+  @Throttle({ default: { limit: 3, ttl: 60000 } }) // Limit OTP resend
   async resendOtp(@Body() resendOtpDto: ResendOtpDto) {
     const result = await this._authUsecase.resendOtp(resendOtpDto);
     return result;
   }
 
   @Post('forgot-password')
+  @Throttle({ default: { limit: 3, ttl: 60000 } }) // Limit forgot password requests
   forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
     console.log('forgot password controller l ethunnund');
 
@@ -145,14 +165,16 @@ export class AuthController {
   async resetPassword(
     @Body() resetPasswordDto: ResetPasswordDto,
     @Res({ passthrough: true }) res: Response,
-  ) {
+  ): Promise<Response> {
     const { accessToken, refreshToken, user, message } =
       await this._authUsecase.resetPassword(resetPasswordDto);
-    res
+    return res
       .cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: false,
-        expires: new Date(Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!)),
+        expires: new Date(
+          Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!),
+        ),
         path: '/',
       })
       .cookie('accessToken', accessToken, {
@@ -190,22 +212,23 @@ export class AuthController {
   async refreshTokens(
     @Req() req: RequestWithUser,
     @Res({ passthrough: true }) res: Response,
-  ) {
+  ): Promise<Response> {
     const userId = req.user['userId'];
-    const role = req.user['role'];
     const refreshToken = req.user['refreshToken'];
     console.log('user id is there', userId);
     const user = await this._userUsecase.findById(userId);
     if (user?.isBlock) {
       throw new ForbiddenException('Account is Blocked');
     }
-    const { accessTokenResponse, refreshTokenResponse, message } =
-      await this._authUsecase.refreshToken(userId, refreshToken, res, role);
-    res
+    const { accessTokenResponse, refreshTokenResponse } =
+      await this._authUsecase.refreshToken(userId, refreshToken);
+    return res
       .cookie('refreshToken', refreshTokenResponse, {
         httpOnly: true,
         secure: false,
-        expires: new Date(Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!)),
+        expires: new Date(
+          Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!),
+        ),
         path: '/',
       })
       .cookie('accessToken', accessTokenResponse, {

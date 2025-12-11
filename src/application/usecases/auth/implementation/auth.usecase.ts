@@ -1,4 +1,4 @@
-import { Injectable, Logger, LoggerService } from '@nestjs/common';
+import { Injectable, LoggerService } from '@nestjs/common';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import {
   BadRequestException,
@@ -7,6 +7,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
+import { Request, Response } from 'express';
 import { LoginDto, SignupDto } from 'src/application/dtos/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -61,7 +62,7 @@ export class AuthService implements IAuthUsecase {
 
     @Inject('INodemailerService')
     private readonly nodemailerService: NodemailerService,
-  ) {}
+  ) { }
 
   async signUp(signupDto: SignupDto) {
     try {
@@ -73,9 +74,8 @@ export class AuthService implements IAuthUsecase {
         signupDto.password,
         signupDto.confirmPassword,
       );
-      console.log(signupDto.password, 'passwordddddd before hashing');
+      this.logger.debug?.('Hashing password for signup', { email: signupDto.email });
       const hashPassword = await this.hash(signupDto.password);
-      console.log(hashPassword, 'hashPassword');
       await this.otpService.sendOtp(
         signupDto.email,
         signupDto.name,
@@ -83,27 +83,29 @@ export class AuthService implements IAuthUsecase {
         signupDto.role,
         signupDto.mobile ?? '',
       );
-      this.logger.log('Signup started');
-      this.logger.warn('Something unusual');
-      this.logger.error('Signup failed');
+      this.logger.log('Signup OTP sent successfully', { email: signupDto.email });
       return { message: 'Otp sent to your email verify that otp' };
     } catch (error) {
-      console.log(error);
+      this.logger.error('Signup failed', { email: signupDto.email, error });
       throw error;
     }
   }
 
   async verifyOtp(verifyOtpDto: VerifyOtpDto) {
-    console.log(verifyOtpDto, 'verify otp dto');
+    this.logger.debug?.('Verifying OTP', { email: verifyOtpDto.email });
 
     const key = `otp:${verifyOtpDto.email}`;
-    console.log(key, 'key from verify otpp');
     const data = await this._redisService.get(key);
-    console.log(data, 'dataaaa from verify otp');
     if (!data) {
       throw new BadRequestException('OTP expired or invalid');
     }
-    const parsed = JSON.parse(data);
+    const parsed = JSON.parse(data) as {
+      otp: string;
+      name: string;
+      password: string;
+      role: Role;
+      phone?: string;
+    };
     if (parsed.otp !== verifyOtpDto.otpCode) {
       throw new BadRequestException('Invalid OTP');
     }
@@ -128,6 +130,7 @@ export class AuthService implements IAuthUsecase {
     );
 
     await this.updateRefreshToken(user?.id, tokens?.refreshToken);
+    this.logger.log('User verified and created', { userId: user.id, email: user.email });
     return {
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
@@ -137,24 +140,26 @@ export class AuthService implements IAuthUsecase {
 
   async resendOtp(resendOtpDto: ResendOtpDto) {
     try {
-      console.log(resendOtpDto);
-      
+      this.logger.debug?.('Resending OTP', { email: resendOtpDto.email });
+
       const key = `otp:${resendOtpDto.email}`;
       const existingData = await this._redisService.get(key);
-      console.log(existingData,'existnifData');
-      
+
       if (!existingData) {
         throw new UnauthorizedException(
           'No active signup found for this email',
         );
       }
-      const oldPayload = JSON.parse(existingData);
+      const oldPayload = JSON.parse(existingData) as {
+        otp: string;
+        name: string;
+        password: string;
+        role: Role;
+        phone?: string;
+      };
       const rateKey = `otp-resend-rate:${resendOtpDto.email}`;
-      console.log(oldPayload,'oldpayload');
-      
-      let currentCount = await this._redisService.get(rateKey);
-      console.log(currentCount,'coutn');
-      
+
+      const currentCount = await this._redisService.get(rateKey);
       const count = currentCount ? parseInt(currentCount) : 0;
 
       if (count >= 3) {
@@ -163,24 +168,21 @@ export class AuthService implements IAuthUsecase {
         );
       }
 
-      // Step 3: Generate new OTP
       const newOtp = await this.nodemailerService.sendOtpToEmail(
         resendOtpDto.email,
       );
-      console.log(newOtp,'new Opt');
-      
+
       const newPayload = {
         ...oldPayload,
         otp: newOtp,
       };
-      console.log(newPayload,'newpyaloaad');
-      
+
       await this._redisService.set(key, JSON.stringify(newPayload), 300);
-      console.log(`Resend OTP for ${resendOtpDto.email}: ${newOtp} (Attempt)`);
+      this.logger.log('OTP resent successfully', { email: resendOtpDto.email });
 
       return { message: 'New OTP sent successfully' };
     } catch (error) {
-      console.log('Resend OTP failed:', error);
+      this.logger.error('Resend OTP failed', { email: resendOtpDto.email, error });
       throw error;
     }
   }
@@ -197,11 +199,11 @@ export class AuthService implements IAuthUsecase {
 
   async verifyForgotPassword(verifyForgotPassword: VerifyForgotPasswordDto) {
     try {
-      console.log(verifyForgotPassword,"Verify forgot password dtooooo")
+      console.log(verifyForgotPassword, 'Verify forgot password dtooooo');
       const key = `forgot:${verifyForgotPassword.email}`;
       const data = await this._redisService.get(key);
       if (!data) throw new BadRequestException('OTP expired or not found');
-      const { otp } = JSON.parse(data);
+      const { otp } = JSON.parse(data) as { otp: string };
       if (otp !== verifyForgotPassword.otp) {
         throw new BadRequestException('Invalid OTP');
       }
@@ -277,10 +279,10 @@ export class AuthService implements IAuthUsecase {
         userEntity.name,
         userEntity.role,
       );
-      if (!tokens) return new BadRequestException('Token not found');
+      if (!tokens) throw new BadRequestException('Token not found');
       await this.updateRefreshToken(userEntity.id, tokens?.refreshToken);
       return {
-        userEntity,
+        user: userEntity,
         accessToken: tokens.accessToken,
         refreshToken: tokens.refreshToken,
       };
@@ -290,11 +292,11 @@ export class AuthService implements IAuthUsecase {
     }
   }
 
-  async logout(userId: string): Promise<{ success:StatusCode,role:Role }> {
+  async logout(userId: string): Promise<{ success: StatusCode; role: Role }> {
     try {
       const user = await this.authRepo.logout(userId);
       console.log(user, 'in logout');
-      return { success: StatusCode.SUCCESS,role:user.role };
+      return { success: StatusCode.SUCCESS, role: user.role };
     } catch (err) {
       console.error('Logout service failed:', err);
       throw err;
@@ -319,8 +321,8 @@ export class AuthService implements IAuthUsecase {
       user.refreshToken,
       refreshToken,
     );
-    console.log(refreshTokenMatches,'refreshokenMatches');
-    
+    console.log(refreshTokenMatches, 'refreshokenMatches');
+
     if (!refreshTokenMatches) {
       throw new ForbiddenException('Access Denied');
     }
@@ -350,7 +352,12 @@ export class AuthService implements IAuthUsecase {
     return await this.argonService.hashPassword(password);
   }
   //Google Auth
-  googleLoginResponse(req, res) {
+  googleLoginResponse(
+    req: Request & {
+      user: { appAccessToken: string; appRefreshToken: string };
+    },
+    res: Response,
+  ) {
     const { appAccessToken, appRefreshToken } = req.user;
     res
       .cookie('accessToken', appAccessToken, {

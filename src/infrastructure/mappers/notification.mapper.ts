@@ -22,7 +22,7 @@ export class NotificationMapper {
       title: notification.title,
       message: notification.message,
       isRead: notification.isRead,
-      types:notification.notificationStatus as $Enums.NotificationStatus,
+      types: notification.notificationStatus as $Enums.NotificationStatus,
       userId: notification.userId,
     };
   }

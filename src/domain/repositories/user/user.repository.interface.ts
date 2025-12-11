@@ -22,5 +22,5 @@ export interface IUserRepository extends IBaseRepository<UserEntity> {
   findAllAgencies(): Promise<UserEntity[] | null>;
   listUsersFromAgencies(): Promise<UserEntity[] | null>;
   countAll(): Promise<number>;
-  findEmail(email:string):Promise<UserEntity|null>
+  findEmail(email: string): Promise<UserEntity | null>;
 }

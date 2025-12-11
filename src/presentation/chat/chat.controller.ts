@@ -11,7 +11,10 @@ import {
 import { GroupChatDto } from 'src/application/dtos/group-chat.dto';
 import { RequestWithUser } from 'src/application/usecases/auth/interfaces/request-with-user';
 import { IChatUsecase } from 'src/application/usecases/chat/interfaces/message.interface';
-import { ISendConnection } from 'src/application/usecases/connection/interfaces/send-connection.interface';
+import {
+  ISendConnection,
+  AcceptedConnection,
+} from 'src/application/usecases/connection/interfaces/send-connection.interface';
 import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
 import { ChatGateway } from './chat.gateway';
 import { IChatRepository } from 'src/domain/repositories/chat/chat.repository.interface';
@@ -25,7 +28,7 @@ export class MessageController {
     @Inject('ISendConnectionUseCase')
     private readonly _connectionUsecase: ISendConnection,
     @Inject('IMessageRepository')
-    private readonly _chatRepo: IChatRepository,    
+    private readonly _chatRepo: IChatRepository,
     private readonly _chatGateway: ChatGateway,
   ) {}
 
@@ -59,16 +62,16 @@ export class MessageController {
       await this._connectionUsecase.getAcceptedConnections(userId);
 
     const formattedDirect = await Promise.all(
-      directChats.map(async (c) => {
-        const lastMsg =
-          await this._chatRepo.getLastMessageForConversation(
-            c.conversationId,
-          );
-        const unread =
-          await this._chatRepo.getUnreadCountForConversation(
-            c.conversationId,
-            userId,
-          );
+      directChats.map(async (c: AcceptedConnection) => {
+        const lastMsg = c.conversationId
+          ? await this._chatRepo.getLastMessageForConversation(c.conversationId)
+          : null;
+        const unread = c.conversationId
+          ? await this._chatRepo.getUnreadCountForConversation(
+              c.conversationId,
+              userId,
+            )
+          : 0;
         const lastSeen = await this._chatUsecase.getLastSeen(c.userId);
         return {
           ...c,
@@ -89,19 +92,27 @@ export class MessageController {
       conversationId: null,
       name: g.name,
       avatar: g.avatar || null,
-      members: g.members.map((m) => m.userId),
+      members: g.members.map((m) => m.user.id),
       type: g.type,
       creatorId: g.creatorId,
       createdAt: g.createdAt,
     }));
 
-    let allChats = [...formattedDirect, ...formattedGroups];
+    const allChats = [...formattedDirect, ...formattedGroups];
     allChats.sort((a, b) => {
-    const timeA = a.lastMessage?.createdAt || a.createdAt || '0';
-    const timeB = b.lastMessage?.createdAt || b.createdAt || '0';
-    return new Date(timeB).getTime() - new Date(timeA).getTime();
-  });
-  return allChats;
+      const itemA = a as unknown as {
+        lastMessage?: { createdAt: string };
+        createdAt?: string;
+      };
+      const itemB = b as unknown as {
+        lastMessage?: { createdAt: string };
+        createdAt?: string;
+      };
+      const timeA = itemA.lastMessage?.createdAt || itemA.createdAt || '0';
+      const timeB = itemB.lastMessage?.createdAt || itemB.createdAt || '0';
+      return new Date(timeB).getTime() - new Date(timeA).getTime();
+    });
+    return allChats;
   }
   @Get(':conversationId')
   async getMessages(

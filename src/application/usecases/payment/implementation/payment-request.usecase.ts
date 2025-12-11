@@ -44,13 +44,13 @@ export class CreatePayoutRequestUsecase implements ICreatePayoutRequestUsecase {
     id: string,
     status: PayoutStatus,
   ): Promise<ResponseDto | null> {
-    let payoutRequest = await this._payoutRepo.findById(id);
+    const payoutRequest = await this._payoutRepo.findById(id);
     console.log(payoutRequest, 'payoutreq');
     if (!payoutRequest) return null;
-    let updatePayoutRequest = payoutRequest.update({ status });
+    const updatePayoutRequest = payoutRequest.update({ status });
     console.log(updatePayoutRequest, 'upated');
 
-    let res = await this._payoutRepo.update(
+    const res = await this._payoutRepo.update(
       payoutRequest.id,
       updatePayoutRequest,
     );
@@ -62,18 +62,18 @@ export class CreatePayoutRequestUsecase implements ICreatePayoutRequestUsecase {
     };
   }
 
-  async rejectPayout(id: string, reason: string):Promise<ResponseDto|null> {
-    let payout = await this._payoutRepo.findById(id);
+  async rejectPayout(id: string, reason: string): Promise<ResponseDto | null> {
+    const payout = await this._payoutRepo.findById(id);
     if (!payout) return null;
 
-    let udpatePayout = payout.update({
+    const udpatePayout = payout.update({
       status: PayoutStatus.REJECTED,
       rejectionReason: reason,
     });
 
-    let res = await this._payoutRepo.update(id, udpatePayout);
-    console.log(res,'reason for cancelllattionnnn');
-    
+    const res = await this._payoutRepo.update(id, udpatePayout);
+    console.log(res, 'reason for cancelllattionnnn');
+
     return {
       code: StatusCode.SUCCESS,
       message: 'Payout rejected',

@@ -1,5 +1,4 @@
 // import { User, UserVerification } from '@prisma/client';
-import { UserVerificationEntity } from 'src/domain/entities/user-verification';
 import { UserEntity } from 'src/domain/entities/user.entity';
 
 export interface IAuthRepository {
@@ -9,5 +8,5 @@ export interface IAuthRepository {
     email: string,
     data: { password: string },
   ): Promise<UserEntity | null>;
-  logout(userId: string): Promise<UserEntity>
+  logout(userId: string): Promise<UserEntity>;
 }

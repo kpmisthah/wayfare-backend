@@ -24,8 +24,8 @@ import { AgencyModule } from '../agency/agency.module';
   controllers: [AuthController],
   providers: [
     {
-      provide:"IGoogleLoginUsecase",
-      useClass:GoogleLoginUseCase,
+      provide: 'IGoogleLoginUsecase',
+      useClass: GoogleLoginUseCase,
     },
     {
       provide: 'IAuthService',

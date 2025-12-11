@@ -20,8 +20,15 @@ export class AgencyPackageRepository
     });
     return PackageMapper.toPackageEntity(createPackage);
   }
-  async countPackages(agencyId: string): Promise<number> {
-    return await this._prisma.package.count({ where: { agencyId } });
+  async countPackages(agencyId: string, search?: string): Promise<number> {
+    const where: any = { agencyId };
+    if (search) {
+      where.OR = [
+        { destination: { contains: search, mode: 'insensitive' } },
+        { itineraryName: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+    return await this._prisma.package.count({ where });
   }
   async getPackages(id: string): Promise<PackageEntity[]> {
     const getPackages = await this._prisma.package.findMany({
@@ -34,12 +41,23 @@ export class AgencyPackageRepository
     agencyId: string,
     page: number,
     limit: number,
+    search?: string,
   ): Promise<PackageEntity[]> {
     const skip = (page - 1) * limit;
+    const where: any = { agencyId };
+
+    if (search) {
+      where.OR = [
+        { destination: { contains: search, mode: 'insensitive' } },
+        { itineraryName: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
     const packages = await this._prisma.package.findMany({
-      where: { agencyId },
+      where,
       skip,
       take: limit,
+      orderBy: { createdAt: 'desc' },
     });
     return PackageMapper.toPackageEntities(packages);
   }
@@ -88,7 +106,7 @@ export class AgencyPackageRepository
     return PackageMapper.toPackageEntities(fetchPackages);
   }
 
-  async trendinPackages() {
+  async trendinPackages(): Promise<PackageEntity[]> {
     const trending = await this._prisma.package.findMany({
       take: 4,
       orderBy: {
@@ -96,9 +114,8 @@ export class AgencyPackageRepository
           _count: 'desc',
         },
       },
-      include: { bookings: true },
     });
     console.log(trending, 'trending in repo');
-    return trending;
+    return PackageMapper.toPackageEntities(trending);
   }
 }

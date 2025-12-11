@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Inject,
   Injectable,
+  Logger,
   NotFoundException,
   UseGuards,
 } from '@nestjs/common';
@@ -36,6 +37,8 @@ import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.gu
 
 @Injectable()
 export class BookingUseCase implements IBookingUseCase {
+  private readonly _logger = new Logger(BookingUseCase.name);
+
   constructor(
     @Inject('IBookingRepository')
     private readonly _bookingRepo: IBookingRepository,
@@ -56,21 +59,28 @@ export class BookingUseCase implements IBookingUseCase {
     private readonly _walletTransactionRepo: IWalletTransactionRepository,
     @Inject(ADMIN_TYPE.IAdminRepository)
     private readonly _adminRepo: IAdminRepository,
-  ) {}
+  ) { }
   @UseGuards(AccessTokenGuard)
   async createBooking(
     createBookingDto: BookingDto,
     userId: string,
   ): Promise<{ booking: CreateBookingDto; checkoutUrl: string } | null> {
+    this._logger.log('Creating booking', { userId, packageId: createBookingDto.packageId });
+
     const bookingPackage = await this._packageRepo.findById(
       createBookingDto.packageId,
     );
-    console.log(bookingPackage, 'booking package in booking.usecase');
-    if (!bookingPackage) throw new Error('Package not found');
-    const agency = await this._agencyRepo.findById(bookingPackage.agencyId);
-    console.log(agency, 'in booking.suecase');
+    if (!bookingPackage) {
+      this._logger.error('Package not found', { packageId: createBookingDto.packageId });
+      throw new Error('Package not found');
+    }
 
-    if (!agency) return null;
+    const agency = await this._agencyRepo.findById(bookingPackage.agencyId);
+    if (!agency) {
+      this._logger.error('Agency not found', { agencyId: bookingPackage.agencyId });
+      return null;
+    }
+
     const bookingEntity = BookingEntity.create({
       packageId: createBookingDto.packageId,
       userId,
@@ -84,9 +94,17 @@ export class BookingUseCase implements IBookingUseCase {
     });
 
     const booking = await this._bookingRepo.create(bookingEntity);
-    console.log(booking, 'createdBooking in booking.suecase');
+    if (!booking) {
+      this._logger.error('Failed to create booking', { userId, packageId: createBookingDto.packageId });
+      return null;
+    }
 
-    if (!booking) return null;
+    this._logger.log('Booking created', {
+      bookingId: booking.id,
+      userId,
+      amount: booking.totalAmount,
+      paymentType: createBookingDto.paymentType
+    });
 
     const handler = this._paymentRegistry.get(createBookingDto.paymentType!);
     const paymentResult = await handler.payment(booking, booking.agencyId);
@@ -128,21 +146,30 @@ export class BookingUseCase implements IBookingUseCase {
     userId: string,
     page: number,
     limit: number,
+    search?: string,
+    status?: string,
   ): Promise<{
     data: (FetchUserBookingDto | undefined)[];
     totalPages: number;
     page: number;
+    total: number;
   }> {
-    console.log(page, 'pageee', limit, 'limitttt');
-    const bookingEntity = await this._bookingRepo.findByUserId(userId);
-    if (!bookingEntity || bookingEntity.length === 0) {
-      return { data: [], totalPages: 0, page };
+    console.log(page, 'pageee', limit, 'limitttt', search, 'searchhh', status, 'statuss');
+
+    const result = await this._bookingRepo.findByUserId(userId, {
+      search,
+      status,
+      page,
+      limit,
+    });
+
+    if (!result.data || result.data.length === 0) {
+      return { data: [], totalPages: 0, page, total: 0 };
     }
-    const totalBookings = bookingEntity.length;
-    const totalPages = Math.ceil(totalBookings / limit);
-    const startIndex = (page - 1) * limit;
-    const endIndex = page * limit;
-    const paginatedBookings = bookingEntity.slice(startIndex, endIndex);
+
+    const totalPages = Math.ceil(result.total / limit);
+    const paginatedBookings = result.data;
+
     const packageEntity = await this._packageRepo.getAllPackages();
     const packages = paginatedBookings.map((booking) =>
       packageEntity.find((pkg) => pkg.id == booking.packageId),
@@ -152,6 +179,7 @@ export class BookingUseCase implements IBookingUseCase {
         if (booking) {
           return this._agencyRepo.findById(booking.agencyId);
         }
+        return Promise.resolve(null);
       }),
     );
     console.log(agencies, 'agenciesin userbookingss');
@@ -165,7 +193,7 @@ export class BookingUseCase implements IBookingUseCase {
         if (agency) {
           return this._userRepo.findById(agency.userId);
         }
-        return null;
+        return Promise.resolve(null);
       }),
     );
     console.log(agencyUsers, 'agency usersin userbookingss');
@@ -184,33 +212,51 @@ export class BookingUseCase implements IBookingUseCase {
       data: mapped,
       totalPages,
       page,
+      total: result.total,
     };
   }
 
   async cancelBooking(id: string): Promise<BookingStatusDto | null> {
+    this._logger.log('Processing booking cancellation', { bookingId: id });
+
     const bookingEntity = await this._bookingRepo.findById(id);
-    if (!bookingEntity) return null;
+    if (!bookingEntity) {
+      this._logger.warn('Booking not found for cancellation', { bookingId: id });
+      return null;
+    }
+
     const travelStartDate = new Date(bookingEntity.travelDate);
-    const refundPercentage =
-      RefundPolicyEntity.calculateRefund(travelStartDate);
-    //refund wallet
+    const refundPercentage = RefundPolicyEntity.calculateRefund(travelStartDate);
+
     const updateBookingStatus = bookingEntity.updateBooking({
       status: BookingStatus.CANCELLED,
     });
-    console.log(updateBookingStatus, 'update Booking Dstatus');
 
     const update = await this._bookingRepo.update(id, updateBookingStatus);
+    if (!update) {
+      this._logger.error('Failed to update booking status', { bookingId: id });
+      return null;
+    }
 
-    console.log(update, 'updateeee in cancelt Booking');
+    this._logger.log('Booking cancelled', {
+      bookingId: id,
+      userId: bookingEntity.userId,
+      refundPercentage
+    });
 
-    if (!update) return null;
     if (refundPercentage > 0) {
       const refundAmount = (bookingEntity.totalAmount * refundPercentage) / 100;
-      console.log(refundAmount, 'refund Amount');
+
+      this._logger.log('Processing refund', {
+        bookingId: id,
+        refundAmount,
+        refundPercentage
+      });
+
       let existingWallet = await this._walletUsecase.findByUserId(
         bookingEntity.userId,
       );
-      console.log(existingWallet, 'existing wallet in cancel booking');
+
       if (existingWallet?.userId != '') {
         await this._walletUsecase.addBalance(
           refundAmount,
@@ -226,12 +272,14 @@ export class BookingUseCase implements IBookingUseCase {
         );
         existingWallet = newWallet;
       }
+
       await this._walletUsecase.deductAgency(
         bookingEntity.agencyId,
         refundAmount,
         PaymentStatus.SUCCEEDED,
         bookingEntity.id,
       );
+
       const walletTransactionEntity = WalletTransactionEntity.create({
         walletId: existingWallet?.id ?? '',
         amount: refundAmount,
@@ -243,6 +291,12 @@ export class BookingUseCase implements IBookingUseCase {
         agencyId: bookingEntity.agencyId,
       });
       await this._walletTransactionRepo.create(walletTransactionEntity);
+
+      this._logger.log('Refund processed', {
+        bookingId: id,
+        userId: bookingEntity.userId,
+        refundAmount
+      });
     }
 
     return BookingMapper.toUpdateBookingStatus(update);
@@ -259,9 +313,24 @@ export class BookingUseCase implements IBookingUseCase {
     return await this._bookingRepo.updateStatus(bookingId, status);
   }
 
-  async execute(packageId: string) {
-    const booking = await this._bookingRepo.findByPackageId(packageId);
-    return BookingMapper.toResponseBookingDtoByPackageId(booking);
+  async execute(
+    packageId: string,
+    page: number,
+    limit: number,
+    search?: string,
+  ) {
+    const result = await this._bookingRepo.findByPackageId(
+      packageId,
+      page,
+      limit,
+      search,
+    );
+    return {
+      data: BookingMapper.toResponseBookingDtoByPackageId(result.data),
+      total: result.total,
+      page,
+      totalPages: Math.ceil(result.total / limit),
+    };
   }
 
   async paymentVerification(bookingId: string) {

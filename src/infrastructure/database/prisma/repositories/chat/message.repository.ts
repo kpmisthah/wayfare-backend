@@ -152,49 +152,49 @@ export class MessageRepository
   }
 
   async getLastMessageForConversation(conversationId: string) {
-  const msg = await this._prisma.message.findFirst({
-    where: { conversationId },
-    orderBy: { createdAt: 'desc' },
-  });
-  return msg ? MessageMapper.toDomain(msg) : null;
-}
+    const msg = await this._prisma.message.findFirst({
+      where: { conversationId },
+      orderBy: { createdAt: 'desc' },
+    });
+    return msg ? MessageMapper.toDomain(msg) : null;
+  }
 
-async getUnreadCountForConversation(conversationId: string, userId: string) {
-  const uc = await this._prisma.userOnConversation.findUnique({
-    where: { userId_conversationId: { userId, conversationId } },
-    select: { unreadCount: true },
-  });
-  return uc?.unreadCount || 0;
-}
+  async getUnreadCountForConversation(conversationId: string, userId: string) {
+    const uc = await this._prisma.userOnConversation.findUnique({
+      where: { userId_conversationId: { userId, conversationId } },
+      select: { unreadCount: true },
+    });
+    return uc?.unreadCount || 0;
+  }
 
-async getLastMessageForGroup(groupId: string) {
-  const msg = await this._prisma.message.findFirst({
-    where: { groupId },
-    orderBy: { createdAt: 'desc' },
-  });
-  return msg ? MessageMapper.toDomain(msg) : null;
-}
+  async getLastMessageForGroup(groupId: string) {
+    const msg = await this._prisma.message.findFirst({
+      where: { groupId },
+      orderBy: { createdAt: 'desc' },
+    });
+    return msg ? MessageMapper.toDomain(msg) : null;
+  }
 
-async getUnreadCountForGroup(groupId: string, userId: string) {
-  const gm = await this._prisma.groupMember.findUnique({
-    where: { groupId_userId: { groupId, userId } },
-    select: { unreadCount: true },
-  });
-  return gm?.unreadCount || 0;
-}
+  async getUnreadCountForGroup(groupId: string, userId: string) {
+    const gm = await this._prisma.groupMember.findUnique({
+      where: { groupId_userId: { groupId, userId } },
+      select: { unreadCount: true },
+    });
+    return gm?.unreadCount || 0;
+  }
 
-async updateLastSeen(userId: string, date: Date) {
-  await this._prisma.user.update({
-    where: { id: userId },
-    data: { lastSeen: date },
-  });
-}
+  async updateLastSeen(userId: string, date: Date) {
+    await this._prisma.user.update({
+      where: { id: userId },
+      data: { lastSeen: date },
+    });
+  }
 
-async getLastSeen(userId: string) {
-  const user = await this._prisma.user.findUnique({
-    where: { id: userId },
-    select: { lastSeen: true },
-  });
-  return user?.lastSeen || null;
-}
+  async getLastSeen(userId: string) {
+    const user = await this._prisma.user.findUnique({
+      where: { id: userId },
+      select: { lastSeen: true },
+    });
+    return user?.lastSeen || null;
+  }
 }

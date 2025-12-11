@@ -15,6 +15,6 @@ import { PrismaModule } from 'src/infrastructure/database/prisma/prisma.module';
       useClass: NodemailerService,
     },
   ],
-  exports: ['IOtpService','INodemailerService'],
+  exports: ['IOtpService', 'INodemailerService'],
 })
 export class OtpModule {}

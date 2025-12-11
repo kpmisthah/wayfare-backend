@@ -131,7 +131,7 @@ export class AgencyService implements IAgencyService {
     // const filteredUsers = users.filter((user)=>
     //   user.name.toLocaleLowerCase().includes(query?.toLocaleLowerCase()||'')
     // )
-    let orderBy;
+    let orderBy: Record<string, unknown> | undefined = undefined;
     if (sortBy === 'az') {
       orderBy = { user: { name: 'asc' } };
     }
@@ -145,7 +145,25 @@ export class AgencyService implements IAgencyService {
       this._agencyRepo.findAlls(query, orderBy, skip, limit),
       this._agencyRepo.count(query),
     ]);
-    const mapped = AgencyMapper.toList(agencies);
+    if (!agencies) {
+      return { data: [], totalPages: 0, currentPage: page };
+    }
+    // Map AgencyManageDto to AgencyManagementDto format
+    const mapped = agencies.map((agency) => ({
+      id: agency.domain.id,
+      address: agency.domain.address ?? '',
+      licenseNumber: agency.domain.licenseNumber ?? '',
+      ownerName: agency.domain.ownerName ?? '',
+      websiteUrl: agency.domain.websiteUrl ?? '',
+      description: agency.domain.description ?? '',
+      user: {
+        name: agency.user.name,
+        email: agency.user.email,
+        isVerified: agency.user.isVerified,
+        image: agency.user.profileImage,
+        isBlock: agency.user.isBlock,
+      },
+    }));
     console.log(mapped, 'mapped agenciessss');
     return {
       data: mapped,

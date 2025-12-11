@@ -33,7 +33,7 @@ export class AgencyPackageService implements IAgencyPackageService {
     private readonly _userRepo: IUserRepository,
     @Inject('ITransportationRepository')
     private readonly _transportationRepo: ITransportationRepository,
-  ) {}
+  ) { }
   async addPackages(
     addPackageDto: PackageDto,
     userId: string,
@@ -136,6 +136,7 @@ export class AgencyPackageService implements IAgencyPackageService {
     userId: string,
     page: number,
     limit: number,
+    search?: string,
   ): Promise<{
     items: PackageDto[];
     page: number;
@@ -145,11 +146,15 @@ export class AgencyPackageService implements IAgencyPackageService {
     const agency = await this.agencyRepo.findByUserId(userId);
     console.log(agency, 'agency');
     if (!agency) return { items: [], page: 1, totalPages: 1, total: 0 };
-    const total = await this._agencyPackageRepo.countPackages(agency.id);
+    const total = await this._agencyPackageRepo.countPackages(
+      agency.id,
+      search,
+    );
     const packages = await this._agencyPackageRepo.getPackagesByPage(
       agency.id,
       page,
       limit,
+      search,
     );
     console.log(packages, 'packages');
     const iteneraries = await this._iteneraryRepo.getIteneraries();
@@ -183,8 +188,21 @@ export class AgencyPackageService implements IAgencyPackageService {
     agencyId: string,
     page: number,
     limit: number,
+    search?: string,
   ): Promise<{ data: PackageDto[]; total: number; totalPages: number }> {
-    const getPackages = await this._agencyPackageRepo.findByAgencyId(agencyId);
+    let getPackages = await this._agencyPackageRepo.findByAgencyId(agencyId);
+
+    // Apply search filter if provided
+    if (search && search.trim()) {
+      const searchLower = search.toLowerCase();
+      getPackages = getPackages.filter(
+        (pkg) =>
+          pkg.itineraryName?.toLowerCase().includes(searchLower) ||
+          pkg.destination?.toLowerCase().includes(searchLower) ||
+          pkg.description?.toLowerCase().includes(searchLower),
+      );
+    }
+
     const total = getPackages.length;
     const totalPages = Math.ceil(total / limit);
     const start = (page - 1) * limit;
@@ -226,7 +244,12 @@ export class AgencyPackageService implements IAgencyPackageService {
 
   async filterPackages(
     filterPackages: FilterPackageDto,
-  ): Promise<PackageDto[] | null> {
+  ): Promise<{
+    data: PackageDto[];
+    total: number;
+    page: number;
+    totalPages: number;
+  } | null> {
     const startDate = new Date(filterPackages.startDate);
     const endDate = new Date(filterPackages.endDate);
     const start = startDate.getTime();
@@ -237,20 +260,73 @@ export class AgencyPackageService implements IAgencyPackageService {
       filterPackages.minBudget / filterPackages.travelers;
     const maxPricePerPerson =
       filterPackages.maxBudget / filterPackages.travelers;
-    const packageRepo = await this._agencyPackageRepo.filterPackages(
+
+    let packageRepo = await this._agencyPackageRepo.filterPackages(
       filterPackages.destination,
       duration,
       minPricePerPerson,
       maxPricePerPerson,
     );
+
+    // Apply additional filters
+    if (filterPackages.search && filterPackages.search.trim()) {
+      const searchLower = filterPackages.search.toLowerCase();
+      packageRepo = packageRepo.filter(
+        (pkg) =>
+          pkg.itineraryName?.toLowerCase().includes(searchLower) ||
+          pkg.destination?.toLowerCase().includes(searchLower) ||
+          pkg.description?.toLowerCase().includes(searchLower),
+      );
+    }
+
+    // Duration filter (short: 1-3, medium: 4-7, long: 8+)
+    if (filterPackages.durationFilter && filterPackages.durationFilter !== 'all') {
+      packageRepo = packageRepo.filter((pkg) => {
+        if (filterPackages.durationFilter === 'short') {
+          return pkg.duration <= 3;
+        } else if (filterPackages.durationFilter === 'medium') {
+          return pkg.duration > 3 && pkg.duration <= 7;
+        } else if (filterPackages.durationFilter === 'long') {
+          return pkg.duration > 7;
+        }
+        return true;
+      });
+    }
+
     const iteneraries = await this._iteneraryRepo.getIteneraries();
     if (!iteneraries) return null;
     const transportation = await this._transportationRepo.getTransportations();
-    return AgencyMapper.toManyPackages(
-      packageRepo,
+
+    // Vehicle filter
+    if (filterPackages.vehicle && filterPackages.vehicle !== 'all') {
+      const vehicleLower = filterPackages.vehicle.toLowerCase();
+      const packageWithTransport = packageRepo.filter((pkg) => {
+        const trans = transportation.find((t) => t.id === pkg.transportationId);
+        return trans?.vehicle?.toLowerCase() === vehicleLower;
+      });
+      packageRepo = packageWithTransport;
+    }
+
+    const total = packageRepo.length;
+    const page = filterPackages.page || 1;
+    const limit = filterPackages.limit || 10;
+    const totalPages = Math.ceil(total / limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedPackages = packageRepo.slice(startIndex, endIndex);
+
+    const mappedPackages = AgencyMapper.toManyPackages(
+      paginatedPackages,
       iteneraries,
       transportation,
     );
+
+    return {
+      data: mappedPackages,
+      total,
+      page,
+      totalPages,
+    };
   }
 
   async updatePackage(

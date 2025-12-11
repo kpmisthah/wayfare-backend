@@ -1,59 +1,70 @@
 import * as winston from 'winston';
 import * as DailyRotateFile from 'winston-daily-rotate-file';
 
+/**
+ * Custom Winston Logger Configuration
+ * - Logs to console (colorized for development)
+ * - Logs to daily rotating files (JSON for production analysis)
+ */
 export class Logging {
   dailyRotateFileTransport: DailyRotateFile;
-  myFormat: winston.Logform.Format;
   createLoggerConfig: winston.LoggerOptions;
+
   constructor() {
-    this.dailyRotateFileTransport = new (DailyRotateFile as any)({
-      filename: `logs/app_log-%DATE%.log`,
-      zippedArchive: false,
+    const DailyRotateFileConstructor = DailyRotateFile as unknown as new (
+      options: Record<string, unknown>,
+    ) => DailyRotateFile;
+
+    // File transport - JSON logs for production analysis
+    this.dailyRotateFileTransport = new DailyRotateFileConstructor({
+      filename: `logs/app-%DATE%.log`,
+      datePattern: 'YYYY-MM-DD',
+      zippedArchive: true,
       maxSize: '20m',
-      maxFiles: '1d',
+      maxFiles: '14d', // Keep logs for 14 days
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.json(),
+      ),
     });
 
-    this.myFormat = winston.format.printf(
-      ({ level = 'info', message, timestamp, req, err, ...metadata }) => {
-        if (!req) {
-          req = { headers: {} };
-        }
+    // Error file transport - separate file for errors only
+    const errorFileTransport = new DailyRotateFileConstructor({
+      filename: `logs/error-%DATE%.log`,
+      datePattern: 'YYYY-MM-DD',
+      zippedArchive: true,
+      maxSize: '20m',
+      maxFiles: '30d', // Keep error logs for 30 days
+      level: 'error',
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.json(),
+      ),
+    });
 
-        let msg = `${timestamp} [${level}] : ${message} `;
-        const json: any = {
-          timestamp,
-          level,
-          ...metadata,
-          message,
-          error: {},
-        };
-
-        if (err) {
-          json.error = err;
-        }
-
-        msg = JSON.stringify(json);
-        return msg;
-      },
+    // Console format for development
+    const consoleFormat = winston.format.combine(
+      winston.format.timestamp({ format: 'HH:mm:ss' }),
+      winston.format.colorize({ all: true }),
+      winston.format.printf(({ timestamp, level, message, context, ...meta }) => {
+        const contextStr = context ? `[${String(context)}]` : '';
+        const metaStr = Object.keys(meta).length ? ` ${JSON.stringify(meta)}` : '';
+        return `${String(timestamp)} ${level} ${contextStr} ${String(message)}${metaStr}`;
+      }),
     );
 
     this.createLoggerConfig = {
-      level: 'warn',
-      format: winston.format.combine(
-        winston.format.colorize(),
-        winston.format.splat(),
-        winston.format.errors({ stack: true }),
-        winston.format.json(),
-        winston.format.timestamp({
-          format: 'YYYY-MM-DD HH:mm:ss',
-        }),
-        this.myFormat,
-      ),
-
+      level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
       transports: [
-        // new winston.transports.Console({ level: "info" }),
+        // Console transport - always show logs in terminal
+        new winston.transports.Console({
+          format: consoleFormat,
+        }),
+        // File transports
         this.dailyRotateFileTransport,
+        errorFileTransport,
       ],
     };
   }
 }
+

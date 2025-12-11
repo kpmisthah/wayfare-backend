@@ -17,23 +17,28 @@ import { IBookingUseCase } from 'src/application/usecases/booking/interfaces/boo
 import { ICreateCheckoutSession } from 'src/application/usecases/booking/interfaces/create-checkout-session.usecase.interface';
 import { BookingStatus } from 'src/domain/enums/booking-status.enum';
 import { StatusCode } from 'src/domain/enums/status-code.enum';
+import { Role } from 'src/domain/enums/role.enum';
 import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
+import { RolesGuard } from '../roles/auth.guard';
+import { Roles } from '../roles/roles.decorator';
+import { Response } from 'express';
 
 @Controller('booking')
-@UseGuards(AccessTokenGuard)
+@UseGuards(AccessTokenGuard, RolesGuard) 
 export class BookingController {
   constructor(
     @Inject('IBookingUseCase')
     private readonly _bookingUseCase: IBookingUseCase,
     @Inject('ICreateCheckoutSessionUseCase')
     private readonly _createCheckoutSessionUseCase: ICreateCheckoutSession,
-  ) {}
+  ) { }
   @Post('/package')
+  @Roles(Role.User)
   async createBooking(
     @Req() req: RequestWithUser,
     @Body() bookingDto: BookingDto,
-    @Res({ passthrough: true }) res,
-  ) {
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<Response> {
     const userId = req.user['userId'];
     const result = await this._bookingUseCase.createBooking(bookingDto, userId);
     console.log(result, 'resultofbooking controllererrrrr');
@@ -49,34 +54,42 @@ export class BookingController {
   }
 
   @Get('/get-bookings')
+  @Roles(Role.Agency) 
   async fetchBookings(@Req() req: RequestWithUser) {
     const userId = req.user['userId'];
     return await this._bookingUseCase.fetchBookings(userId);
   }
 
   @Get('/user')
+  @Roles(Role.User) 
   async getUserBookings(
     @Req() req: RequestWithUser,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
+    @Query('search') search?: string,
+    @Query('status') status?: string,
   ) {
     const userId = req.user['userId'];
     const pageNumber = page ? Number(page) : 1;
-    const limitNumber = limit ? Number(limit) : 1;
+    const limitNumber = limit ? Number(limit) : 10;
     return await this._bookingUseCase.getUserBookings(
       userId,
       pageNumber,
       limitNumber,
+      search,
+      status,
     );
   }
 
   @Post('/cancel/:id')
+  @Roles(Role.User) 
   async cancelBooking(@Param('id') id: string) {
     console.log(id, 'in booking.controller.ts');
     return await this._bookingUseCase.cancelBooking(id);
   }
 
   @Patch('/update-status/:id')
+  @Roles(Role.Agency) 
   async updateBookingStatus(
     @Param('id') bookingId: string,
     @Body() body: { status: BookingStatus },
@@ -92,6 +105,7 @@ export class BookingController {
     );
   }
   @Post('retry-payment')
+  @Roles(Role.User) 
   async retryPayment(
     @Req() req: RequestWithUser,
     @Body() { bookingId }: { bookingId: string },
@@ -103,11 +117,20 @@ export class BookingController {
   }
 
   @Get(':id/my-booking')
+  @Roles(Role.User, Role.Agency)
   async getMyBookingDetails(@Param('id') id: string) {
     return this._bookingUseCase.getUserBookingDetails(id);
   }
   @Get(':id/bookings')
-  async getBookings(@Param('id') packageId: string) {
-    return this._bookingUseCase.execute(packageId);
+  @Roles(Role.Agency) 
+  async getBookings(
+    @Param('id') packageId: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('search') search?: string,
+  ) {
+    const pageNum = parseInt(page || '1');
+    const limitNum = parseInt(limit || '10');
+    return this._bookingUseCase.execute(packageId, pageNum, limitNum, search);
   }
 }

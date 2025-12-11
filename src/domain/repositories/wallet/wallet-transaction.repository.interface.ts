@@ -5,9 +5,14 @@ export interface IWalletTransactionRepository
   extends IBaseRepository<WalletTransactionEntity> {
   getTransactionsByWalletId(
     walletId: string,
-  ): Promise<WalletTransactionEntity[]>;
+    page?: number,
+    limit?: number,
+  ): Promise<{ data: unknown[]; total: number; page: number; totalPages: number }>;
   findAgencyByCredits(): Promise<WalletTransactionEntity[]>;
-  getWalletSummary(agencyId: string);
-  getRecentAgencyWalletTransactions(agencyId: string, limit: number);
-  findByBookingId(bookingId:string):Promise<WalletTransactionEntity|null>
+  getWalletSummary(agencyId: string): Promise<unknown>;
+  getRecentAgencyWalletTransactions(
+    agencyId: string,
+    limit: number,
+  ): Promise<unknown>;
+  findByBookingId(bookingId: string): Promise<WalletTransactionEntity | null>;
 }

@@ -28,8 +28,9 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
 
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (req: Request) => {
-          const token = req?.cookies?.accessToken || null;
+        (req: Request & { cookies: Record<string, string> }) => {
+          const token: string | null =
+            (req?.cookies?.accessToken as string) || null;
           return token;
         },
       ]),

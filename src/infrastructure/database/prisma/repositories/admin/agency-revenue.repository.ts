@@ -1,12 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
-import { IAgencyRevenueRepository } from 'src/domain/repositories/admin/agency-revenue.repository.interface';
+import {
+  IAgencyRevenueRepository,
+  AgencyRevenueSummaryResult,
+} from 'src/domain/repositories/admin/agency-revenue.repository.interface';
 import { AgencyRevenueDTO } from 'src/application/dtos/agency-revenue.dto';
 
 @Injectable()
 export class AgenciesRevenueRepository implements IAgencyRevenueRepository {
   constructor(private readonly _prisma: PrismaService) {}
-  async getAgencyRevenueSummary(): Promise<AgencyRevenueDTO[]> {
+
+  async getAgencyRevenueSummary(
+    page: number,
+    limit: number,
+    search?: string,
+  ): Promise<AgencyRevenueSummaryResult> {
+    // Get all agency summaries first
     const agencySummary = await this._prisma.booking.groupBy({
       by: ['agencyId'],
       _sum: {
@@ -16,24 +25,56 @@ export class AgenciesRevenueRepository implements IAgencyRevenueRepository {
         _all: true,
       },
     });
-    const agencyId = agencySummary.map((a) => a.agencyId);
-    const agency = await this._prisma.agency.findMany({
-      where: { id: { in: agencyId } },
+
+    const agencyIds = agencySummary.map((a) => a.agencyId);
+
+    // Build where clause for agencies with search
+    const agencyWhereClause: {
+      id: { in: string[] };
+      user?: { name: { contains: string; mode: 'insensitive' } };
+    } = {
+      id: { in: agencyIds },
+    };
+
+    if (search && search.trim()) {
+      agencyWhereClause.user = {
+        name: { contains: search, mode: 'insensitive' },
+      };
+    }
+
+    // Get agencies with search filter
+    const agencies = await this._prisma.agency.findMany({
+      where: agencyWhereClause,
       select: { id: true, user: { select: { name: true } } },
     });
 
-    const result = agencySummary.map((summary) => {
-      const matchedAgencies = agency.find(
-        (agency) => agency.id == summary.agencyId,
+    // Map and filter results
+    const filteredResults: AgencyRevenueDTO[] = [];
+    for (const summary of agencySummary) {
+      const matchedAgency = agencies.find(
+        (agency) => agency.id === summary.agencyId,
       );
-      return {
-        agencyId: summary.agencyId,
-        agencyName: matchedAgencies?.user.name ?? '',
-        platformEarning: summary._sum.platformEarning ?? 0,
-        all: summary._count._all,
-      };
-    });
+      if (matchedAgency) {
+        filteredResults.push({
+          agencyId: summary.agencyId,
+          agencyName: matchedAgency.user.name,
+          platformEarning: summary._sum.platformEarning ?? 0,
+          all: summary._count._all,
+        });
+      }
+    }
 
-    return result;
+    // Calculate pagination
+    const total = filteredResults.length;
+    const totalPages = Math.ceil(total / limit);
+    const skip = (page - 1) * limit;
+    const data = filteredResults.slice(skip, skip + limit);
+
+    return {
+      data,
+      total,
+      page,
+      totalPages,
+    };
   }
 }

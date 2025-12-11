@@ -1,13 +1,13 @@
-import { IsString } from "class-validator";
-import { NotificationStatus } from "src/domain/enums/notification-status.enum";
+import { IsString } from 'class-validator';
+import { NotificationStatus } from 'src/domain/enums/notification-status.enum';
 
-export class ResponseNotificationDto{
-  @IsString()  
+export class ResponseNotificationDto {
+  @IsString()
   id: string;
 
   @IsString()
   title: string;
-  
+
   @IsString()
   message: string;
 
@@ -15,5 +15,5 @@ export class ResponseNotificationDto{
 
   date: string;
 
-  type:NotificationStatus
+  type: NotificationStatus;
 }

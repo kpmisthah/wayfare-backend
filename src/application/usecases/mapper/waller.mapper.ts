@@ -1,8 +1,51 @@
 import { RecentWalletTxDto } from 'src/application/dtos/recent-wallet.dto';
 import { WalletTransferDto } from 'src/application/dtos/wallet-tranfer.dto';
 import { WalletDto } from 'src/application/dtos/wallet.dto';
-import { WalletTransactionEntity } from 'src/domain/entities/wallet-transaction.entity';
 import { WalletEntity } from 'src/domain/entities/wallet.entity';
+
+// Interface for wallet transaction with booking relationship
+interface WalletTransactionWithBooking {
+  id: string;
+  amount: number;
+  status: string;
+  createdAt: Date;
+  booking?: {
+    user?: {
+      name?: string;
+    };
+    package?: {
+      destination?: string;
+    };
+  };
+}
+
+// Interface for raw wallet transaction with relations from Prisma
+interface WalletTransactionWithRelations {
+  id: string;
+  amount: number;
+  type: string;
+  status: string;
+  createdAt: Date;
+  category: string;
+  bookingId?: string | null;
+  agencyId?: string | null;
+  booking?: {
+    id: string;
+    bookingCode: string;
+    travelDate: string;
+    package?: {
+      id: string;
+      itineraryName?: string | null;
+      destination?: string | null;
+    };
+  } | null;
+  agency?: {
+    id: string;
+    user?: {
+      name: string;
+    };
+  } | null;
+}
 
 export class WalletMapper {
   static toWalletDto(walletEntity: WalletEntity): WalletDto {
@@ -12,26 +55,57 @@ export class WalletMapper {
       balance: walletEntity.balance,
     };
   }
+
   static toWalletTransactionDto(
-    walletTransactionEntity: WalletTransactionEntity,
+    transaction: WalletTransactionWithRelations,
   ): WalletTransferDto {
     return {
-      id: walletTransactionEntity.id,
-      amount: walletTransactionEntity.amount,
-      transactionType: walletTransactionEntity.transactionType,
-      paymentStatus: walletTransactionEntity.paymentStatus,
-      date: walletTransactionEntity.createdAt,
+      id: transaction.id,
+      amount: transaction.amount,
+      transactionType: transaction.type,
+      paymentStatus: transaction.status,
+      date: transaction.createdAt,
+      category: transaction.category,
+      bookingId: transaction.bookingId ?? undefined,
+      agencyId: transaction.agencyId ?? undefined,
+      booking: transaction.booking
+        ? {
+          id: transaction.booking.id,
+          bookingCode: transaction.booking.bookingCode,
+          travelDate: transaction.booking.travelDate,
+          package: transaction.booking.package
+            ? {
+              id: transaction.booking.package.id,
+              itineraryName:
+                transaction.booking.package.itineraryName ?? undefined,
+              destination:
+                transaction.booking.package.destination ?? undefined,
+            }
+            : undefined,
+        }
+        : undefined,
+      agency: transaction.agency
+        ? {
+          id: transaction.agency.id,
+          user: transaction.agency.user
+            ? {
+              name: transaction.agency.user.name,
+            }
+            : undefined,
+        }
+        : undefined,
     };
   }
-  static toWalletTransactionsDto(
-    walletTransactionEntity: WalletTransactionEntity[],
-  ): WalletTransferDto[] {
-    return walletTransactionEntity.map((transaction) =>
-      this.toWalletTransactionDto(transaction),
+
+  static toWalletTransactionsDto(transactions: unknown[]): WalletTransferDto[] {
+    return (transactions as WalletTransactionWithRelations[]).map(
+      (transaction) => this.toWalletTransactionDto(transaction),
     );
   }
 
-  static toRecentWalletTxDto(entity): RecentWalletTxDto {
+  static toRecentWalletTxDto(
+    entity: WalletTransactionWithBooking,
+  ): RecentWalletTxDto {
     return {
       id: entity.id,
       amount: entity.amount,
@@ -42,7 +116,9 @@ export class WalletMapper {
     };
   }
 
-  static toRecentWalletTxListDto(entities): RecentWalletTxDto[] {
+  static toRecentWalletTxListDto(
+    entities: WalletTransactionWithBooking[],
+  ): RecentWalletTxDto[] {
     return entities.map((t) => this.toRecentWalletTxDto(t));
   }
 }

@@ -1,3 +1,3 @@
 export interface IRejectConnection {
-  execute(id: string);
+  execute(id: string): Promise<{ message: string }>;
 }

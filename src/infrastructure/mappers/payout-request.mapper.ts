@@ -10,10 +10,10 @@ type PayoutPrismaResult = Prisma.PayoutRequestGetPayload<{
       include: {
         user: true;
         bankDetails: true;
-      }
-    }
-  }
-}>
+      };
+    };
+  };
+}>;
 
 export class PayoutRequestMapper {
   static toDomain(data: PayoutRequest): PayoutRequestEntity {
@@ -22,7 +22,7 @@ export class PayoutRequestMapper {
       data.agencyId,
       data.amount,
       data.status as PayoutStatus,
-      data.rejectionReason ?? ''
+      data.rejectionReason ?? '',
     );
   }
 
@@ -32,34 +32,33 @@ export class PayoutRequestMapper {
     return {
       agency: { connect: { id: entity.agencyId } },
       amount: entity.amount,
-      status:entity.status,
-      rejectionReason:entity.rejectionReason
+      status: entity.status,
+      rejectionReason: entity.rejectionReason,
     };
   }
 
-  static toDto(result:PayoutPrismaResult):PayoutDetailsDTO{
-    return{
-    id: result.id,
-    amount: result.amount,
-    status: result.status as PayoutStatus,
+  static toDto(result: PayoutPrismaResult): PayoutDetailsDTO {
+    return {
+      id: result.id,
+      amount: result.amount,
+      status: result.status as PayoutStatus,
 
-    agencyInfo: {
-      name: result.agency.user.name,
-      phone: result.agency.user.phone ?? '',
-      email: result.agency.user.email,
-    },
+      agencyInfo: {
+        name: result.agency.user.name,
+        phone: result.agency.user.phone ?? '',
+        email: result.agency.user.email,
+      },
 
-    bankDetails: {
-      bankName: result.agency.bankDetails?.bankName ?? '',
-      accountNumber: result.agency.bankDetails?.accountNumber ?? '',
-      branch: result.agency.bankDetails?.branch ?? '',
-      ifscCode: result.agency.bankDetails?.ifscCode ?? '',
-    }
+      bankDetails: {
+        bankName: result.agency.bankDetails?.bankName ?? '',
+        accountNumber: result.agency.bankDetails?.accountNumber ?? '',
+        branch: result.agency.bankDetails?.branch ?? '',
+        ifscCode: result.agency.bankDetails?.ifscCode ?? '',
+      },
+    };
   }
-}
 
-static toDtos(results:PayoutPrismaResult[]):PayoutDetailsDTO[]{
-  return results.map((result)=>this.toDto(result))
-}
-  
+  static toDtos(results: PayoutPrismaResult[]): PayoutDetailsDTO[] {
+    return results.map((result) => this.toDto(result));
+  }
 }

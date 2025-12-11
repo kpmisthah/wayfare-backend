@@ -5,7 +5,7 @@ import * as nodemailer from 'nodemailer';
 import { INodeMailerService } from 'src/domain/interfaces/nodemailer.interface';
 @Injectable()
 export class NodemailerService implements INodeMailerService {
-  private readonly emailTransporter;
+  private readonly emailTransporter: nodemailer.Transporter;
   constructor(private readonly configService: ConfigService) {
     this.emailTransporter = nodemailer.createTransport({
       host: this.configService.get<string>('EMAIL_HOST'),
@@ -62,6 +62,23 @@ export class NodemailerService implements INodeMailerService {
     } catch (error) {
       console.log(error);
       throw new Error('Failed to send forgot password OTP');
+    }
+  }
+
+  async sendAgencyVerificationEmail(
+    email: string,
+    loginLink: string,
+  ): Promise<void> {
+    try {
+      await this.emailTransporter.sendMail({
+        from: this.configService.get<string>('EMAIL_USER'),
+        to: email,
+        subject: 'Agency Verification Approved',
+        html: `<p>Your agency has been approved. <a href="${loginLink}">Click here to log in</a></p>`,
+      });
+    } catch (error) {
+      console.error('Failed to send agency verification email:', error);
+      throw new Error('Failed to send agency verification email');
     }
   }
 }

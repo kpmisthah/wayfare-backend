@@ -5,7 +5,6 @@ import { NotificationEntity } from 'src/domain/entities/notification.entity';
 import { INotifactionUsecase } from '../interfaces/notifcation.interface';
 import { ChatGateway } from 'src/presentation/chat/chat.gateway';
 import { NotificationMapper } from '../../mapper/notification.mapper';
-import { NotificationStatus } from '@prisma/client';
 
 @Injectable()
 export class NotificationUsecase implements INotifactionUsecase {
@@ -19,20 +18,21 @@ export class NotificationUsecase implements INotifactionUsecase {
     dto: CreateNotificationDto,
     userId: string,
   ): Promise<NotificationEntity | null> {
-    console.log(dto,'in createNotifacation');
-    
+    console.log(dto, 'in createNotifacation');
+
     const entity = NotificationEntity.create({
       userId,
       title: dto.title,
       message: dto.message,
-      type:dto.type
+      type: dto.type,
     });
 
-    console.log(entity,'in create notifcationENtityty');
-    
-    let notification = await this._notificationRepo.create(entity);
-    if(!notification) return null
-    let mappedNotification = NotificationMapper.toNotificationDto(notification)
+    console.log(entity, 'in create notifcationENtityty');
+
+    const notification = await this._notificationRepo.create(entity);
+    if (!notification) return null;
+    const mappedNotification =
+      NotificationMapper.toNotificationDto(notification);
 
     this._chatGateway.server.to(userId).emit('newNotification', {
       id: mappedNotification.id,
@@ -42,12 +42,12 @@ export class NotificationUsecase implements INotifactionUsecase {
       date: new Date().toISOString(),
       type: mappedNotification.type,
     });
-    return notification
+    return notification;
   }
 
   async listNotification(userId: string, limit = 20, offset = 0) {
     const list = await this._notificationRepo.findByUser(userId, limit, offset);
-    let mappedList = NotificationMapper.toNotificationsDto(list)
+    const mappedList = NotificationMapper.toNotificationsDto(list);
     const unreadCount = await this._notificationRepo.countUnread(userId);
     return { mappedList, unreadCount };
   }

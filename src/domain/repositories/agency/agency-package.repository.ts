@@ -5,7 +5,7 @@ export interface IAgencyPackageRepository
   extends IBaseRepository<PackageEntity | null> {
   addPackages(packages: PackageEntity): Promise<PackageEntity>;
   getPackages(id: string): Promise<PackageEntity[]>;
-  findByAgencyId(agencyId): Promise<PackageEntity[]>;
+  findByAgencyId(agencyId: string | undefined): Promise<PackageEntity[]>;
   findBookedPackage(agencyId: string): Promise<PackageEntity | null>;
   filterPackages(
     destination: string,
@@ -14,11 +14,12 @@ export interface IAgencyPackageRepository
     maxBudget: number,
   ): Promise<PackageEntity[]>;
   getAllPackages(): Promise<PackageEntity[]>;
-  countPackages(agencyId: string): Promise<number>;
+  countPackages(agencyId: string, search?: string): Promise<number>;
   getPackagesByPage(
     agencyId: string,
     page: number,
     limit: number,
+    search?: string,
   ): Promise<PackageEntity[]>;
-  trendinPackages();
+  trendinPackages(): Promise<PackageEntity[]>;
 }

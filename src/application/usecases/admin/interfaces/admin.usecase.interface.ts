@@ -8,10 +8,10 @@ export interface IAdminService {
   createPreference(preferenceDto: PreferenceDto): Promise<preference | null>;
   getAllPreferences(): Promise<preference[] | null>;
   getAllAgencies(dto: {
-      page: number;
-      limit: number;
-      search?: string;
-      status?: AgencyStatus;
-    }): Promise<{data:AgencyManagementDto[];total:number} | null> 
+    page: number;
+    limit: number;
+    search?: string;
+    status?: AgencyStatus;
+  }): Promise<{ data: AgencyManagementDto[]; total: number } | null>;
   findAdmin(): Promise<SafeUser | null>;
 }

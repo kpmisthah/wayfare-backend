@@ -20,5 +20,5 @@ export class BookingResponseDto {
   totalAmount: number;
   @IsString()
   email: string;
-  bookingCode:string
+  bookingCode: string;
 }

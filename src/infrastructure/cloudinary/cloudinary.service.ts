@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
-import toStream = require('buffer-to-stream');
+import {
+  UploadApiResponse,
+  UploadApiErrorResponse,
+  v2 as cloudinary,
+} from 'cloudinary';
 import { ICloudinaryService } from 'src/domain/repositories/cloudinary/cloudinary.service.interface';
+import { Readable } from 'stream';
 
 @Injectable()
 export class CloudinaryService implements ICloudinaryService {
@@ -12,10 +16,13 @@ export class CloudinaryService implements ICloudinaryService {
       try {
         const upload = cloudinary.uploader.upload_stream(
           { folder: 'profile-banners' },
-          (error: any, result: UploadApiResponse) => {
+          (
+            error: UploadApiErrorResponse | undefined,
+            result: UploadApiResponse | undefined,
+          ) => {
             if (error) {
               console.error('Cloudinary error:', error);
-              return reject(error);
+              return reject(new Error(error.message));
             }
             if (!result) {
               console.error('Cloudinary returned no result');
@@ -26,16 +33,19 @@ export class CloudinaryService implements ICloudinaryService {
           },
         );
 
-        const stream = toStream(file.buffer);
-        stream.on('error', (err) => {
+        const stream = new Readable();
+        stream.push(file.buffer);
+        stream.push(null);
+
+        stream.on('error', (err: Error) => {
           console.error('Stream error:', err);
-          reject(err);
+          reject(new Error(String(err)));
         });
 
         stream.pipe(upload);
       } catch (err) {
         console.error('Unexpected error during upload:', err);
-        reject(err);
+        reject(new Error(String(err)));
       }
     });
   }

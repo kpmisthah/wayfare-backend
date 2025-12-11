@@ -140,9 +140,9 @@ import { NotificationRepository } from './repositories/notification/notification
       useClass: PayoutRequestRepository,
     },
     {
-      provide:"INotificationRepository",
-      useClass:NotificationRepository
-    }
+      provide: 'INotificationRepository',
+      useClass: NotificationRepository,
+    },
   ],
   exports: [
     PrismaService,

@@ -17,13 +17,13 @@ export class StripeModule {
         StripeWebhookUsecase,
         {
           provide: 'STRIPE_SECRET_KEY',
-          useFactory: async (configService: ConfigService) =>
+          useFactory: (configService: ConfigService): string | undefined =>
             configService.get('STRIPE_SECRET_KEY'),
           inject: [ConfigService],
         },
         {
           provide: 'STRIPE_WEBHOOK_SECRET',
-          useFactory: async (configService: ConfigService) =>
+          useFactory: (configService: ConfigService): string | undefined =>
             configService.get<string>('STRIPE_WEBHOOK_SECRET'),
           inject: [ConfigService],
         },

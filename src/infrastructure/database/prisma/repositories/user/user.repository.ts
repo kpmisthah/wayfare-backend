@@ -124,10 +124,9 @@ export class UserRepository
   async countAll(): Promise<number> {
     return await this._prisma.user.count();
   }
-  async findEmail(email:string):Promise<UserEntity|null>{
-    let user = await this._prisma.user.findUnique({where:{email}})
-    if(!user) return null
-    return UserMapper.toDomain(user)
-
+  async findEmail(email: string): Promise<UserEntity | null> {
+    const user = await this._prisma.user.findUnique({ where: { email } });
+    if (!user) return null;
+    return UserMapper.toDomain(user);
   }
 }

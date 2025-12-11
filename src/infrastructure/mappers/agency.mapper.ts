@@ -19,6 +19,8 @@ export class AgencyMapper {
       agency.websiteUrl ?? '',
       agency.transactionId ?? '',
       agency.rejectionReason,
+      (agency as any).user?.bannerImage,
+      (agency as any).user?.profileImage,
     );
   }
 

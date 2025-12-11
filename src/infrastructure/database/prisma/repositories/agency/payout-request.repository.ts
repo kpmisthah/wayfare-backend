@@ -23,56 +23,55 @@ export class PayoutRequestRepository
       where: { agencyId, status: 'PENDING' },
     });
 
-    return result.map(PayoutRequestMapper.toDomain);
+    return result.map((r) => PayoutRequestMapper.toDomain(r));
   }
 
-async payoutDetails(options: {
-  skip: number;
-  take: number;
-  status?: PayoutStatus;
-  search?: string;
-}): Promise<{ data: PayoutDetailsDTO[], total: number }> {
-    
-  const { skip, take, status, search } = options;
+  async payoutDetails(options: {
+    skip: number;
+    take: number;
+    status?: PayoutStatus;
+    search?: string;
+  }): Promise<{ data: PayoutDetailsDTO[]; total: number }> {
+    const { skip, take, status, search } = options;
 
-  const where: Prisma.PayoutRequestWhereInput = {};
+    const where: Prisma.PayoutRequestWhereInput = {};
 
-  if (status) {
-    where.status = status as $Enums.PayoutStatus; 
-  }
+    if (status) {
+      where.status = status as $Enums.PayoutStatus;
+    }
 
-  if (search) {
-    where.OR = [
-      { id: { contains: search, mode: 'insensitive' } },
-      { 
-        agency: { 
-          user: { 
-            name:{contains:search,mode:"insensitive"},
-            email: { contains: search, mode: 'insensitive' } 
-          } 
-        } 
-      },
-    ];
-  }
+    if (search) {
+      where.OR = [
+        { id: { contains: search, mode: 'insensitive' } },
+        {
+          agency: {
+            user: {
+              name: { contains: search, mode: 'insensitive' },
+              email: { contains: search, mode: 'insensitive' },
+            },
+          },
+        },
+      ];
+    }
 
-  const total = await this._prisma.payoutRequest.count({ where });
+    const total = await this._prisma.payoutRequest.count({ where });
 
-  const result = await this._prisma.payoutRequest.findMany({
-    skip: skip,
-    take: take,
-    where: where,
-    include: {
-      agency: {
-        include: {
-          user: true,
-          bankDetails: true,
+    const result = await this._prisma.payoutRequest.findMany({
+      skip: skip,
+      take: take,
+      where: where,
+      include: {
+        agency: {
+          include: {
+            user: true,
+            bankDetails: true,
+          },
         },
       },
-    },
-  });
-  
-  const data = PayoutRequestMapper.toDtos(result);
-  
-  return { data, total };
-}
+    });
+
+    const data = PayoutRequestMapper.toDtos(result);
+
+    return { data, total };
+  }
 }

@@ -17,7 +17,7 @@ export class IteneraryMapper {
     itineraryEntity: ItineraryEntity,
   ): Prisma.IteneraryCreateInput {
     return {
-      day: String(itineraryEntity.day) ?? '',
+      day: String(itineraryEntity.day),
       activities: itineraryEntity.activities ?? '',
       meals: itineraryEntity.meals ?? '',
       accommodation: itineraryEntity.accommodation ?? '',

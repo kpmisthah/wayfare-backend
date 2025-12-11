@@ -21,9 +21,18 @@ export interface IWalletUseCase {
     bookingId: string,
   ): Promise<WalletDto | null>;
   creditAdmin(earning: number, bookingId: string): Promise<WalletDto | null>;
-  getTransactions(userId: string): Promise<WalletTransferDto[]>;
+  getTransactions(
+    userId: string,
+    page?: number,
+    limit?: number,
+  ): Promise<{ data: WalletTransferDto[]; total: number; page: number; totalPages: number }>;
   findByUserId(userId: string): Promise<WalletDto | null>;
-  getWalletSummary(userId: string);
-  getRecentTransaction(userId: string);
-  deductAgency(agencyId:string,deductAmount:number,status:PaymentStatus.PENDING|PaymentStatus.SUCCEEDED,bookingId:string):Promise<{ status: StatusCode } | null>
+  getWalletSummary(userId: string): Promise<unknown>;
+  getRecentTransaction(userId: string): Promise<unknown>;
+  deductAgency(
+    agencyId: string,
+    deductAmount: number,
+    status: PaymentStatus.PENDING | PaymentStatus.SUCCEEDED,
+    bookingId: string,
+  ): Promise<{ status: StatusCode } | null>;
 }

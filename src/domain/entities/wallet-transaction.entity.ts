@@ -38,11 +38,14 @@ export class WalletTransactionEntity {
     );
   }
 
-  public updateWalletTransaction(props: { status: PaymentStatus,deductAmount?:number }) {
+  public updateWalletTransaction(props: {
+    status: PaymentStatus;
+    deductAmount?: number;
+  }) {
     const updatedAmount =
-    props.deductAmount !== undefined
-      ? this._amount - props.deductAmount
-      : this._amount;
+      props.deductAmount !== undefined
+        ? this._amount - props.deductAmount
+        : this._amount;
     return new WalletTransactionEntity(
       this._id,
       this._walletId,

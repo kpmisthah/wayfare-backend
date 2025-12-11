@@ -5,6 +5,6 @@ export interface IAgencyProfileService {
     agencyId,
     updateAgencyProfileDto: UpdateAgencyProfileDto,
   ): Promise<AgencyProfileDto | null>;
-  getAgencyProfile();
-  findProfile(id: string);
+  getAgencyProfile(): Promise<AgencyProfileDto[] | null>;
+  findProfile(id: string): Promise<AgencyProfileDto | null>;
 }

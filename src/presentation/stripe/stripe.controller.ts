@@ -12,6 +12,10 @@ import { RequestWithUser } from 'src/application/usecases/auth/interfaces/reques
 import { IBookingUseCase } from 'src/application/usecases/booking/interfaces/bookiing.usecase.interface';
 import { StripeWebhookUsecase } from 'src/application/usecases/stripe/implementation/webhook.usecase';
 
+interface RawBodyRequest extends Request {
+  rawBody?: Buffer;
+}
+
 @Controller()
 export class StripeController {
   private readonly _logger = new Logger(StripeController.name);
@@ -25,13 +29,16 @@ export class StripeController {
 
   @Post('webhook')
   async handleWebhook(
-    @Req() req: Request,
+    @Req() req: RawBodyRequest,
     @Headers('stripe-signature') signature: string,
   ) {
     console.log(
       '<...............................>webhook verndooooooo.....................................',
     );
-    const rawBody = (req as any).rawBody;
+    const rawBody = req.rawBody;
+    if (!rawBody) {
+      throw new Error('Raw body is missing');
+    }
     return this._weebhookUseCase.handle(rawBody, signature, this.webhookSecret);
   }
 

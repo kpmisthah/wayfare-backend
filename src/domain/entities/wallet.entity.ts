@@ -1,4 +1,4 @@
-import { BadRequestException } from "@nestjs/common";
+import { BadRequestException } from '@nestjs/common';
 
 export class WalletEntity {
   constructor(
@@ -22,7 +22,7 @@ export class WalletEntity {
   }
   public debit(totalAmount: number) {
     if (this._balance < totalAmount) {
-      throw new BadRequestException("Insufficient balance")
+      throw new BadRequestException('Insufficient balance');
     }
     return new WalletEntity(
       this._id,

@@ -18,7 +18,7 @@ import { RolesGuard } from '../roles/auth.guard';
 import { Roles } from '../roles/roles.decorator';
 import { Role } from 'src/domain/enums/role.enum';
 
-@UseGuards(AccessTokenGuard,RolesGuard)
+@UseGuards(AccessTokenGuard, RolesGuard)
 @Roles(Role.User)
 @Controller('users')
 export class UsersController {

@@ -7,7 +7,7 @@ export interface PaymentProvider {
   createCheckoutSession(params: {
     amount: number;
     currency: string;
-    metadata: any;
+    metadata: Record<string, string>;
     successUrl: string;
     cancelUrl: string;
     expiresAt: number;

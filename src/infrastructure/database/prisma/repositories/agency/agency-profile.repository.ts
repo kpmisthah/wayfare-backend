@@ -9,7 +9,7 @@ export class AgencyProfileRepository implements IAgencyProfileRepository {
   constructor(private readonly prisma: PrismaService) {}
   async updateProfile(
     updateAgencyProfile: AgencyEntity,
-    agencyId,
+    agencyId: string,
   ): Promise<AgencyEntity | null> {
     const agencyProfileUpdate = await this.prisma.agency.update({
       where: { userId: agencyId },
@@ -47,6 +47,11 @@ export class AgencyProfileRepository implements IAgencyProfileRepository {
   async findByUserId(id: string): Promise<AgencyEntity | null> {
     const agencyProfile = await this.prisma.agency.findFirst({
       where: { userId: id },
+      include: {
+        user: {
+          select: { bannerImage: true },
+        },
+      },
     });
     if (!agencyProfile) {
       return null;

@@ -7,7 +7,7 @@ export class PayoutRequestEntity {
     private readonly _agencyId: string,
     private readonly _amount: number,
     private readonly _status: PayoutStatus,
-    private readonly _rejectionReason?:string
+    private readonly _rejectionReason?: string,
   ) {}
 
   static create(props: { agencyId: string; amount: number }) {
@@ -18,14 +18,13 @@ export class PayoutRequestEntity {
       PayoutStatus.PENDING,
     );
   }
-    public update(props:{
-    status?: PayoutStatus,rejectionReason?:string}) {
+  public update(props: { status?: PayoutStatus; rejectionReason?: string }) {
     return new PayoutRequestEntity(
       this._id,
       this._agencyId,
       this._amount,
       props.status ?? this._status,
-      props.rejectionReason ?? this._rejectionReason
+      props.rejectionReason ?? this._rejectionReason,
     );
   }
 
@@ -42,6 +41,6 @@ export class PayoutRequestEntity {
     return this._status;
   }
   get rejectionReason() {
-    return this._rejectionReason
+    return this._rejectionReason;
   }
 }

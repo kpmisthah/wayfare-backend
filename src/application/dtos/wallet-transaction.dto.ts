@@ -1,6 +1,8 @@
 import { Type } from 'class-transformer';
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsString, IsOptional } from 'class-validator';
 import { Transaction } from 'src/domain/enums/transaction.enum';
+import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
+import { WalletTransactionEnum } from 'src/domain/enums/wallet-transaction.enum';
 
 export class WalletTransactionDto {
   @IsString()
@@ -13,4 +15,20 @@ export class WalletTransactionDto {
   commission: number;
 
   type: Transaction;
+
+  @IsOptional()
+  @IsString()
+  agencyName?: string;
+
+  @IsOptional()
+  @IsString()
+  destination?: string;
+
+  @IsOptional()
+  @IsString()
+  bookingCode?: string;
+
+  status: PaymentStatus;
+
+  category: WalletTransactionEnum;
 }

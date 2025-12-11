@@ -1,4 +1,4 @@
-import { StatusCode } from "src/domain/enums/status-code.enum";
+import { StatusCode } from 'src/domain/enums/status-code.enum';
 
 export interface ResponseDto {
   code: StatusCode;

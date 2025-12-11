@@ -50,7 +50,7 @@ export class AgencyRepository
     take: number;
     status?: AgencyStatus;
     search?: string;
-  }): Promise<{data:AgencyEntity[],total:number}|null> {
+  }): Promise<{ data: AgencyEntity[]; total: number } | null> {
     const { skip, take, status, search } = options;
     const where: Prisma.AgencyWhereInput = {};
     if (status) {
@@ -67,23 +67,23 @@ export class AgencyRepository
         },
       ];
     }
-    const total = await this._prisma.agency.count({where})
+    const total = await this._prisma.agency.count({ where });
     const agency = await this._prisma.agency.findMany({
       skip,
       take,
-      where
+      where,
     });
     console.log(agency, 'agency in repo getAllAgencies');
     if (!agency) {
       return null;
     }
-    let data = AgencyMapper.toProfile(agency);
-    return {data,total}
+    const data = AgencyMapper.toProfile(agency);
+    return { data, total };
   }
 
   async findAlls(
     query: string,
-    orderBy: any,
+    orderBy: Record<string, 'asc' | 'desc'>,
     skip = 0,
     limit = 6,
   ): Promise<AgencyManageDto[] | null> {
@@ -123,7 +123,10 @@ export class AgencyRepository
     });
   }
 
-  async updateStatus(id: string, isVerified): Promise<AgencyEntity | null> {
+  async updateStatus(
+    id: string,
+    isVerified: AgencyEntity,
+  ): Promise<AgencyEntity | null> {
     const updatedData = await this._prisma.agency.update({
       where: { userId: id },
       data: AgencyMapper.toPrisma(isVerified),

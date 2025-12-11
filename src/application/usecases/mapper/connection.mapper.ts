@@ -21,12 +21,12 @@ export class ConnectionMapper {
     });
   }
 
-  static mappedConnection(connection:ConnectionEntity):ResponseConnectionDto{
-    return{
-      id:connection.id,
-      senderId:connection.senderId,
-      receieverId:connection.receiverId,
-      status:connection.status ?? ''
-    }
+  static mappedConnection(connection: ConnectionEntity): ResponseConnectionDto {
+    return {
+      id: connection.id,
+      senderId: connection.senderId,
+      receieverId: connection.receiverId,
+      status: connection.status ?? '',
+    };
   }
 }

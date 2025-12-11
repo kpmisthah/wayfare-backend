@@ -1,9 +1,9 @@
-import { PayoutStatus } from "src/domain/enums/payout-status.enum";
+import { PayoutStatus } from 'src/domain/enums/payout-status.enum';
 
 export interface PayoutDetailsDTO {
   id: string;
   amount: number;
-  status: PayoutStatus
+  status: PayoutStatus;
 
   agencyInfo: {
     name: string;

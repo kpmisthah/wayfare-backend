@@ -6,7 +6,7 @@ import { IRedisService } from 'src/domain/interfaces/redis-service.interface';
 export class RedisService implements IRedisService {
   private client: Redis;
 
-   constructor() {
+  constructor() {
     this.client = new Redis({
       host: process.env.NODE_ENV === 'production' ? 'redis' : 'localhost',
       port: 6379,

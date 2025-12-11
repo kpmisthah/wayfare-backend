@@ -16,7 +16,7 @@ export class BookingEntity {
     private readonly _commission: number,
     private readonly _platformEarning: number,
     private readonly _agencyEarning: number,
-    private readonly _bookingCode:BookingCode,
+    private readonly _bookingCode: BookingCode,
     private readonly _customerName?: string,
     private readonly _customerEmail?: string,
     private readonly _phone?: string,
@@ -51,7 +51,7 @@ export class BookingEntity {
       props.commission,
       platformEarning,
       agencyEarning,
-      BookingCode.generate('BKG')
+      BookingCode.generate('BKG'),
     );
   }
 
@@ -149,7 +149,7 @@ export class BookingEntity {
   get duration() {
     return this._duration;
   }
-  get bookingCode(){
-    return this._bookingCode
+  get bookingCode() {
+    return this._bookingCode;
   }
 }

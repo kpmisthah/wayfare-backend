@@ -10,17 +10,18 @@ import { BookingStatus } from '@prisma/client';
 @Injectable()
 export class TransactionRepository
   extends BaseRepository<TransactionEntity>
-  implements ITransactionRepository
-{
+  implements ITransactionRepository {
   constructor(private readonly _prisma: PrismaService) {
     super(_prisma.transaction, TransactionMapper);
   }
   async findByBookingId(id: string): Promise<TransactionEntity | null> {
-    const booking = await this._prisma.transaction.findFirst({
+    // Get the most recent transaction for this booking (important for retry payments)
+    const transaction = await this._prisma.transaction.findFirst({
       where: { bookingId: id },
+      orderBy: { createdAt: 'desc' },
     });
-    if (!booking) return null;
-    return TransactionMapper.toDomain(booking);
+    if (!transaction) return null;
+    return TransactionMapper.toDomain(transaction);
   }
 
   async getTotalRevenue(): Promise<number> {

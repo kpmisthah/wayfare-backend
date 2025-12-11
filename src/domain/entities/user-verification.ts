@@ -47,7 +47,7 @@ export class UserVerificationEntity {
       props.phone,
     );
   }
-  public updateUserOtp(props: { otp; otp_expiry }) {
+  public updateUserOtp(props: { otp: string; otp_expiry: Date }) {
     return new UserVerificationEntity(
       this._id,
       this._name,

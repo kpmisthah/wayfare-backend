@@ -16,7 +16,7 @@ export class UserMapper {
       isVerified: userEntity.isVerified,
       phone: userEntity.phone,
       refreshToken: userEntity.refreshToken,
-      profileImage:userEntity.profileImage
+      profileImage: userEntity.profileImage,
     };
   }
 
@@ -42,7 +42,7 @@ export class UserMapper {
       name: userEntity.name,
       email: userEntity.email,
       phone: userProfileEntity.phone,
-      location: userProfileEntity.phone,
+      location: userProfileEntity.location,
     };
   }
   static toUpdateStatus(userEntity: UserEntity): UpdateStatusDto {

@@ -9,10 +9,11 @@ export class RejectConnectionUseCase implements IRejectConnection {
     private readonly _ConnectionRepo: IConnectionRepository,
   ) {}
 
-  async execute(id: string) {
+  async execute(id: string): Promise<{ message: string }> {
     const connection = await this._ConnectionRepo.findById(id);
     if (!connection) throw new NotFoundException('Connection not found');
     const updateConnection = connection.update({ status: 'REJECTED' });
-    return await this._ConnectionRepo.update(id, updateConnection);
+    await this._ConnectionRepo.update(id, updateConnection);
+    return { message: 'Connection rejected successfully' };
   }
 }

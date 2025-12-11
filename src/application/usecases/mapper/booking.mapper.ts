@@ -59,7 +59,6 @@ export class BookingMapper {
     packageEntity: PackageEntity,
     userEntity: UserEntity | undefined,
   ): FetchUserBookingDto {
-    
     return {
       id: bookingEntity.id,
       destination: packageEntity.destination,
@@ -70,7 +69,7 @@ export class BookingMapper {
       bookingStatus: bookingEntity.status,
       highlights: packageEntity.highlights,
       travelDate: bookingEntity.travelDate,
-      bookingCode:bookingEntity.bookingCode.toString()
+      bookingCode: bookingEntity.bookingCode.toString(),
     };
   }
   static toFetchUserBookingsDto(
@@ -143,7 +142,7 @@ export class BookingMapper {
       travelers: bookingEntity.peopleCount,
       totalAmount: bookingEntity.totalAmount,
       email: bookingEntity.customerEmail ?? '',
-      bookingCode:bookingEntity.bookingCode.toString()
+      bookingCode: bookingEntity.bookingCode.toString(),
     };
   }
 }

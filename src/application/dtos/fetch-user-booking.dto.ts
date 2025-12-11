@@ -31,5 +31,5 @@ export class FetchUserBookingDto {
   @IsDateString()
   travelDate: string;
 
-  bookingCode:string
+  bookingCode: string;
 }

@@ -10,12 +10,24 @@ export class ConversationController {
     private readonly _conversationUsecase: IConversationUsecase,
   ) {}
   @Get('create/:userA/:userB')
-  async create(@Param('userA') userA: string, @Param('userB') userB: string) {
-    return await this._conversationUsecase.execute(userA, userB);
+  async create(
+    @Param('userA') userA: string,
+    @Param('userB') userB: string,
+  ): Promise<string> {
+    const result = await this._conversationUsecase.execute(userA, userB);
+    return result ?? ''; // Handle potential null/void
   }
 
   @Get(':userId')
-  async getUserConversations(@Param('userId') userId: string) {
+  async getUserConversations(@Param('userId') userId: string): Promise<
+    {
+      conversationId: string;
+      lastMessage: string;
+      lastMessageTime: Date;
+      unreadCount: number;
+      otherUser: { name: string | null; image: string | null; id: string };
+    }[]
+  > {
     return await this._conversationUsecase.getConversation(userId);
   }
 }

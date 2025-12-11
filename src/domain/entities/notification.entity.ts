@@ -1,5 +1,4 @@
-import { NotificationStatus } from "../enums/notification-status.enum";
-
+import { NotificationStatus } from '../enums/notification-status.enum';
 
 export class NotificationEntity {
   constructor(
@@ -8,7 +7,7 @@ export class NotificationEntity {
     private readonly _message: string,
     private readonly _isRead: boolean,
     private readonly _userId: string,
-    private readonly _notifcationStatus:NotificationStatus,
+    private readonly _notifcationStatus: NotificationStatus,
     private readonly _createdAt: Date,
   ) {}
 
@@ -16,7 +15,7 @@ export class NotificationEntity {
     title: string;
     message: string;
     userId: string;
-    type:NotificationStatus
+    type: NotificationStatus;
   }): NotificationEntity {
     return new NotificationEntity(
       '',
@@ -52,8 +51,8 @@ export class NotificationEntity {
   get createdAt() {
     return this._createdAt;
   }
-  get notificationStatus(){
-    return this._notifcationStatus
+  get notificationStatus() {
+    return this._notifcationStatus;
   }
 
   markAsRead(): NotificationEntity {

@@ -37,16 +37,21 @@ export class AdminService implements IAdminService {
     limit: number;
     search?: string;
     status?: AgencyStatus;
-  }): Promise<{data:AgencyManagementDto[];total:number} | null> {
+  }): Promise<{ data: AgencyManagementDto[]; total: number } | null> {
     const { page, limit, search, status } = dto;
     const skip = (page - 1) * limit;
-    let take = limit
+    const take = limit;
     const users = await this._userRepo.findAllAgencies();
     if (!users) return null;
-    const agencies = await this._agencyRepo.findAll({skip,take,status,search});
-    if(!agencies) return null
-    let data = AgencyMapper.toListAgencies(users, agencies.data);
-    return {data,total:agencies.total}
+    const agencies = await this._agencyRepo.findAll({
+      skip,
+      take,
+      status,
+      search,
+    });
+    if (!agencies) return null;
+    const data = AgencyMapper.toListAgencies(users, agencies.data);
+    return { data, total: agencies.total };
   }
   async findAdmin(): Promise<SafeUser | null> {
     const admin = await this._adminRepo.findAdmin();

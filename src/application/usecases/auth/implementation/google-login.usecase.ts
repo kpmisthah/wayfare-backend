@@ -7,7 +7,7 @@ import { JwtTokenFactory } from './jwt-token.factory';
 import { IGoogleLoginUseCase } from '../interfaces/google-login.usecase.interface';
 
 @Injectable()
-export class GoogleLoginUseCase implements IGoogleLoginUseCase{
+export class GoogleLoginUseCase implements IGoogleLoginUseCase {
   constructor(
     @Inject('IUserRepository')
     private readonly _userRepository: IUserRepository,

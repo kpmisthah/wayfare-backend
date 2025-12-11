@@ -5,9 +5,9 @@ import { RedisService } from 'src/infrastructure/utils/redis.service';
 @Module({
   providers: [
     {
-      provide:"IRedisService",
-      useClass:RedisService
-    }
+      provide: 'IRedisService',
+      useClass: RedisService,
+    },
   ],
   exports: ['IRedisService'],
 })

@@ -1,4 +1,9 @@
-import { Injectable, BadRequestException, Inject, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  Inject,
+  NotFoundException,
+} from '@nestjs/common';
 import { ConnectionEntity } from 'src/domain/entities/connection.entity';
 import { IConnectionRepository } from 'src/domain/repositories/connection/connection.repository';
 import { ISendConnection } from '../interfaces/send-connection.interface';
@@ -22,15 +27,16 @@ export class SendConnectionUseCase implements ISendConnection {
     @Inject('IConversationRepository')
     private readonly _conversationRepo: IConversationRepository,
     @Inject('IUserRepository')
-    private readonly _userRepo: IUserRepository,    
+    private readonly _userRepo: IUserRepository,
     @Inject('INotificationUsecase')
-    private readonly _notificationUsecase:INotifactionUsecase,    
+    private readonly _notificationUsecase: INotifactionUsecase,
     private readonly _chatGateway: ChatGateway,
-
   ) {}
 
-  async execute(senderId: string, receiverId: string) {
-
+  async execute(
+    senderId: string,
+    receiverId: string,
+  ): Promise<{ message: string }> {
     const existing = await this._connectionRepo.findConnection(
       senderId,
       receiverId,
@@ -44,23 +50,23 @@ export class SendConnectionUseCase implements ISendConnection {
       status: 'PENDING',
     });
 
-    const cn = await this._connectionRepo.create(connection);
+    await this._connectionRepo.create(connection);
     const sender = await this._userRepo.findById(senderId);
     if (!sender) throw new NotFoundException('Sender not found');
 
     await this._notificationUsecase.createNotification(
-    {
-      title: "Connection Request",
-      message: `${sender.name} wants to connect with you`,
-      type:NotificationStatus.CONNECTION_REQUEST
-    },
-    receiverId, 
-  );
+      {
+        title: 'Connection Request',
+        message: `${sender.name} wants to connect with you`,
+        type: NotificationStatus.CONNECTION_REQUEST,
+      },
+      receiverId,
+    );
     this._chatGateway.notifyConnectionRequest(receiverId, {
       senderId,
       senderName: sender.name,
     });
-    return cn;
+    return { message: 'Connection request sent successfully' };
   }
 
   async getConnectionForUser(userId: string): Promise<ConnectionDto[]> {

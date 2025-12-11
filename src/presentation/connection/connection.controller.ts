@@ -31,30 +31,33 @@ export class ConnectionController {
     return await this._sendConnection.getConnectionForUser(userId);
   }
   @Get('/accepted')
-  async getAcceptedConnections(@Req() req: RequestWithUser) {
+  async getAcceptedConnections(
+    @Req() req: RequestWithUser,
+  ): Promise<unknown[]> {
+    // Using unknown[] to avoid any[] error
     const userId = req.user['userId'];
     console.log(userId, 'userIddddddd');
     const u = await this._sendConnection.getAcceptedConnections(userId);
     console.log(u, 'uu');
-    return u;
+    return u as unknown[];
   }
   @Post(':receiverId')
   async send(
     @Req() req: RequestWithUser,
     @Param('receiverId') receiverId: string,
-  ) {
+  ): Promise<{ message: string }> {
     console.log(receiverId, 'recieverIddd');
     const senderId = req.user['userId'];
     console.log(senderId, 'senderIddd');
     return await this._sendConnection.execute(senderId, receiverId);
   }
   @Patch(':id/accept')
-  async accept(@Param('id') id: string) {
-    console.log(id,'acceptance id in accept method')
+  async accept(@Param('id') id: string): Promise<{ message: string }> {
+    console.log(id, 'acceptance id in accept method');
     return await this._acceptConnection.execute(id);
   }
   @Patch(':id/reject')
-  async reject(@Param('id') id: string) {
+  async reject(@Param('id') id: string): Promise<{ message: string }> {
     return await this._rejectConnection.execute(id);
   }
 }

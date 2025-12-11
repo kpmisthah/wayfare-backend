@@ -9,17 +9,54 @@ import { BookingStatus } from 'src/domain/enums/booking-status.enum';
 @Injectable()
 export class BookingRepository
   extends BaseRepository<BookingEntity>
-  implements IBookingRepository
-{
+  implements IBookingRepository {
   constructor(private _prisma: PrismaService) {
     super(_prisma.booking, BookingMapper);
   }
-  async findByUserId(userId: string): Promise<BookingEntity[] | null> {
-    const booking = await this._prisma.booking.findMany({
-      where: { userId },
-    });
-    if (!booking) return null;
-    return BookingMapper.toDomains(booking);
+  async findByUserId(
+    userId: string,
+    options?: {
+      search?: string;
+      status?: string;
+      page?: number;
+      limit?: number;
+    },
+  ): Promise<{ data: BookingEntity[]; total: number }> {
+    const { search, status, page = 1, limit = 10 } = options || {};
+    const skip = (page - 1) * limit;
+
+    // Build where clause
+    const where: Record<string, unknown> = { userId };
+
+    if (status && status !== 'all') {
+      where.status = status.toUpperCase();
+    }
+
+    // If search is provided, we need to join with package to search by destination
+    if (search) {
+      where.package = {
+        OR: [
+          { destination: { contains: search, mode: 'insensitive' } },
+          { itineraryName: { contains: search, mode: 'insensitive' } },
+        ],
+      };
+    }
+
+    const [bookings, total] = await Promise.all([
+      this._prisma.booking.findMany({
+        where,
+        include: { package: true },
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this._prisma.booking.count({ where }),
+    ]);
+
+    return {
+      data: BookingMapper.toDomains(bookings),
+      total,
+    };
   }
 
   async fetchBookingDetails(agencyId: string): Promise<BookingEntity[]> {
@@ -50,12 +87,35 @@ export class BookingRepository
     return BookingMapper.toDomain(updateBooking);
   }
 
-  async findByPackageId(packageId: string): Promise<BookingEntity[]> {
-    const bookings = await this._prisma.booking.findMany({
-      where: { packageId },
-      include: { user: true, package: true },
-    });
-    return BookingMapper.tobookingDomains(bookings);
+  async findByPackageId(
+    packageId: string,
+    page: number,
+    limit: number,
+    search?: string,
+  ): Promise<{ data: BookingEntity[]; total: number }> {
+    const skip = (page - 1) * limit;
+    const where: any = { packageId };
+    if (search) {
+      where.user = {
+        name: { contains: search, mode: 'insensitive' },
+      };
+    }
+
+    const [bookings, total] = await Promise.all([
+      this._prisma.booking.findMany({
+        where,
+        include: { user: true, package: true },
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this._prisma.booking.count({ where }),
+    ]);
+
+    return {
+      data: BookingMapper.tobookingDomains(bookings),
+      total,
+    };
   }
 
   async findByAgencyId(agencyId: string): Promise<BookingEntity[]> {

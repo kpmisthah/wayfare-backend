@@ -14,22 +14,31 @@ export interface IAgencyPackageService {
     userId: string,
     page: number,
     limit: number,
+    search?: string,
   ): Promise<{
     items: PackageDto[];
     page: number;
     totalPages: number;
     total: number;
   } | null>;
-  getPackageDetails(packageId: string): Promise<any | null>;
+  getPackageDetails(packageId: string): Promise<PackageDto | null>;
   getPackagesByAgencyId(
     agencyId: string,
     page: number,
     limit: number,
+    search?: string,
   ): Promise<{ data: PackageDto[]; total: number; totalPages: number }>;
-  filterPackages(filterPackages: FilterPackageDto);
+  filterPackages(
+    filterPackages: FilterPackageDto,
+  ): Promise<{
+    data: PackageDto[];
+    total: number;
+    page: number;
+    totalPages: number;
+  } | null>;
   getAgencyPackages(userId: string): Promise<PackageDto[] | null>;
   updatePackage(
-    id,
+    id: string,
     updatePackageDto: UpdatePackageDto,
   ): Promise<UpdatePackageDto | null>;
   trendingPackages(): Promise<TrendingDestinationDto[]>;

@@ -14,7 +14,6 @@ export class UserEntity {
     private readonly _profileImage?: string,
     private readonly _bannerImage?: string,
     private readonly _refreshToken?: string,
-    
   ) {
     // if (!email.includes('@')) throw new Error('Invalid Email');
   }
@@ -141,8 +140,8 @@ export class UserEntity {
   get phone(): string {
     return this._phone ?? '';
   }
-  get lastSeen(){
-    return this._lastSeen
+  get lastSeen() {
+    return this._lastSeen;
   }
 
   // getHashedPassword(): string | null {

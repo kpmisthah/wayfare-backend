@@ -6,7 +6,7 @@ import { IProfileRepository } from 'src/domain/repositories/user/profile.reposit
 import { IUploadProfileUseCase } from '../interfaces/uplaod-profile.usecase.interface';
 
 @Injectable()
-export class UploadProfileUseCase implements IUploadProfileUseCase{
+export class UploadProfileUseCase implements IUploadProfileUseCase {
   constructor(
     @Inject('ICloudinaryService')
     private readonly cloudinaryService: ICloudinaryService,

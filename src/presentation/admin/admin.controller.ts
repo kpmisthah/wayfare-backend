@@ -28,7 +28,7 @@ import { RolesGuard } from '../roles/auth.guard';
 import { Roles } from '../roles/roles.decorator';
 import { Role } from 'src/domain/enums/role.enum';
 
-@UseGuards(AccessTokenGuard,RolesGuard)
+@UseGuards(AccessTokenGuard, RolesGuard)
 @Roles(Role.Admin)
 @Controller('admin')
 export class AdminController {
@@ -61,14 +61,19 @@ export class AdminController {
     @Query('search') search?: string,
     @Query('status') status?: AgencyStatus,
   ) {
-    return this._adminUsecase.getAllAgencies({page: +page,
-    limit: +limit,
-    search,
-    status}
-  )
+    return this._adminUsecase.getAllAgencies({
+      page: +page,
+      limit: +limit,
+      search,
+      status,
+    });
   }
   @Get('/finance/dashboard')
-  async getTotalRevenue() {
+  async getTotalRevenue(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('search') search?: string,
+  ) {
     const [
       totalRevenue,
       totalCommission,
@@ -80,7 +85,7 @@ export class AdminController {
       this._adminRevenue.getAllCommission(),
       this._adminRevenue.getWalletBalance(),
       this._adminRevenue.activeAgencyCount(),
-      this._adminRevenue.getTransactionSummary(),
+      this._adminRevenue.getTransactionSummary(page, limit, search),
     ]);
     return {
       totalRevenue,
@@ -91,8 +96,16 @@ export class AdminController {
     };
   }
   @Get('/finance/agency')
-  async getAgencyRevenueSummary() {
-    return this._agencyRevenue.getAgencyRevenueSummary();
+  async getAgencyRevenueSummary(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('search') search?: string,
+  ): Promise<unknown> {
+    return await this._agencyRevenue.getAgencyRevenueSummary(
+      page,
+      limit,
+      search,
+    );
   }
 
   @Get('/summary')
@@ -100,7 +113,7 @@ export class AdminController {
     return this._getAdminSummaryUsecase.getDashboardStats();
   }
   @Get('recent-bookings')
-  async getRecentBookings() {
+  async getRecentBookings(): Promise<unknown> {
     return await this._bookingUseCase.getRecentBookings();
   }
   @Get('payout-details')

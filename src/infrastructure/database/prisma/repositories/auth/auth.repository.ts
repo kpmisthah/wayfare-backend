@@ -42,6 +42,6 @@ export class AuthRepository implements IAuthRepository {
       data: { refreshToken: null },
     });
     console.log(d, 'ddddd');
-    return UserMapper.toDomain(d)
+    return UserMapper.toDomain(d);
   }
 }

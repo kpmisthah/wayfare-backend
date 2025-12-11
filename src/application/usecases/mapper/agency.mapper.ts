@@ -29,7 +29,8 @@ export class AgencyMapper {
     return {
       id: agencyEntity.id,
       description: agencyEntity.description,
-      // phone:agencyEntity.phone,
+      phone: userEntity.phone,
+      email: userEntity.email,
       address: agencyEntity.address,
       licenseNumber: agencyEntity.licenseNumber,
       ownerName: agencyEntity.ownerName,
@@ -39,6 +40,7 @@ export class AgencyMapper {
         email: userEntity.email,
         verified: userEntity.isVerified,
         profileImage: userEntity.profileImage,
+        bannerImage: userEntity.bannerImage,
       },
     };
   }

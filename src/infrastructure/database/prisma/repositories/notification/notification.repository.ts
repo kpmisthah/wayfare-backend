@@ -1,23 +1,30 @@
 import { Injectable } from '@nestjs/common';
-import { INotificationRepository } from "src/domain/repositories/user/notification.repository.interface"
+import { INotificationRepository } from 'src/domain/repositories/user/notification.repository.interface';
 import { NotificationEntity } from 'src/domain/entities/notification.entity';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { BaseRepository } from '../base.repository';
 import { NotificationMapper } from 'src/infrastructure/mappers/notification.mapper';
 
 @Injectable()
-export class NotificationRepository extends BaseRepository<NotificationEntity> implements INotificationRepository{
-  constructor(private readonly _prisma:PrismaService) {
-    super(_prisma.notification,NotificationMapper)
+export class NotificationRepository
+  extends BaseRepository<NotificationEntity>
+  implements INotificationRepository
+{
+  constructor(private readonly _prisma: PrismaService) {
+    super(_prisma.notification, NotificationMapper);
   }
-  async findByUser(userId: string, limit = 20, offset = 0): Promise<NotificationEntity[]> {
+  async findByUser(
+    userId: string,
+    limit = 20,
+    offset = 0,
+  ): Promise<NotificationEntity[]> {
     const res = await this._prisma.notification.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
       take: limit,
       skip: offset,
     });
-    return NotificationMapper.toDomainMany(res)
+    return NotificationMapper.toDomainMany(res);
   }
 
   async markAsRead(notificationId: string): Promise<NotificationEntity | null> {
@@ -25,7 +32,7 @@ export class NotificationRepository extends BaseRepository<NotificationEntity> i
       where: { id: notificationId },
       data: { isRead: true },
     });
-    return NotificationMapper.toDomain(res)
+    return NotificationMapper.toDomain(res);
   }
 
   async countUnread(userId: string): Promise<number> {
