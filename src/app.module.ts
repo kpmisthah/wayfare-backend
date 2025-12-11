@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './infrastructure/database/prisma/prisma.module';
@@ -25,11 +26,18 @@ import { ConnectionModule } from './presentation/connection/connection.module';
 import { PaymentModule } from './presentation/payment/payment.module';
 import { RedisModule } from './infrastructure/common/redis/redis.module';
 import { NotificationModule } from './presentation/notification/notification.module';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 
 const customLogger = new Logging();
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ThrottlerModule.forRoot([{
+      ttl: 60000, 
+      limit: 10,  
+    }]),
+
     StripeModule.forRootAsync(),
     PrismaModule,
     AuthModule,
@@ -49,12 +57,15 @@ const customLogger = new Logging();
     ConnectionModule,
     PaymentModule,
     RedisModule,
-    NotificationModule
-    // ElasticsearchModule
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
     {
       provide: WINSTON_MODULE_NEST_PROVIDER,
       useValue: WinstonModule.createLogger(customLogger.createLoggerConfig),
@@ -62,4 +73,5 @@ const customLogger = new Logging();
   ],
   exports: [WINSTON_MODULE_NEST_PROVIDER],
 })
-export class AppModule {}
+export class AppModule { }
+
