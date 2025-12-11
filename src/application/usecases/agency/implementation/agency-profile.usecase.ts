@@ -13,8 +13,6 @@ export class AgencyProfilService implements IAgencyProfileService {
   constructor(
     @Inject(AGENCY_PROFILE_TYPE.IAgencyProfileRepository)
     private readonly agencyProfileRepo: IAgencyProfileRepository,
-    // @Inject("IUserService")
-    // private readonly userService:IUserService,
     @Inject('IUserRepository')
     private readonly userRepo: IUserRepository,
     @Inject('IAgencyRepository')
@@ -51,14 +49,23 @@ export class AgencyProfilService implements IAgencyProfileService {
     return AgencyMapper.toAgencyProfileDto(agency, existingUser);
   }
 
-  async getAgencyProfile() {
-    //cross check with DTO
-    return await this.agencyProfileRepo.getAgencyProfile();
+  async getAgencyProfile(): Promise<AgencyProfileDto[] | null> {
+    
+    const agencies = await this.agencyProfileRepo.getAgencyProfile();
+    if (!agencies) return null;
+
+    const result: AgencyProfileDto[] = [];
+    for (const agency of agencies) {
+      const user = await this.userRepo.findById(agency.userId);
+      if (user) {
+        result.push(AgencyMapper.toAgencyProfileDto(agency, user));
+      }
+    }
+    return result;
   }
 
   async findProfile(id: string) {
     const user = await this.userRepo.findById(id);
-    // if(!user?.isVerified) return null
     if (!user) {
       return null;
     }

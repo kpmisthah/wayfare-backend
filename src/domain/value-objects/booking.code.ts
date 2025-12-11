@@ -1,6 +1,6 @@
 import { customAlphabet } from 'nanoid';
 
-const alphabet = '34679ACDEFHJKLMNPRTUVWXY'; 
+const alphabet = '34679ACDEFHJKLMNPRTUVWXY';
 const nanoid = customAlphabet(alphabet, 7);
 
 export class BookingCode {
@@ -11,7 +11,6 @@ export class BookingCode {
     return new BookingCode(code);
   }
 
-  // Reconstruct from DB or external source
   static fromString(value: string): BookingCode {
     const normalized = value.toUpperCase();
     if (!/^BKG-[34679ACDEFHJKLMNPRTUVWXY]{7}$/.test(normalized)) {
