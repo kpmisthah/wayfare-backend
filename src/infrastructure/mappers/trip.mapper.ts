@@ -21,6 +21,7 @@ export class TripMapper {
       travelerType: trip.travelerType,
       hotels: trip.hotels as unknown as Prisma.InputJsonValue,
       itinerary: trip.itinerary as unknown as Prisma.InputJsonValue,
+      preferences: trip.preferences as unknown as Prisma.InputJsonValue,
       user: { connect: { id: trip.userId } },
       startDate: trip.startDate,
       visibility: trip.visibility,
@@ -39,6 +40,7 @@ export class TripMapper {
       trip.itinerary as unknown as DayPlan[],
       trip.startDate,
       trip.visibility,
+      trip.preferences as unknown as { activities?: string[]; pace?: string; interests?: string[] } | null,
     );
   }
   static toDomainMany(trips: TripPlan[]): AiTripEntity[] {
@@ -59,6 +61,7 @@ export class TripMapper {
       trip.itinerary as unknown as DayPlan[],
       trip.startDate,
       trip.visibility,
+      trip.preferences as unknown as { activities?: string[]; pace?: string; interests?: string[] } | null,
       trip.user?.name ?? '',
       trip.user?.profileImage ?? '',
       trip.user?.userProfile?.location ?? '',

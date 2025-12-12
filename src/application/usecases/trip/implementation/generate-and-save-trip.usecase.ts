@@ -13,7 +13,7 @@ export class GenerateAndSaveTrip implements IGenerateAndSaveTrip {
     private readonly _generateTrip: IGenerateTripUsecase,
     @Inject('ISaveTrip')
     private readonly _saveTrip: ISaveTrip,
-  ) {}
+  ) { }
   async execute(userId: string, dto: GenerateTripDto): Promise<TripDto> {
     const generate = await this._generateTrip.execute(dto);
     const JsonResponse: TripResponse = JSON.parse(generate) as TripResponse;
@@ -23,6 +23,7 @@ export class GenerateAndSaveTrip implements IGenerateAndSaveTrip {
       JsonResponse,
       dto.startDate,
       dto.visiblity,
+      dto.preferences,
     );
     console.log(saveToDb, 'saveToDbb');
 

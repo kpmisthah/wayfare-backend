@@ -1,9 +1,17 @@
 import { Message, Prisma } from '@prisma/client';
 import { MessageEntity } from 'src/domain/entities/message.entity';
 
+type MessageWithSender = Message & {
+  sender?: {
+    id: string;
+    name: string;
+    profileImage?: string | null;
+  };
+};
+
 export class MessageMapper {
-  static toDomain(message: Message): MessageEntity {
-    return new MessageEntity(
+  static toDomain(message: MessageWithSender): MessageEntity {
+    const entity = new MessageEntity(
       message.id,
       message.senderId,
       message.content,
@@ -11,6 +19,17 @@ export class MessageMapper {
       message.groupId,
       message.createdAt as unknown as string,
     );
+
+    // Add sender info if available
+    if (message.sender) {
+      (entity as any).sender = {
+        id: message.sender.id,
+        name: message.sender.name,
+        profileImage: message.sender.profileImage,
+      };
+    }
+
+    return entity;
   }
   // static toPrisma(messageEntity:MessageEntity):Prisma.MessageCreateInput{
   //     return{
@@ -37,7 +56,7 @@ export class MessageMapper {
 
     return data;
   }
-  static toDomains(messages: Message[]): MessageEntity[] {
+  static toDomains(messages: MessageWithSender[]): MessageEntity[] {
     return messages.map((msg) => {
       return this.toDomain(msg);
     });

@@ -1,31 +1,11 @@
-import { IsOptional, IsString } from 'class-validator';
-
-export class MessageDto {
-  @IsString()
+export interface MessageDto {
   id: string;
-  @IsString()
   content: string;
-  @IsString()
-  @IsOptional()
-  conversationId?: string | null;
-  @IsString()
-  @IsOptional()
-  groupId?: string | null;
-
-  @IsString()
+  conversationId: string | null;
+  groupId: string | null;
   senderId: string;
-  @IsString()
-  createdAt: string;
-
-  @IsString()
-  @IsOptional()
   senderName?: string;
-
-  @IsString()
-  @IsOptional()
   senderProfileImage?: string;
-
-  @IsString()
-  @IsOptional()
+  createdAt: string;
   status?: 'sent' | 'delivered' | 'read';
 }

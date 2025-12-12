@@ -12,10 +12,11 @@ export class AiTripEntity {
     private readonly _itinerary: DayPlan[],
     private readonly _startDate: string,
     private readonly _visibility: boolean,
+    private readonly _preferences?: { activities?: string[]; pace?: string; interests?: string[] } | null,
     private readonly _userName?: string,
     private readonly _profileImage?: string,
     private readonly _location?: string,
-  ) {}
+  ) { }
 
   static create(props: {
     userId: string;
@@ -27,6 +28,7 @@ export class AiTripEntity {
     itinerary: DayPlan[];
     startDate: string;
     visibility: boolean;
+    preferences?: { activities?: string[]; pace?: string; interests?: string[] } | null;
   }) {
     console.log(props, 'in entrity');
 
@@ -41,6 +43,7 @@ export class AiTripEntity {
       props.itinerary,
       props.startDate,
       props.visibility,
+      props.preferences,
     );
   }
   get id() {
@@ -75,6 +78,10 @@ export class AiTripEntity {
 
   get visibility() {
     return this._visibility;
+  }
+
+  get preferences() {
+    return this._preferences;
   }
 
   get userName() {

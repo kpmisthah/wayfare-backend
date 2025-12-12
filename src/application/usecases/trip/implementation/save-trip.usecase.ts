@@ -11,18 +11,21 @@ export class SaveTrip implements ISaveTrip {
   constructor(
     @Inject('ITripRepository')
     private readonly _tripRepo: TripRepository,
-  ) {}
+  ) { }
   async saveTrip(
     userId: string,
     response: SaveTripDto,
     startDate: string,
     visibility: boolean,
+    preferences?: { activities?: string[]; pace?: string; interests?: string[] },
   ): Promise<TripDto> {
     console.log(
       startDate,
       'startDate in savetrip and',
       visibility,
       'in savTripp',
+      preferences,
+      'preferences received',
     );
 
     const createAiTrip = AiTripEntity.create({
@@ -35,6 +38,7 @@ export class SaveTrip implements ISaveTrip {
       itinerary: response.itinerary,
       startDate,
       visibility,
+      preferences: preferences || null,
     });
     console.log(createAiTrip, 'entity aftrer creatrign');
 

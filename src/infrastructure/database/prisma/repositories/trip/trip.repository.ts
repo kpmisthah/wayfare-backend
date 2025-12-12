@@ -8,8 +8,7 @@ import { ITripRepository } from 'src/domain/repositories/trip/trip.repository.in
 @Injectable()
 export class TripRepository
   extends BaseRepository<AiTripEntity>
-  implements ITripRepository
-{
+  implements ITripRepository {
   constructor(private _prisma: PrismaService) {
     super(_prisma.tripPlan, TripMapper);
   }
@@ -28,6 +27,38 @@ export class TripRepository
       where: { userId },
     });
     return TripMapper.toDomainMany(result);
+  }
+
+  async findByUserIdPaginated(
+    userId: string,
+    options: { page: number; limit: number; search: string },
+  ): Promise<{ trips: AiTripEntity[]; total: number }> {
+    const skip = (options.page - 1) * options.limit;
+
+    const where = {
+      userId,
+      ...(options.search && {
+        destination: {
+          contains: options.search,
+          mode: 'insensitive' as const,
+        },
+      }),
+    };
+
+    const [trips, total] = await Promise.all([
+      this._prisma.tripPlan.findMany({
+        where,
+        skip,
+        take: options.limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this._prisma.tripPlan.count({ where }),
+    ]);
+
+    return {
+      trips: TripMapper.toDomainMany(trips),
+      total,
+    };
   }
 
   async findTravellersByDestination(

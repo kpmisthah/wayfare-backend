@@ -6,19 +6,12 @@ import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import { UnauthorizedExceptionFilter } from './infrastructure/filters/unauthorized.filter';
 import { json, urlencoded, Request, Response } from 'express';
-import cookieParser from 'cookie-parser';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
-  // const customLoggerService = new Logging();
   try {
-    // const app = await NestFactory.create(AppModule, {
-    //   logger: WinstonModule.createLogger(
-    //     customLoggerService.createLoggerConfig,
-    //   ),
-    // });
 
     const app = await NestFactory.create(AppModule);
-    // app.useGlobalFilters(new GlobalExceptionFilter());
     app.use(
       json({
         verify: (
@@ -48,12 +41,9 @@ async function bootstrap() {
       }),
     );
 
-    // const graph = generateAppGraph(app);
-    // console.log(graph);
-    // fs.writeFileSync('app.module.mmd', graph);
     app.useGlobalFilters(new UnauthorizedExceptionFilter());
     app.use(helmet());
-    // Enable cookie parser
+
     app.use(cookieParser());
 
     // CORS Setup

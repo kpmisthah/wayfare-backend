@@ -7,6 +7,7 @@ import {
   Post,
   Req,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { GenerateTripDto } from 'src/application/dtos/generate-trip.dto';
 import { TripDto } from 'src/application/dtos/Trip.dto';
@@ -27,7 +28,7 @@ export class TripController {
     private readonly _generateAndSaveTrip: IGenerateAndSaveTrip,
     @Inject('IAiTripPlanUsecase')
     private readonly _tripPlan: IAiTripPlanUsecase,
-  ) {}
+  ) { }
 
   @Post('generate')
   async generateTripPlan(
@@ -44,8 +45,20 @@ export class TripController {
   }
 
   @Get()
-  async fetchAllTrip(@Req() req: RequestWithUser) {
+  async fetchAllTrip(
+    @Req() req: RequestWithUser,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('search') search?: string,
+  ) {
     const userId = req.user.userId;
-    return await this._tripPlan.fetchAllTrip(userId);
+    const pageNum = page ? parseInt(page) : 1;
+    const limitNum = limit ? parseInt(limit) : 10;
+
+    return await this._tripPlan.fetchAllTrip(userId, {
+      page: pageNum,
+      limit: limitNum,
+      search: search || '',
+    });
   }
 }

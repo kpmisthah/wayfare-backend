@@ -8,8 +8,7 @@ import { MessageMapper } from 'src/infrastructure/mappers/message.mapper';
 @Injectable()
 export class MessageRepository
   extends BaseRepository<MessageEntity>
-  implements IChatRepository
-{
+  implements IChatRepository {
   constructor(private readonly _prisma: PrismaService) {
     super(_prisma.message, MessageMapper);
   }
@@ -18,6 +17,11 @@ export class MessageRepository
   ): Promise<MessageEntity[]> {
     const msgs = await this._prisma.message.findMany({
       where: { conversationId },
+      include: {
+        sender: {
+          select: { id: true, name: true, profileImage: true },
+        },
+      },
       orderBy: { createdAt: 'asc' },
     });
     return MessageMapper.toDomains(msgs);
@@ -26,6 +30,11 @@ export class MessageRepository
     console.log(message, 'messageeeee');
     const msg = await this._prisma.message.create({
       data: MessageMapper.toPrisma(message),
+      include: {
+        sender: {
+          select: { id: true, name: true, profileImage: true },
+        },
+      },
     });
     console.log(msg, 'msgggg');
     return MessageMapper.toDomain(msg);
@@ -100,6 +109,11 @@ export class MessageRepository
   async getMessagesByGroup(groupId: string): Promise<MessageEntity[]> {
     const msgs = await this._prisma.message.findMany({
       where: { groupId },
+      include: {
+        sender: {
+          select: { id: true, name: true, profileImage: true },
+        },
+      },
       orderBy: { createdAt: 'asc' },
     });
     return MessageMapper.toDomains(msgs);
