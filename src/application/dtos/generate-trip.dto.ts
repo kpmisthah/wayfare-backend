@@ -1,4 +1,22 @@
-import { IsString, Min, Max, IsDateString } from 'class-validator';
+import { IsString, Min, Max, IsDateString, IsOptional, IsArray, IsIn, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
+
+export class TripPreferencesDto {
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  activities?: string[];
+
+  @IsOptional()
+  @IsIn(['relaxed', 'moderate', 'packed'])
+  pace?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  interests?: string[];
+}
+
 export class GenerateTripDto {
   @IsString()
   destination: string;
@@ -17,4 +35,9 @@ export class GenerateTripDto {
   startDate: string;
 
   visiblity: boolean;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => TripPreferencesDto)
+  preferences?: TripPreferencesDto;
 }
