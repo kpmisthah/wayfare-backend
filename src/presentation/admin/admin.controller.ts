@@ -45,7 +45,7 @@ export class AdminController {
     private readonly _bookingUseCase: IBookingUseCase,
     @Inject('ICreatePayoutRequestUsecase')
     private readonly _payoutRequestUsecase: ICreatePayoutRequestUsecase,
-  ) {}
+  ) { }
   @Get('/preferences')
   getAllPreferences() {
     return this._adminUsecase.getAllPreferences();
@@ -144,5 +144,13 @@ export class AdminController {
   @Patch('/payout/reject/:id')
   async rejectPayout(@Param('id') id: string, @Body('reason') reason: string) {
     return this._payoutRequestUsecase.rejectPayout(id, reason);
+  }
+
+  @Patch('/agency/:id')
+  async updateAgency(
+    @Param('id') id: string,
+    @Body() updateData: { name: string; email: string; status?: string },
+  ) {
+    return await this._adminUsecase.updateAgency(id, updateData);
   }
 }

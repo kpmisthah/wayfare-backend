@@ -34,7 +34,6 @@ export class ConnectionController {
   async getAcceptedConnections(
     @Req() req: RequestWithUser,
   ): Promise<unknown[]> {
-    // Using unknown[] to avoid any[] error
     const userId = req.user['userId'];
     console.log(userId, 'userIddddddd');
     const u = await this._sendConnection.getAcceptedConnections(userId);

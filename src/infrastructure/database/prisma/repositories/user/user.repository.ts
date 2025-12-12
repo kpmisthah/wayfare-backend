@@ -29,14 +29,7 @@ export class UserRepository
     total?: number;
     totalPages?: number;
   }> {
-    // let skip: number;
-    // if (page && limit) {
     const skip = (page - 1) * limit;
-    // } else {
-    //   skip = 0;
-    //   page = 0;
-    //   limit = 0;
-    // }
     const data = await this._prisma.user.findMany({
       where: {
         role: 'USER',

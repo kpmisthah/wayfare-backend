@@ -397,6 +397,7 @@ enum WalletTransactionType {
   AGENCY_CREDIT
   REFUND
   WITHDRAWAL
+  PAYOUT
 }
 
 enum TransactionType {

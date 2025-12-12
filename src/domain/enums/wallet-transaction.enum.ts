@@ -4,4 +4,5 @@ export enum WalletTransactionEnum {
   AGENCY_CREDIT = 'AGENCY_CREDIT',
   REFUND = 'REFUND',
   WITHDRAWAL = 'WITHDRAWAL',
+  PAYOUT = 'PAYOUT',
 }

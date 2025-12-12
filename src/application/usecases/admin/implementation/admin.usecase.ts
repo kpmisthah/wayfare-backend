@@ -21,7 +21,7 @@ export class AdminService implements IAdminService {
     private readonly _agencyRepo: IAgencyRepository,
     @Inject('IUserRepository')
     private readonly _userRepo: IUserRepository,
-  ) {}
+  ) { }
   async createPreference(
     preferenceDto: PreferenceDto,
   ): Promise<preference | null> {
@@ -57,5 +57,38 @@ export class AdminService implements IAdminService {
     const admin = await this._adminRepo.findAdmin();
     if (!admin) return null;
     return UserMapper.toSafeUserDto(admin);
+  }
+
+  async updateAgency(
+    id: string,
+    updateData: { name: string; email: string; status?: string },
+  ): Promise<AgencyManagementDto> {
+
+    const agency = await this._agencyRepo.findById(id);
+    if (!agency) {
+      throw new Error('Agency not found');
+    }
+
+
+    const user = await this._userRepo.findById(agency.userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const updatedUserEntity = user.update({
+      name: updateData.name,
+      email: updateData.email,
+    });
+
+    await this._userRepo.update(agency.userId, updatedUserEntity);
+
+
+    const updatedAgency = await this._agencyRepo.findById(id);
+    const finalUser = await this._userRepo.findById(agency.userId);
+
+    if (!updatedAgency || !finalUser) {
+      throw new Error('Failed to fetch updated data');
+    }
+    return AgencyMapper.toAgencyManagement(finalUser, updatedAgency);
   }
 }

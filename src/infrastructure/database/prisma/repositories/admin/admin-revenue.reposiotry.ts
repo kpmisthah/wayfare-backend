@@ -40,7 +40,7 @@ export interface WalletTransactionWithRelations {
 
 @Injectable()
 export class AdminRevenueRepository implements IAdminRevenueRepository {
-  constructor(private readonly _prisma: PrismaService) {}
+  constructor(private readonly _prisma: PrismaService) { }
 
   async getAllRevenue() {
     const totalStripeTransaction = await this._prisma.transaction.aggregate({
@@ -107,12 +107,10 @@ export class AdminRevenueRepository implements IAdminRevenueRepository {
   ): Promise<TransactionSummaryResult> {
     const skip = (page - 1) * limit;
 
-    // Build where clause
     const whereClause: Prisma.WalletTransactionWhereInput = {
       category: $Enums.WalletTransactionType.ADMIN_CREDIT,
     };
 
-    // If search is provided, search by agency name (from booking) or destination
     if (search && search.trim()) {
       whereClause.OR = [
         {
@@ -218,7 +216,6 @@ export class AdminRevenueRepository implements IAdminRevenueRepository {
 
     const destination = tx.booking?.package?.destination || undefined;
 
-    // Extend with relation data
     return Object.assign(entity, {
       agencyName,
       destination,

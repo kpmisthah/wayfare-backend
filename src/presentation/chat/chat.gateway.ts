@@ -197,11 +197,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.server.sockets.adapter.rooms.get(roomId)?.size,
       );
     }
-    // if(room){
-    //   client.join(room)
-    //   console.log(`Client ${client.id} joined room: ${room}`);
-    // }
-    // client.emit('joined', { roomId });
   }
 
   @SubscribeMessage('leaveRoom')
@@ -254,15 +249,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         saved,
         '==========================in chat gateway===========================',
       );
-      // Broadcast to all sockets in that conversation room
-      // this.server.to(data.conversationId).emit('receiveMessage', saved);
 
       const messageWithStatus = { ...saved, status: 'sent' };
       this.server
         .to(data.conversationId)
         .emit('receiveMessage', messageWithStatus);
       console.log('emit event sender');
-      // client.to(data.conversationId).emit('receiveMessage', saved);
     }
   }
 
@@ -275,7 +267,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const roomId = data.conversationId || data.groupId;
     if (!roomId) return;
 
-    // Ideally, update DB here using usecase
     // await this._chatUsecase.markMessagesAsRead(data.messageIds);
 
     // Broadcast to the room (so the sender sees blue ticks)
@@ -303,13 +294,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     );
     console.log(data, 'data in handlerStartCalll');
 
-    // Send call to the receiver
     this.server.to(data.toUserId).emit('incomingCall', {
       from: fromUserId,
-      // fromName: 'User', // You can pass name later
       conversationId: data.conversationId,
       callType: data.callType,
-      signalData: data.signalData, // WebRTC signal
+      signalData: data.signalData, 
     });
   }
   @SubscribeMessage('acceptCall')

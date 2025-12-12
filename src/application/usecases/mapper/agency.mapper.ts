@@ -11,9 +11,6 @@ export class AgencyMapper {
   static toAgencyDto(agencyEntity: AgencyEntity): AgencyResponseDto {
     return {
       description: agencyEntity.description,
-      // status: agencyEntity.status,
-      // specialization:agencyEntity.specialization,
-      // phone:agencyEntity.phone,
       pendingPayouts: agencyEntity.pendingPayouts,
       totalEarnings: agencyEntity.totalEarnings,
       licenseNumber: agencyEntity.licenseNumber,

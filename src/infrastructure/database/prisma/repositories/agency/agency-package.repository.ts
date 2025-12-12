@@ -8,8 +8,7 @@ import { BaseRepository } from '../base.repository';
 @Injectable()
 export class AgencyPackageRepository
   extends BaseRepository<PackageEntity>
-  implements IAgencyPackageRepository
-{
+  implements IAgencyPackageRepository {
   constructor(private readonly _prisma: PrismaService) {
     super(_prisma.package, PackageMapper);
   }
@@ -68,6 +67,22 @@ export class AgencyPackageRepository
     });
     return PackageMapper.toDomains(getAgencyPackages);
   }
+
+  async findActiveByAgencyId(agencyId: string): Promise<PackageEntity[]> {
+    const getAgencyPackages = await this._prisma.package.findMany({
+      where: {
+        agencyId,
+        status: 'ACTIVE',
+        agency: {
+          user: {
+            isBlock: false,
+          },
+        },
+      },
+      include: { transportation: true },
+    });
+    return PackageMapper.toDomains(getAgencyPackages);
+  }
   async findBookedPackage(agencyId: string): Promise<PackageEntity | null> {
     const bookedPackage = await this._prisma.package.findFirst({
       where: { agencyId },
@@ -94,6 +109,12 @@ export class AgencyPackageRepository
           lte: maxBudget,
           gte: minBudget,
         },
+        status: 'ACTIVE',
+        agency: {
+          user: {
+            isBlock: false,
+          },
+        },
       },
     });
     console.log(filterPackages, 'filter packages');
@@ -109,6 +130,14 @@ export class AgencyPackageRepository
   async trendinPackages(): Promise<PackageEntity[]> {
     const trending = await this._prisma.package.findMany({
       take: 4,
+      where: {
+        status: 'ACTIVE',
+        agency: {
+          user: {
+            isBlock: false,
+          },
+        },
+      },
       orderBy: {
         bookings: {
           _count: 'desc',

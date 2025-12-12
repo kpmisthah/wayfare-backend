@@ -3,7 +3,6 @@ import { MessageEntity } from 'src/domain/entities/message.entity';
 
 export class MessageMapper {
   static toMessageDto(message: MessageEntity): MessageDto {
-    // Access dynamically added sender property
     const entityWithSender = message as any;
 
     return {

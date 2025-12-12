@@ -4,8 +4,9 @@ import { BookingModule } from '../booking/booking.module';
 import { WalletPaymentStatus } from 'src/application/usecases/payment/implementation/wallet-status.usecase';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CreatePayoutRequestUsecase } from 'src/application/usecases/payment/implementation/payment-request.usecase';
+import { WalletModule } from '../wallet/wallet.module';
 @Module({
-  imports: [BookingModule, ScheduleModule.forRoot()],
+  imports: [BookingModule, ScheduleModule.forRoot(), WalletModule],
   controllers: [PaymentController],
   providers: [
     {
@@ -19,4 +20,4 @@ import { CreatePayoutRequestUsecase } from 'src/application/usecases/payment/imp
   ],
   exports: ['IWalletPaymentStatus', 'ICreatePayoutRequestUsecase'],
 })
-export class PaymentModule {}
+export class PaymentModule { }

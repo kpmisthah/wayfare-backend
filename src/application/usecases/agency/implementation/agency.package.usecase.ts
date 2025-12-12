@@ -33,7 +33,7 @@ export class AgencyPackageService implements IAgencyPackageService {
     private readonly _userRepo: IUserRepository,
     @Inject('ITransportationRepository')
     private readonly _transportationRepo: ITransportationRepository,
-  ) {}
+  ) { }
   async addPackages(
     addPackageDto: PackageDto,
     userId: string,
@@ -190,9 +190,11 @@ export class AgencyPackageService implements IAgencyPackageService {
     limit: number,
     search?: string,
   ): Promise<{ data: PackageDto[]; total: number; totalPages: number }> {
-    let getPackages = await this._agencyPackageRepo.findByAgencyId(agencyId);
-
-    // Apply search filter if provided
+    console.log(agencyId,'agencyidddddd');
+    
+    let getPackages = await this._agencyPackageRepo.findActiveByAgencyId(agencyId);
+    console.log(getPackages,'----------------->>>>>getPakcagesss,,,,,,,,,,,,--');
+    
     if (search && search.trim()) {
       const searchLower = search.toLowerCase();
       getPackages = getPackages.filter(
@@ -265,8 +267,6 @@ export class AgencyPackageService implements IAgencyPackageService {
       minPricePerPerson,
       maxPricePerPerson,
     );
-
-    // Apply additional filters
     if (filterPackages.search && filterPackages.search.trim()) {
       const searchLower = filterPackages.search.toLowerCase();
       packageRepo = packageRepo.filter(
@@ -276,8 +276,6 @@ export class AgencyPackageService implements IAgencyPackageService {
           pkg.description?.toLowerCase().includes(searchLower),
       );
     }
-
-    // Duration filter (short: 1-3, medium: 4-7, long: 8+)
     if (
       filterPackages.durationFilter &&
       filterPackages.durationFilter !== 'all'
@@ -298,7 +296,6 @@ export class AgencyPackageService implements IAgencyPackageService {
     if (!iteneraries) return null;
     const transportation = await this._transportationRepo.getTransportations();
 
-    // Vehicle filter
     if (filterPackages.vehicle && filterPackages.vehicle !== 'all') {
       const vehicleLower = filterPackages.vehicle.toLowerCase();
       const packageWithTransport = packageRepo.filter((pkg) => {
@@ -351,10 +348,6 @@ export class AgencyPackageService implements IAgencyPackageService {
       duration: updatePackageDto.duration,
       picture: updatePackageDto.picture,
       price: updatePackageDto.price,
-      // vehicle:updatePackageDto.vehicle,
-      // pickup_point:updatePackageDto.pickup_point,
-      // drop_point:updatePackageDto.drop_point,
-      // detail:updatePackageDto.detail,
       status: updatePackageDto.status,
     });
     console.log(packageUpdate, 'in package updare app');

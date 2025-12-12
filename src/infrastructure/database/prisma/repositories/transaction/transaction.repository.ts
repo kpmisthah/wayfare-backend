@@ -16,7 +16,6 @@ export class TransactionRepository
     super(_prisma.transaction, TransactionMapper);
   }
   async findByBookingId(id: string): Promise<TransactionEntity | null> {
-    // Get the most recent transaction for this booking (important for retry payments)
     const transaction = await this._prisma.transaction.findFirst({
       where: { bookingId: id },
       orderBy: { createdAt: 'desc' },
@@ -55,7 +54,6 @@ export class TransactionRepository
 
     const startDate = months[0].start;
 
-    // Normal payments (UPI/Card)
     const trxPayments = await this._prisma.transaction.findMany({
       where: {
         status: PaymentStatus.SUCCEEDED,
@@ -64,7 +62,6 @@ export class TransactionRepository
       select: { amount: true, createdAt: true },
     });
 
-    // Wallet-based revenue
     const walletPayments = await this._prisma.walletTransaction.findMany({
       where: {
         category: 'USER_PAYMENT',

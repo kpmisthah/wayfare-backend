@@ -15,7 +15,6 @@ export class AgenciesRevenueRepository implements IAgencyRevenueRepository {
     limit: number,
     search?: string,
   ): Promise<AgencyRevenueSummaryResult> {
-    // Get all agency summaries first
     const agencySummary = await this._prisma.booking.groupBy({
       by: ['agencyId'],
       _sum: {
@@ -28,7 +27,6 @@ export class AgenciesRevenueRepository implements IAgencyRevenueRepository {
 
     const agencyIds = agencySummary.map((a) => a.agencyId);
 
-    // Build where clause for agencies with search
     const agencyWhereClause: {
       id: { in: string[] };
       user?: { name: { contains: string; mode: 'insensitive' } };

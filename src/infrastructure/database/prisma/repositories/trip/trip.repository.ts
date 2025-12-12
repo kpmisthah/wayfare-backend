@@ -82,10 +82,7 @@ export class TripRepository
     destinations: string[],
     userId: string,
   ): Promise<AiTripEntity[]> {
-    // Build OR conditions for partial destination matching
-    // This allows "Goa" to match "Goa, India" and vice versa
     const destinationConditions = destinations.map((dest) => {
-      // Extract the main destination name (before any comma)
       const mainDestination = dest.split(',')[0].trim();
       return {
         destination: {

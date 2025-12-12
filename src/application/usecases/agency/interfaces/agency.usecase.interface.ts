@@ -6,16 +6,13 @@ import { UpdateStatusDto } from 'src/application/dtos/update-status.dto';
 import { AgencyEntity } from 'src/domain/entities/agency.entity';
 
 export interface IAgencyService {
-  // agencyApproval(id: string, updateAgencyDto: UpdateAgencyStatusDto): Promise<any>;
+
   createAgency(
     createAgencyDto: CreateAgencyDto,
     userId: string,
   ): Promise<AgencyResponseDto | null>;
   findById(id: string): Promise<AgencyProfileDto | null>;
-  // updateProfile(
-  //   id: string,
-  //   updateAgencyStatusDto: UpdateAgencyStatusDto,
-  // ): Promise<AgencyResponseDto | null>;
+ 
   updateStatus(id: string): Promise<UpdateStatusDto | null>;
   findByEmail(email: string): Promise<AgencyEntity | null>;
   findAll(): Promise<AgencyManagementDto[] | null>;
@@ -24,7 +21,7 @@ export interface IAgencyService {
     action: string,
     reason?: string,
   ): Promise<AgencyManagementDto | null>;
-  // listAgencies(page:number,limit:number): Promise<{data:AgencyManagementDto[],totalPages:number,currentPage:number} | null>
+
   searchAgencies(
     query: string,
     page: number,

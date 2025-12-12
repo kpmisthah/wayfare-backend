@@ -83,10 +83,8 @@ export class MessageController {
       }),
     );
 
-    // Get groups
     const groups = await this._chatUsecase.getUserGroups(userId);
     console.log(groups, 'grpupssssss');
-    // Format groups properly
     const formattedGroups = groups.map((g) => ({
       groupId: g.id,
       conversationId: null,
@@ -117,11 +115,7 @@ export class MessageController {
   @Get(':conversationId')
   async getMessages(
     @Param('conversationId') conversationId: string,
-    // @Query("take") take='50000',
-    // @Query("skip") skip='0'
   ) {
-    // const t = Number(take)
-    // const s = Number(skip)
     const isGroup = await this._chatUsecase.isGroupId(conversationId);
     if (isGroup) {
       console.log(isGroup, '=========isGroup=========...');

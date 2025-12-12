@@ -29,7 +29,6 @@ export class TravellersController {
   @Get()
   async fetchTravellersByUserDestinations(@Req() req: RequestWithUser) {
     const userId = req.user['userId'];
-    // let userId = '1c025e7d-0826-4d2c-aece-2449bd69b9d7'
     return await this._travellersUsecase.fetchTravellersByUserDestinations(
       userId,
     );

@@ -4,10 +4,6 @@ export class AgencyEntity {
   constructor(
     private readonly _id: string,
     private readonly _description: string | null,
-    // private readonly _status: AgencyStatus,
-    // private readonly _specialization:string[],
-    // private readonly _phone:string,
-    // private readonly _role:Role,
     private readonly _userId: string,
     private readonly _pendingPayouts: number,
     private readonly _totalEarnings: number,
@@ -23,10 +19,6 @@ export class AgencyEntity {
 
   static create(props: {
     description: string;
-    // status:AgencyStatus,
-    // specialization:string[],
-    // phone:string,
-    // role:Role,
     userId: string;
     pendingPayouts: number;
     totalEarnings: number;

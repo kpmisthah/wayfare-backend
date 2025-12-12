@@ -3,7 +3,7 @@ import { WalletTransferDto } from 'src/application/dtos/wallet-tranfer.dto';
 import { WalletDto } from 'src/application/dtos/wallet.dto';
 import { WalletEntity } from 'src/domain/entities/wallet.entity';
 
-// Interface for wallet transaction with booking relationship
+
 interface WalletTransactionWithBooking {
   id: string;
   amount: number;
@@ -19,7 +19,7 @@ interface WalletTransactionWithBooking {
   };
 }
 
-// Interface for raw wallet transaction with relations from Prisma
+
 interface WalletTransactionWithRelations {
   id: string;
   amount: number;

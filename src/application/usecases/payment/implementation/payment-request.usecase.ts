@@ -9,13 +9,17 @@ import { PayoutDetailsDTO } from 'src/application/dtos/payout-details.dto';
 import { PayoutStatus } from 'src/domain/enums/payout-status.enum';
 import { StatusCode } from 'src/domain/enums/status-code.enum';
 import { ResponseDto } from 'src/application/dtos/reponse.dto';
+import { IWalletUseCase } from 'src/application/usecases/wallet/interfaces/wallet.usecase.interface';
+import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
 
 @Injectable()
 export class CreatePayoutRequestUsecase implements ICreatePayoutRequestUsecase {
   constructor(
     @Inject('IPayoutRequestRepository')
     private readonly _payoutRepo: IPayoutRequestRepository,
-  ) {}
+    @Inject('IWalletUseCase')
+    private readonly _walletUseCase: IWalletUseCase,
+  ) { }
 
   async execute(dto: PayoutRequestDto): Promise<PayoutRequestDto | null> {
     const entity = PayoutRequestEntity.create({
@@ -47,18 +51,36 @@ export class CreatePayoutRequestUsecase implements ICreatePayoutRequestUsecase {
     const payoutRequest = await this._payoutRepo.findById(id);
     console.log(payoutRequest, 'payoutreq');
     if (!payoutRequest) return null;
+
+ 
+    if (status === PayoutStatus.APPROVED) {
+      console.log(`Deducting ${payoutRequest.amount} from agency ${payoutRequest.agencyId}`);
+
+      const deductResult = await this._walletUseCase.deductAgency(
+        payoutRequest.agencyId,
+        payoutRequest.amount,
+        PaymentStatus.SUCCEEDED,
+        payoutRequest.id, 
+      );
+
+      if (!deductResult || deductResult.status !== StatusCode.SUCCESS) {
+        throw new Error('Failed to deduct amount from agency wallet');
+      }
+
+      console.log('Amount deducted successfully from agency wallet');
+    }
+
     const updatePayoutRequest = payoutRequest.update({ status });
-    console.log(updatePayoutRequest, 'upated');
+    console.log(updatePayoutRequest, 'updated');
 
     const res = await this._payoutRepo.update(
       payoutRequest.id,
       updatePayoutRequest,
     );
-    console.log(res, '================>resutlltt===================');
 
     return {
       code: StatusCode.SUCCESS,
-      message: `Payout approved`,
+      message: `Payout ${status === PayoutStatus.APPROVED ? 'approved and amount deducted from wallet' : 'approved'}`,
     };
   }
 

@@ -11,8 +11,7 @@ import { $Enums, Prisma } from '@prisma/client';
 @Injectable()
 export class AgencyRepository
   extends BaseRepository<AgencyEntity>
-  implements IAgencyRepository
-{
+  implements IAgencyRepository {
   constructor(private readonly _prisma: PrismaService) {
     super(_prisma.agency, AgencyMapper);
   }
@@ -90,6 +89,7 @@ export class AgencyRepository
     const agencies = await this._prisma.agency.findMany({
       where: {
         user: {
+          isBlock: false,
           name: {
             contains: query,
             mode: 'insensitive',
@@ -114,6 +114,7 @@ export class AgencyRepository
     return this._prisma.agency.count({
       where: {
         user: {
+          isBlock: false,
           name: {
             contains: query,
             mode: 'insensitive',

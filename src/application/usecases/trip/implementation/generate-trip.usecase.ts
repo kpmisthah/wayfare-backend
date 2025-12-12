@@ -12,7 +12,6 @@ export class GenerateTripUsecase implements IGenerateTripUsecase {
   async execute(dto: GenerateTripDto) {
     console.log(dto, 'in dto GenerateTripDto in ai');
 
-    // Build preferences section if provided
     let preferencesSection = '';
     if (dto.preferences) {
       preferencesSection = `\nUser Preferences:`;

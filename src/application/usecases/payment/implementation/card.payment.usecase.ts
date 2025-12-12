@@ -23,12 +23,6 @@ export class CardPaymentUsecase implements IPayment {
   async payment(booking: BookingEntity, agencyId: string) {
     console.log(booking, 'in cardPayment and ', agencyId, 'in here');
 
-    // const clientSecret = await this._paymentProvider.createPaymentIntent(
-    //   booking.totalAmount * 100,
-    //   'inr',
-    //   { bookingId: booking.id },
-    // );
-    // console.log(clientSecret,'client sectrrt in cardPaymnetUsecase');
     const checkoutUrl = await this._paymentProvider.createCheckoutSession({
       amount: booking.totalAmount,
       currency: 'inr',

@@ -38,6 +38,8 @@ import { PackageStatus } from 'src/domain/enums/package-status.enum';
 import { BankDetailsDto } from 'src/application/dtos/request-payout.dto';
 import { IBankingDetailsUsecase } from 'src/application/usecases/agency/interfaces/agnecy-banking-details.usecase.interface';
 import { IWalletUseCase } from 'src/application/usecases/wallet/interfaces/wallet.usecase.interface';
+import { PayoutRequestDto } from 'src/application/dtos/payout-request.dto';
+import { ICreatePayoutRequestUsecase } from 'src/application/usecases/payment/interfaces/create-payout.usecase.interface';
 import { RolesGuard } from '../roles/auth.guard';
 import { Roles } from '../roles/roles.decorator';
 import { Role } from 'src/domain/enums/role.enum';
@@ -59,7 +61,9 @@ export class AgencyController {
     private readonly _bankingDetailsUsecase: IBankingDetailsUsecase,
     @Inject('IWalletUseCase')
     private readonly _walletUseCase: IWalletUseCase,
-  ) {}
+    @Inject('ICreatePayoutRequestUsecase')
+    private readonly _payoutUsecase: ICreatePayoutRequestUsecase,
+  ) { }
   @Post('/agency-profile')
   async createAgencyProfile(
     @Body() createAgencyDto: CreateAgencyDto,
@@ -210,15 +214,7 @@ export class AgencyController {
     const userId = req.user['userId'];
     return await this._walletUseCase.getRecentTransaction(userId);
   }
-  // @Get()
-  // async listAgencies(
-  // @Query('page') page: string,
-  // @Query('limit') limit: string
-  // ) {
-  //   const pageNum = parseInt(page) || 1;
-  //   const limitNum = parseInt(limit) || 6;
-  //   return this._agencyUsecase.listAgencies(pageNum,limitNum);
-  // }
+
   @Get('/:agencyId/packages')
   async getAgencyPackages(
     @Param('agencyId') agencyId: string,
@@ -226,7 +222,7 @@ export class AgencyController {
     @Query('limit') limit?: string,
     @Query('search') search?: string,
   ): Promise<{ data: PackageDto[]; total: number; totalPages: number }> {
-    console.log('Hellooooooo agecnyId');
+    console.log('==================Hellooooooo agecnyId==========', agencyId);
     const pageNumber = page ? Number(page) : 1;
     console.log(pageNumber, 'pageNumber');
 
@@ -262,8 +258,6 @@ export class AgencyController {
     @Param('id') id: string,
     @Body() body: { action: 'accept' | 'reject'; reason?: string },
   ) {
-    // let id = req.user['userId']
-    console.log(id, 'id');
     const { action, reason } = body;
     console.log(action, 'action');
     console.log(reason, 'reason');
@@ -276,8 +270,12 @@ export class AgencyController {
     return await this._bankingDetailsUsecase.getBankDetailsByAgency(userId);
   }
   @Post('/bank-details')
-  async agencyBankDetails(@Body() bankDetailsDto: BankDetailsDto) {
-    return await this._bankingDetailsUsecase.bankDetails(bankDetailsDto);
+  async agencyBankDetails(
+    @Req() req: RequestWithUser,
+    @Body() bankDetailsDto: BankDetailsDto,
+  ) {
+    const userId = req.user['userId'];
+    return await this._bankingDetailsUsecase.bankDetails(bankDetailsDto, userId);
   }
   @Patch('/update/bankdetails')
   async updateBankDetails(
@@ -289,5 +287,26 @@ export class AgencyController {
       userId,
       updateBankDetailsDto,
     );
+  }
+
+  @Post('/payout')
+  async requestPayout(
+    @Req() req: RequestWithUser,
+    @Body() payoutDto: { amount: number },
+  ) {
+    const userId = req.user['userId'];
+
+    const agency = await this._agencyProfileUsecase.findProfile(userId);
+    if (!agency) {
+      throw new Error('Agency profile not found');
+    }
+
+    const payoutRequest: PayoutRequestDto = {
+      agencyId: agency.id,
+      amount: payoutDto.amount,
+      status: undefined as any, 
+    };
+
+    return await this._payoutUsecase.execute(payoutRequest);
   }
 }

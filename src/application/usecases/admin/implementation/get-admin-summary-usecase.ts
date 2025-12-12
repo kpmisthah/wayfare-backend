@@ -18,7 +18,7 @@ export class GetAdminSummaryUseCase implements IAdminSumaryUsecase {
   ) {}
 
   async getDashboardStats(): Promise<DashboardStats> {
-    // run in parallel
+
     const [
       totalUsers,
       totalBookings,

@@ -19,28 +19,6 @@ export class ProfileRepository implements IProfileRepository {
     return UserProfileMapper.toDomain(profile);
   }
   async getUserData(id: string): Promise<UserProfileEntity | null> {
-    //ividenn preferences ozhivaaaakiiii
-    //  let res = await this.prisma.user.findUnique({
-    //   where:{id},
-    //   select:{
-    //     id:true,
-    //     name:true,
-    //     email:true,
-    //     phone:true,
-    //     location:true,
-    //     profileImage:true,
-    //     bannerImage:true,
-    //     preferences:{
-    //       select:{
-    //         id:true,
-    //         name:true
-    //       }
-    //     }
-    //   }
-    // })
-    // console.log(res,'in repository')
-    // return res
-    // }
     const userProfile = await this.prisma.userProfile.findFirst({
       where: { userId: id },
     });
@@ -89,18 +67,7 @@ export class ProfileRepository implements IProfileRepository {
         phone: data.phone,
       },
       create: UserProfileMapper.toPrisma(data),
-      // select:{
-      //   name:true,
-      //   email:true,
-      //   phone:true,
-      //   location:true,
-      //   preferences:{
-      //     select:{
-      //       id:true,
-      //       name:true
-      //     }
-      //   }
-      // }
+
     });
     if (!updateUserProfile) return null;
     return UserProfileMapper.toDomain(updateUserProfile);

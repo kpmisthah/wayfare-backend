@@ -14,4 +14,8 @@ export interface IAdminService {
     status?: AgencyStatus;
   }): Promise<{ data: AgencyManagementDto[]; total: number } | null>;
   findAdmin(): Promise<SafeUser | null>;
+  updateAgency(
+    id: string,
+    updateData: { name: string; email: string; status?: string },
+  ): Promise<AgencyManagementDto>;
 }

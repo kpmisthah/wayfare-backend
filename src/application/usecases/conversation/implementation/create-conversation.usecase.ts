@@ -18,7 +18,7 @@ export class ConversationUseCase implements IConversationUsecase {
 
     console.log(userA, 'userrrAAAA');
     console.log(userB, 'userBBBB');
-    if (existing) return existing.id; // Corrected to return id as per Controller expectation (string) or entity? Controller expects string
+    if (existing) return existing.id; 
     const res = await this._conversationRepo.createConversation([userA, userB]);
     console.log(res, 'in ===========>conversation enitty==========>');
     return res.id;
@@ -35,9 +35,6 @@ export class ConversationUseCase implements IConversationUsecase {
   > {
     const result = await this._conversationRepo.getUserConversations(userId);
     if (!result) return [];
-    // TODO: The repository returns ConversationEntity[] but the interface expects enriched data.
-    // This needs to be addressed by updating either the repository or the interface.
-    // For now, return empty array as the entities don't contain the required fields.
     return [];
   }
 }

@@ -6,6 +6,7 @@ export interface IAgencyPackageRepository
   addPackages(packages: PackageEntity): Promise<PackageEntity>;
   getPackages(id: string): Promise<PackageEntity[]>;
   findByAgencyId(agencyId: string | undefined): Promise<PackageEntity[]>;
+  findActiveByAgencyId(agencyId: string | undefined): Promise<PackageEntity[]>;
   findBookedPackage(agencyId: string): Promise<PackageEntity | null>;
   filterPackages(
     destination: string,

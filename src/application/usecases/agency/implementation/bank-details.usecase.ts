@@ -13,12 +13,18 @@ export class BankingDetailsUsecase implements IBankingDetailsUsecase {
     private readonly _bankingDetailsRepo: IBankingDetailsRepository,
     @Inject('IAgencyRepository')
     private readonly _agencyRepo: IAgencyRepository,
-  ) {}
+  ) { }
   async bankDetails(
     bankDetailsDto: BankDetailsDto,
+    userId: string,
   ): Promise<BankDetailsDto | null> {
+    const agency = await this._agencyRepo.findByUserId(userId);
+    if (!agency) {
+      throw new Error('Agency not found for this user');
+    }
+
     const bankDetails = BankingEntity.create({
-      agencyId: bankDetailsDto.agencyId,
+      agencyId: agency.id,
       accountHolderName: bankDetailsDto.accountHolderName,
       accountNumber: bankDetailsDto.accountNumber,
       ifcCode: bankDetailsDto.ifscCode,

@@ -11,6 +11,7 @@ import { NodemailerService } from 'src/infrastructure/utils/nodemailer.service';
 import { AdminModule } from '../admin/admin.module';
 import { BankingDetailsUsecase } from 'src/application/usecases/agency/implementation/bank-details.usecase';
 import { WalletModule } from '../wallet/wallet.module';
+import { PaymentModule } from '../payment/payment.module';
 // import { SearchModule } from 'src/infrastructure/elastic-search/elastic-search.module';
 
 import { AgencyDashboardController } from './agency-dashboard.controller';
@@ -18,7 +19,7 @@ import { AgencyDashboardUseCase } from 'src/application/usecases/agency/implemen
 import { AgencyDashboardRepository } from 'src/infrastructure/database/prisma/repositories/agency/agency-dashboard.repository';
 
 @Module({
-  imports: [CloudinaryModule, UsersModule, AdminModule, WalletModule],
+  imports: [CloudinaryModule, UsersModule, AdminModule, WalletModule, PaymentModule],
   controllers: [AgencyDashboardController, AgencyController],
   providers: [
     {
@@ -61,4 +62,4 @@ import { AgencyDashboardRepository } from 'src/infrastructure/database/prisma/re
     AGENCY_PROFILE_TYPE.IAgencyProfileService,
   ],
 })
-export class AgencyModule {}
+export class AgencyModule { }

@@ -7,8 +7,8 @@ import { Roles } from '../roles/roles.decorator';
 import { Role } from 'src/domain/enums/role.enum';
 
 @Controller('wallet')
-@UseGuards(AccessTokenGuard, RolesGuard) // Added RolesGuard
-@Roles(Role.User, Role.Agency) // Both Users and Agencies can access wallet
+@UseGuards(AccessTokenGuard, RolesGuard) 
+@Roles(Role.User, Role.Agency) 
 export class WalletController {
   constructor(
     @Inject('IWalletUseCase')

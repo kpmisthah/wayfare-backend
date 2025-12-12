@@ -15,7 +15,7 @@ export class ConversationController {
     @Param('userB') userB: string,
   ): Promise<string> {
     const result = await this._conversationUsecase.execute(userA, userB);
-    return result ?? ''; // Handle potential null/void
+    return result ?? ''; 
   }
 
   @Get(':userId')

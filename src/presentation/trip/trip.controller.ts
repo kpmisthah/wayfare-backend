@@ -20,8 +20,8 @@ import { Roles } from '../roles/roles.decorator';
 import { Role } from 'src/domain/enums/role.enum';
 
 @Controller('trip')
-@UseGuards(AccessTokenGuard, RolesGuard) // Added RolesGuard
-@Roles(Role.User) // Only Users can access trip planning
+@UseGuards(AccessTokenGuard, RolesGuard)
+@Roles(Role.User) 
 export class TripController {
   constructor(
     @Inject('IGenerateAndSaveTrip')

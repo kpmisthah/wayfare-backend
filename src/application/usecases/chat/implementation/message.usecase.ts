@@ -65,7 +65,6 @@ export class ChatUsecase implements IChatUsecase {
 
     const groupId = group.id;
 
-    // FORCE ALL MEMBERS INTO THE ROOM — NO RACE CONDITION
     allMembers.forEach((userId) => {
       const userRoom =
         this._chatGateway.server.sockets.adapter.rooms.get(userId);
@@ -92,7 +91,6 @@ export class ChatUsecase implements IChatUsecase {
       createdAt: group.createdAt,
     };
 
-    // NOW 100% SAFE TO EMIT
     setImmediate(() => {
       this._chatGateway.server.to(groupId).emit('groupCreated', payload);
     });
@@ -118,7 +116,6 @@ export class ChatUsecase implements IChatUsecase {
     senderId: string,
     content: string,
   ): Promise<MessageDto> {
-    // Optional: verify sender is member of group
     const isMember = await this._chatRepo.isUserInGroup(senderId, groupId);
     if (!isMember)
       throw new Error('Not authorized to send message in this group');

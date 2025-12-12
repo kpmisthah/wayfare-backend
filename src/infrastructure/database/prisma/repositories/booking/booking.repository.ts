@@ -26,14 +26,12 @@ export class BookingRepository
     const { search, status, page = 1, limit = 10 } = options || {};
     const skip = (page - 1) * limit;
 
-    // Build where clause
     const where: Record<string, unknown> = { userId };
 
     if (status && status !== 'all') {
       where.status = status.toUpperCase();
     }
 
-    // If search is provided, we need to join with package to search by destination
     if (search) {
       where.package = {
         OR: [

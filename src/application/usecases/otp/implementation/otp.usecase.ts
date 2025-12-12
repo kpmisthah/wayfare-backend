@@ -13,7 +13,7 @@ export class OtpService implements IOtpService {
     private readonly nodemailerService: NodemailerService,
     @Inject('IRedisService')
     private readonly _redisService: IRedisService,
-  ) {}
+  ) { }
 
   async sendOtp(
     email: string,
@@ -47,8 +47,9 @@ export class OtpService implements IOtpService {
     }
   }
 
-  async sendForgotPasswordOtp(email: string) {
-    const otp = await this.nodemailerService.sendOtpToEmail(email);
+  async sendForgotPasswordOtp(email: string, name: string = 'User') {
+
+    const otp = await this.nodemailerService.sendForgotPasswordOtp(email, name);
     const key = `forgot:${email}`;
 
     await this._redisService.set(key, JSON.stringify({ otp }), 300);

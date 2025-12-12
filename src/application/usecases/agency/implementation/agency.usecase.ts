@@ -30,7 +30,7 @@ export class AgencyService implements IAgencyService {
     @Inject('IIteneraryRepository')
     private readonly _IteneraryRepo: IItineraryRepository,
     // private readonly _searchService:SearchService
-  ) {}
+  ) { }
 
   async createAgency(
     createAgencyDto: CreateAgencyDto,
@@ -50,7 +50,6 @@ export class AgencyService implements IAgencyService {
 
     const agency = await this._agencyRepo.create(agencyEntity);
     console.log(agency, 'agency');
-    // await this._searchService.indexAgency(agency);
     if (!agency) {
       return null;
     }
@@ -126,11 +125,6 @@ export class AgencyService implements IAgencyService {
     currentPage: number;
   } | null> {
     const skip = (page - 1) * limit;
-    // const users = await this._userRepo.listUsersFromAgencies();
-    // if (!users) return null;
-    // const filteredUsers = users.filter((user)=>
-    //   user.name.toLocaleLowerCase().includes(query?.toLocaleLowerCase()||'')
-    // )
     let orderBy: Record<string, unknown> | undefined = undefined;
     if (sortBy === 'az') {
       orderBy = { user: { name: 'asc' } };
@@ -148,7 +142,6 @@ export class AgencyService implements IAgencyService {
     if (!agencies) {
       return { data: [], totalPages: 0, currentPage: page };
     }
-    // Map AgencyManageDto to AgencyManagementDto format
     const mapped = agencies.map((agency) => ({
       id: agency.domain.id,
       address: agency.domain.address ?? '',

@@ -41,7 +41,6 @@ export class AgencyDashboardController {
       };
     } catch (error) {
       console.error('[AgencyDashboardController] Error:', error);
-      // Let global exception filter handle it or return error object
       throw error;
     }
   }

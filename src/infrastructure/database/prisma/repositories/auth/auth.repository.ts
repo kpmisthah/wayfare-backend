@@ -8,16 +8,6 @@ import { UserMapper } from 'src/infrastructure/mappers/user.mapper';
 export class AuthRepository implements IAuthRepository {
   constructor(private _prisma: PrismaService) {}
 
-  // async findByOtp(otp: string): Promise<UserVerificationEntity | null> {
-  //   const record = await this._prisma.userVerification.findFirst({
-  //     where: { otp },
-  //   });
-  //   if (!record) return null;
-  //   return userVerificationMapper.toDomain(record);
-  // }
-  // async deleteTempUser(id: string) {
-  //   return this._prisma.userVerification.delete({ where: { id } });
-  // }
   async resetPassword(
     email: string,
     data: { password: string },

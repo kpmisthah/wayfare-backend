@@ -9,8 +9,7 @@ import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
 @Injectable()
 export class WalletTransactionRepository
   extends BaseRepository<WalletTransactionEntity>
-  implements IWalletTransactionRepository
-{
+  implements IWalletTransactionRepository {
   constructor(private readonly _prisma: PrismaService) {
     super(_prisma.walletTransaction, WalletTransactionMapper);
   }
@@ -89,29 +88,48 @@ export class WalletTransactionRepository
   }
 
   async getWalletSummary(agencyId: string) {
-    const successAmount = await this._prisma.walletTransaction.aggregate({
+
+    const creditAmount = await this._prisma.walletTransaction.aggregate({
       where: {
         agencyId,
         status: PaymentStatus.SUCCEEDED,
+        type: 'CREDIT', 
       },
       _sum: { amount: true },
     });
 
-    const wholeAmount = await this._prisma.walletTransaction.aggregate({
-      where: { agencyId },
+  
+    const debitAmount = await this._prisma.walletTransaction.aggregate({
+      where: {
+        agencyId,
+        status: PaymentStatus.SUCCEEDED,
+        type: 'DEBIT', 
+      },
       _sum: { amount: true },
     });
 
-    const pendingAmount = await this._prisma.walletTransaction.aggregate({
-      where: { agencyId, status: PaymentStatus.PENDING },
+  
+    const walletAmount = (creditAmount._sum.amount || 0) - (debitAmount._sum.amount || 0);
+
+ 
+    const wholeAmount = (creditAmount._sum.amount || 0) - (debitAmount._sum.amount || 0);
+
+ 
+    const pendingCredit = await this._prisma.walletTransaction.aggregate({
+      where: { agencyId, status: PaymentStatus.PENDING, type: 'CREDIT' },
       _sum: { amount: true },
     });
-    const walletAmount = successAmount._sum.amount;
-    const wholeWalletAmount = wholeAmount._sum.amount;
-    const pendingWalletAmount = pendingAmount._sum.amount;
+
+    const pendingDebit = await this._prisma.walletTransaction.aggregate({
+      where: { agencyId, status: PaymentStatus.PENDING, type: 'DEBIT' },
+      _sum: { amount: true },
+    });
+
+    const pendingWalletAmount = (pendingCredit._sum.amount || 0) - (pendingDebit._sum.amount || 0);
+
     return {
       walletAmount,
-      wholeWalletAmount,
+      wholeWalletAmount: wholeAmount,
       pendingWalletAmount,
     };
   }

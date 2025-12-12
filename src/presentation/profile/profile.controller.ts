@@ -23,8 +23,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadProfileUseCase } from 'src/application/usecases/profile/implementation/upload-profile.usecase';
 
 @Controller('user')
-@UseGuards(AccessTokenGuard, RolesGuard) // Added RolesGuard at controller level
-@Roles(Role.User) // Only Users can access user profile endpoints
+@UseGuards(AccessTokenGuard, RolesGuard) 
+@Roles(Role.User) 
 export class ProfileController {
   constructor(
     @Inject(PROFILE_TYPE.IProfileService)

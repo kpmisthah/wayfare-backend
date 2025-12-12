@@ -6,6 +6,7 @@ export class BankDetailsDto {
   id: string;
 
   @IsString()
+  @IsOptional()
   agencyId: string;
 
   @IsString()
