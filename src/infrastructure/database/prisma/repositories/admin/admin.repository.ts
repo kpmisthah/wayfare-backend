@@ -7,20 +7,7 @@ import { UserMapper } from 'src/infrastructure/mappers/user.mapper';
 
 @Injectable()
 export class AdminRepository implements IAdminRepository {
-  constructor(private readonly prisma: PrismaService) {}
-  async createPreference(preference: {
-    name: string;
-  }): Promise<preference | null> {
-    return await this.prisma.preference.create({
-      data: {
-        name: preference.name,
-      },
-    });
-  }
-
-  async getAllPreferences(): Promise<preference[] | null> {
-    return await this.prisma.preference.findMany();
-  }
+  constructor(private readonly prisma: PrismaService) { }
 
   async findAdmin(): Promise<UserEntity | null> {
     const admin = await this.prisma.user.findFirst({

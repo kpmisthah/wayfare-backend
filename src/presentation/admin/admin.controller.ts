@@ -46,14 +46,6 @@ export class AdminController {
     @Inject('ICreatePayoutRequestUsecase')
     private readonly _payoutRequestUsecase: ICreatePayoutRequestUsecase,
   ) { }
-  @Get('/preferences')
-  getAllPreferences() {
-    return this._adminUsecase.getAllPreferences();
-  }
-  @Post('/preferences')
-  createPreference(@Body() preferenceDto: PreferenceDto) {
-    return this._adminUsecase.createPreference(preferenceDto);
-  }
   @Get('/agencies')
   getAgencies(
     @Query('page') page = 1,

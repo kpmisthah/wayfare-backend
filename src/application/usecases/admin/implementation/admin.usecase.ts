@@ -1,6 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { preference } from '@prisma/client';
-import { PreferenceDto } from 'src/application/dtos/preferences.dto';
 import { IAdminRepository } from 'src/domain/repositories/admin/admin.repository.interface';
 import { IAdminService } from 'src/application/usecases/admin/interfaces/admin.usecase.interface';
 import { ADMIN_TYPE } from 'src/domain/types';
@@ -22,15 +20,6 @@ export class AdminService implements IAdminService {
     @Inject('IUserRepository')
     private readonly _userRepo: IUserRepository,
   ) { }
-  async createPreference(
-    preferenceDto: PreferenceDto,
-  ): Promise<preference | null> {
-    return await this._adminRepo.createPreference(preferenceDto);
-  }
-
-  async getAllPreferences(): Promise<preference[] | null> {
-    return await this._adminRepo.getAllPreferences();
-  }
 
   async getAllAgencies(dto: {
     page: number;
@@ -91,4 +80,5 @@ export class AdminService implements IAdminService {
     }
     return AgencyMapper.toAgencyManagement(finalUser, updatedAgency);
   }
+
 }
