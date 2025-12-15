@@ -9,9 +9,9 @@ name: Backend CI
 # WHEN does this run?
 on:
   push:
-    branches: [main, develop]    # Runs when you push to main or develop
+    branches: [main, master, dev, develop]
   pull_request:
-    branches: [main, develop]    # Runs when you create a PR to these branches
+    branches: [main, master, dev, develop]
 
 # Environment variables available to all jobs
 env:
