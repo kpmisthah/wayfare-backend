@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
-import { IAgencyRepository } from 'src/domain/repositories/agency/agency.repository.interface';
-import { AgencyEntity } from 'src/domain/entities/agency.entity';
-import { AgencyMapper } from 'src/infrastructure/mappers/agency.mapper';
+import { IAgencyRepository } from '../../../../../domain/repositories/agency/agency.repository.interface';
+import { AgencyEntity } from '../../../../../domain/entities/agency.entity';
+import { AgencyMapper } from '../../../../mappers/agency.mapper';
 import { BaseRepository } from '../base.repository';
-import { AgencyManageDto } from 'src/application/dtos/AgencyManagement.dto';
-import { AgencyStatus } from 'src/domain/enums/agency-status.enum';
+import { AgencyManageDto } from '../../../../../application/dtos/AgencyManagement.dto';
+import { AgencyStatus } from '../../../../../domain/enums/agency-status.enum';
 import { $Enums, Prisma } from '@prisma/client';
 
 @Injectable()

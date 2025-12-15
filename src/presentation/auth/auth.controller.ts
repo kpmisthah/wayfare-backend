@@ -11,21 +11,21 @@ import {
   Patch,
 } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import { LoginDto, SignupDto } from 'src/application/dtos/auth.dto';
-import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
-import { RefreshTokenGuard } from 'src/infrastructure/common/guard/refreshToken.guard';
-import { RequestWithUser } from 'src/application/usecases/auth/interfaces/request-with-user';
-import { VerifyOtpDto } from 'src/application/dtos/verifyOtp.dto';
-import { ResendOtpDto } from 'src/application/dtos/resendOtp.dto';
-import { ForgotPasswordDto } from 'src/application/dtos/forgotPassword.dto';
-import { VerifyForgotPasswordDto } from 'src/application/dtos/verifyForgotPasswordDto';
-import { ResetPasswordDto } from 'src/application/dtos/resetPassword.dto';
+import { LoginDto, SignupDto } from '../../application/dtos/auth.dto';
+import { AccessTokenGuard } from '../../infrastructure/common/guard/accessToken.guard';
+import { RefreshTokenGuard } from '../../infrastructure/common/guard/refreshToken.guard';
+import { RequestWithUser } from '../../application/usecases/auth/interfaces/request-with-user';
+import { VerifyOtpDto } from '../../application/dtos/verifyOtp.dto';
+import { ResendOtpDto } from '../../application/dtos/resendOtp.dto';
+import { ForgotPasswordDto } from '../../application/dtos/forgotPassword.dto';
+import { VerifyForgotPasswordDto } from '../../application/dtos/verifyForgotPasswordDto';
+import { ResetPasswordDto } from '../../application/dtos/resetPassword.dto';
 import { Request, Response } from 'express';
-import { IAuthUsecase } from 'src/application/usecases/auth/interfaces/auth.usecase.interface';
-import { IUserUsecase } from 'src/application/usecases/users/interfaces/user.usecase.interface';
+import { IAuthUsecase } from '../../application/usecases/auth/interfaces/auth.usecase.interface';
+import { IUserUsecase } from '../../application/usecases/users/interfaces/user.usecase.interface';
 import { AuthGuard } from '@nestjs/passport';
-import { GoogleLoginUseCase } from 'src/application/usecases/auth/implementation/google-login.usecase';
-import { ChangePassword } from 'src/application/dtos/change-password.dto';
+import { GoogleLoginUseCase } from '../../application/usecases/auth/implementation/google-login.usecase';
+import { ChangePassword } from '../../application/dtos/change-password.dto';
 
 @Controller('auth')
 export class AuthController {

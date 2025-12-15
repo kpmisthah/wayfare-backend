@@ -1,6 +1,6 @@
-import { ConnectionEntity } from 'src/domain/entities/connection.entity';
+import { ConnectionEntity } from '../../entities/connection.entity';
 import { IBaseRepository } from '../base.repository';
-import { AcceptedConnection } from 'src/domain/interfaces/accepted-connection.interface';
+import { AcceptedConnection } from '../../interfaces/accepted-connection.interface';
 
 export interface IConnectionRepository
   extends IBaseRepository<ConnectionEntity> {

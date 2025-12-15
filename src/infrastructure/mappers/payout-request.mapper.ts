@@ -1,8 +1,8 @@
 // infrastructure/mappers/payout-request.mapper.ts
-import { PayoutRequestEntity } from 'src/domain/entities/payout-request.entity';
+import { PayoutRequestEntity } from '../../domain/entities/payout-request.entity';
 import { PayoutRequest, Prisma } from '@prisma/client';
-import { PayoutStatus } from 'src/domain/enums/payout-status.enum';
-import { PayoutDetailsDTO } from 'src/application/dtos/payout-details.dto';
+import { PayoutStatus } from '../../domain/enums/payout-status.enum';
+import { PayoutDetailsDTO } from '../../application/dtos/payout-details.dto';
 
 type PayoutPrismaResult = Prisma.PayoutRequestGetPayload<{
   include: {

@@ -1,8 +1,8 @@
 import { Type } from 'class-transformer';
 import { IsNumber, IsString, IsOptional } from 'class-validator';
-import { Transaction } from 'src/domain/enums/transaction.enum';
-import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
-import { WalletTransactionEnum } from 'src/domain/enums/wallet-transaction.enum';
+import { Transaction } from '../../domain/enums/transaction.enum';
+import { PaymentStatus } from '../../domain/enums/payment-status.enum';
+import { WalletTransactionEnum } from '../../domain/enums/wallet-transaction.enum';
 
 export class WalletTransactionDto {
   @IsString()

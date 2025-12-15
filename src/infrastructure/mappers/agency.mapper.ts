@@ -1,5 +1,5 @@
 import { Agency, Prisma } from '@prisma/client';
-import { AgencyEntity } from 'src/domain/entities/agency.entity';
+import { AgencyEntity } from '../../domain/entities/agency.entity';
 
 export class AgencyMapper {
   static toDomain(agency: Agency): AgencyEntity {

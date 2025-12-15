@@ -7,14 +7,14 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { PayoutRequestDto } from 'src/application/dtos/payout-request.dto';
-import { IBookingUseCase } from 'src/application/usecases/booking/interfaces/bookiing.usecase.interface';
-import { ICreatePayoutRequestUsecase } from 'src/application/usecases/payment/interfaces/create-payout.usecase.interface';
-import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
+import { PayoutRequestDto } from '../../application/dtos/payout-request.dto';
+import { IBookingUseCase } from '../../application/usecases/booking/interfaces/bookiing.usecase.interface';
+import { ICreatePayoutRequestUsecase } from '../../application/usecases/payment/interfaces/create-payout.usecase.interface';
+import { AccessTokenGuard } from '../../infrastructure/common/guard/accessToken.guard';
 import { RolesGuard } from '../roles/auth.guard';
 import { Roles } from '../roles/roles.decorator';
-import { Role } from 'src/domain/enums/role.enum';
-import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
+import { Role } from '../../domain/enums/role.enum';
+import { PaymentStatus } from '../../domain/enums/payment-status.enum';
 
 @Controller('payment')
 @UseGuards(AccessTokenGuard, RolesGuard) 

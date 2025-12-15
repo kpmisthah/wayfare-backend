@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IOtpService } from 'src/application/usecases/otp/interfaces/otp.usecase.interface';
-import { Role } from 'src/domain/enums/role.enum';
-import { NodemailerService } from 'src/infrastructure/utils/nodemailer.service';
-import { IRedisService } from 'src/domain/interfaces/redis-service.interface';
+import { IOtpService } from '../interfaces/otp.usecase.interface';
+import { Role } from '../../../../domain/enums/role.enum';
+import { NodemailerService } from '../../../../infrastructure/utils/nodemailer.service';
+import { IRedisService } from '../../../../domain/interfaces/redis-service.interface';
 
 @Injectable()
 export class OtpService implements IOtpService {

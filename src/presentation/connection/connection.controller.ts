@@ -8,11 +8,11 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { RequestWithUser } from 'src/application/usecases/auth/interfaces/request-with-user';
-import { IAcceptConnection } from 'src/application/usecases/connection/interfaces/accept-connection.interface';
-import { IRejectConnection } from 'src/application/usecases/connection/interfaces/reject-connection.interface';
-import { ISendConnection } from 'src/application/usecases/connection/interfaces/send-connection.interface';
-import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
+import { RequestWithUser } from '../../application/usecases/auth/interfaces/request-with-user';
+import { IAcceptConnection } from '../../application/usecases/connection/interfaces/accept-connection.interface';
+import { IRejectConnection } from '../../application/usecases/connection/interfaces/reject-connection.interface';
+import { ISendConnection } from '../../application/usecases/connection/interfaces/send-connection.interface';
+import { AccessTokenGuard } from '../../infrastructure/common/guard/accessToken.guard';
 
 @Controller('connections')
 @UseGuards(AccessTokenGuard)

@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { IConnectionRepository } from 'src/domain/repositories/connection/connection.repository';
+import { IConnectionRepository } from '../../../../../domain/repositories/connection/connection.repository';
 import { BaseRepository } from '../base.repository';
-import { ConnectionEntity } from 'src/domain/entities/connection.entity';
+import { ConnectionEntity } from '../../../../../domain/entities/connection.entity';
 import { PrismaService } from '../../prisma.service';
-import { ConnectionMapper } from 'src/infrastructure/mappers/connection.mapper';
-import { AcceptedConnection } from 'src/domain/interfaces/accepted-connection.interface';
+import { ConnectionMapper } from '../../../../mappers/connection.mapper';
+import { AcceptedConnection } from '../../../../../domain/interfaces/accepted-connection.interface';
 @Injectable()
 export class ConnectionRepository
   extends BaseRepository<ConnectionEntity>

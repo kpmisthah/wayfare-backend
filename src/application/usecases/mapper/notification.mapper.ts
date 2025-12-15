@@ -1,5 +1,5 @@
-import { ResponseNotificationDto } from 'src/application/dtos/response-notification.dto';
-import { NotificationEntity } from 'src/domain/entities/notification.entity';
+import { ResponseNotificationDto } from '../../dtos/response-notification.dto';
+import { NotificationEntity } from '../../../domain/entities/notification.entity';
 
 export class NotificationMapper {
   static toNotificationDto(

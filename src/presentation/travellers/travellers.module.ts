@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TravellersController } from './travellers.controller';
-import { TravellersUsecase } from 'src/application/usecases/travellers/implementation/travellers.usecase';
+import { TravellersUsecase } from '../../application/usecases/travellers/implementation/travellers.usecase';
 
 @Module({
   controllers: [TravellersController],

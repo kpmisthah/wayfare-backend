@@ -1,5 +1,5 @@
 import { $Enums, ConnectionRequest, Prisma } from '@prisma/client';
-import { ConnectionEntity } from 'src/domain/entities/connection.entity';
+import { ConnectionEntity } from '../../domain/entities/connection.entity';
 
 type ConnectionWithUser = Prisma.ConnectionRequestGetPayload<{
   include: {

@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsNumber, IsString } from 'class-validator';
-import { BookingStatus } from 'src/domain/enums/booking-status.enum';
+import { BookingStatus } from '../../domain/enums/booking-status.enum';
 
 export class ResponseBookingDto {
   @IsString()

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
 import { BaseRepository } from '../base.repository';
-import { MessageEntity } from 'src/domain/entities/message.entity';
-import { IChatRepository } from 'src/domain/repositories/chat/chat.repository.interface';
-import { MessageMapper } from 'src/infrastructure/mappers/message.mapper';
+import { MessageEntity } from '../../../../../domain/entities/message.entity';
+import { IChatRepository } from '../../../../../domain/repositories/chat/chat.repository.interface';
+import { MessageMapper } from '../../../../mappers/message.mapper';
 
 @Injectable()
 export class MessageRepository

@@ -1,10 +1,10 @@
-import { IBookingRepository } from 'src/domain/repositories/booking/booking.repository';
-import { IUserRepository } from 'src/domain/repositories/user/user.repository.interface';
-import { IAgencyRepository } from 'src/domain/repositories/agency/agency.repository.interface';
+import { IBookingRepository } from '../../../../domain/repositories/booking/booking.repository';
+import { IUserRepository } from '../../../../domain/repositories/user/user.repository.interface';
+import { IAgencyRepository } from '../../../../domain/repositories/agency/agency.repository.interface';
 import { Inject } from '@nestjs/common';
-import { ITransactionRepository } from 'src/domain/repositories/transaction/transaction.repository';
+import { ITransactionRepository } from '../../../../domain/repositories/transaction/transaction.repository';
 import { IAdminSumaryUsecase } from '../interfaces/admin-summary-usecase.interface';
-import { DashboardStats } from 'src/domain/types/stat.type';
+import { DashboardStats } from '../../../../domain/types/stat.type';
 export class GetAdminSummaryUseCase implements IAdminSumaryUsecase {
   constructor(
     @Inject('IUserRepository')

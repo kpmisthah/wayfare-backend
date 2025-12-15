@@ -1,11 +1,11 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { MessageEntity } from 'src/domain/entities/message.entity';
-import { IChatRepository } from 'src/domain/repositories/chat/chat.repository.interface';
+import { MessageEntity } from '../../../../domain/entities/message.entity';
+import { IChatRepository } from '../../../../domain/repositories/chat/chat.repository.interface';
 import { IChatUsecase, UserGroup } from '../interfaces/message.interface';
 import { MessageMapper } from '../../mapper/message.mapper';
-import { MessageDto } from 'src/application/dtos/message.dto';
-import { GroupChatDto } from 'src/application/dtos/group-chat.dto';
-import { ChatGateway } from 'src/presentation/chat/chat.gateway';
+import { MessageDto } from '../../../dtos/message.dto';
+import { GroupChatDto } from '../../../dtos/group-chat.dto';
+import { ChatGateway } from '../../../../presentation/chat/chat.gateway';
 
 @Injectable()
 export class ChatUsecase implements IChatUsecase {

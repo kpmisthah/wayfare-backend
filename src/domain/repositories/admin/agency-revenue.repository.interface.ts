@@ -1,4 +1,4 @@
-import { AgencyRevenueDTO } from 'src/application/dtos/agency-revenue.dto';
+import { AgencyRevenueDTO } from '../../../application/dtos/agency-revenue.dto';
 
 export interface AgencyRevenueSummaryResult {
   data: AgencyRevenueDTO[];

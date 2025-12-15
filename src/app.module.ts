@@ -28,11 +28,16 @@ import { RedisModule } from './infrastructure/common/redis/redis.module';
 import { NotificationModule } from './presentation/notification/notification.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 
+import { validate } from './infrastructure/config/env.validation';
+
 const customLogger = new Logging();
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validate,
+    }),
     ThrottlerModule.forRoot([
       {
         ttl: 60000,
@@ -75,4 +80,4 @@ const customLogger = new Logging();
   ],
   exports: [WINSTON_MODULE_NEST_PROVIDER],
 })
-export class AppModule {}
+export class AppModule { }

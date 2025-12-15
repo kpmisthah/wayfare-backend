@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { BaseRepository } from '../base.repository';
-import { BankingEntity } from 'src/domain/entities/banking.entity';
+import { BankingEntity } from '../../../../../domain/entities/banking.entity';
 import { PrismaService } from '../../prisma.service';
-import { AgencyBankDetailsMapper } from 'src/infrastructure/mappers/agency-bank-details.mapper';
-import { IBankingDetailsRepository } from 'src/domain/interfaces/agency-bookibnng-details.interface';
+import { AgencyBankDetailsMapper } from '../../../../mappers/agency-bank-details.mapper';
+import { IBankingDetailsRepository } from '../../../../../domain/interfaces/agency-bookibnng-details.interface';
 
 @Injectable()
 export class AgencyBankDetailsRepository

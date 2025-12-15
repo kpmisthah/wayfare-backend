@@ -1,4 +1,4 @@
-import { AgencyRevenueSummaryResult } from 'src/domain/repositories/admin/agency-revenue.repository.interface';
+import { AgencyRevenueSummaryResult } from '../../../../domain/repositories/admin/agency-revenue.repository.interface';
 
 export interface IAgencyRevenue {
   getAgencyRevenueSummary(

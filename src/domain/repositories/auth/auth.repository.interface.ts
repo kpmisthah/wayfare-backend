@@ -1,5 +1,5 @@
 // import { User, UserVerification } from '@prisma/client';
-import { UserEntity } from 'src/domain/entities/user.entity';
+import { UserEntity } from '../../entities/user.entity';
 
 export interface IAuthRepository {
   // findByOtp(otp: string): Promise<UserVerificationEntity | null>;

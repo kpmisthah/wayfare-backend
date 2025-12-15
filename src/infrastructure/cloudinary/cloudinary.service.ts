@@ -4,7 +4,7 @@ import {
   UploadApiErrorResponse,
   v2 as cloudinary,
 } from 'cloudinary';
-import { ICloudinaryService } from 'src/domain/repositories/cloudinary/cloudinary.service.interface';
+import { ICloudinaryService } from '../../domain/repositories/cloudinary/cloudinary.service.interface';
 import { Readable } from 'stream';
 
 @Injectable()

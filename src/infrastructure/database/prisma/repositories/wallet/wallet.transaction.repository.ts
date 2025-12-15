@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { BaseRepository } from '../base.repository';
-import { WalletTransactionEntity } from 'src/domain/entities/wallet-transaction.entity';
-import { IWalletTransactionRepository } from 'src/domain/repositories/wallet/wallet-transaction.repository.interface';
+import { WalletTransactionEntity } from '../../../../../domain/entities/wallet-transaction.entity';
+import { IWalletTransactionRepository } from '../../../../../domain/repositories/wallet/wallet-transaction.repository.interface';
 import { PrismaService } from '../../prisma.service';
-import { WalletTransactionMapper } from 'src/infrastructure/mappers/wallet-transaction.mapper';
-import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
+import { WalletTransactionMapper } from '../../../../mappers/wallet-transaction.mapper';
+import { PaymentStatus } from '../../../../../domain/enums/payment-status.enum';
 
 @Injectable()
 export class WalletTransactionRepository

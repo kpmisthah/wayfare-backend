@@ -1,4 +1,4 @@
-import { WalletEntity } from 'src/domain/entities/wallet.entity';
+import { WalletEntity } from '../../entities/wallet.entity';
 import { IBaseRepository } from '../base.repository';
 
 export interface IWalletRepository extends IBaseRepository<WalletEntity> {

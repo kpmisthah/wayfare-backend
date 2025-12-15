@@ -1,6 +1,6 @@
-import { ConnectionDto } from 'src/application/dtos/connection.dto';
-import { ResponseConnectionDto } from 'src/application/dtos/response-connection.dto';
-import { ConnectionEntity } from 'src/domain/entities/connection.entity';
+import { ConnectionDto } from '../../dtos/connection.dto';
+import { ResponseConnectionDto } from '../../dtos/response-connection.dto';
+import { ConnectionEntity } from '../../../domain/entities/connection.entity';
 
 export class ConnectionMapper {
   static toConnectionDto(connectionEntity: ConnectionEntity): ConnectionDto {

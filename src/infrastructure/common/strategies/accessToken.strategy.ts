@@ -3,8 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
-import { IUserUsecase } from 'src/application/usecases/users/interfaces/user.usecase.interface';
-import { IAgencyService } from 'src/application/usecases/agency/interfaces/agency.usecase.interface';
+import { IUserUsecase } from '../../../application/usecases/users/interfaces/user.usecase.interface';
+import { IAgencyService } from '../../../application/usecases/agency/interfaces/agency.usecase.interface';
 
 type JwtPayload = {
   sub: string;

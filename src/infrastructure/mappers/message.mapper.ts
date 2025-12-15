@@ -1,5 +1,5 @@
 import { Message, Prisma } from '@prisma/client';
-import { MessageEntity } from 'src/domain/entities/message.entity';
+import { MessageEntity } from '../../domain/entities/message.entity';
 
 type MessageWithSender = Message & {
   sender?: {

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { IConversationRepository } from 'src/domain/repositories/conversation/conversation.repository.interface';
+import { IConversationRepository } from '../../../../domain/repositories/conversation/conversation.repository.interface';
 import { IConversationUsecase } from '../interfaces/conversation.interface';
 
 @Injectable()

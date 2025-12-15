@@ -1,7 +1,7 @@
 import { $Enums, Prisma, Transaction } from '@prisma/client';
-import { TransactionEntity } from 'src/domain/entities/transaction.entity';
-import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
-import { Role } from 'src/domain/enums/role.enum';
+import { TransactionEntity } from '../../domain/entities/transaction.entity';
+import { PaymentStatus } from '../../domain/enums/payment-status.enum';
+import { Role } from '../../domain/enums/role.enum';
 
 export class TransactionMapper {
   static toDomain(transaction: Transaction): TransactionEntity {

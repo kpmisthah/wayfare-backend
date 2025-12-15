@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { BaseRepository } from '../base.repository';
-import { ItineraryEntity } from 'src/domain/entities/itinerary.entity';
+import { ItineraryEntity } from '../../../../../domain/entities/itinerary.entity';
 import { PrismaService } from '../../prisma.service';
-import { IItineraryRepository } from 'src/domain/repositories/agency/itenerary.repository';
-import { IteneraryMapper } from 'src/infrastructure/mappers/itenerary.mapper';
+import { IItineraryRepository } from '../../../../../domain/repositories/agency/itenerary.repository';
+import { IteneraryMapper } from '../../../../mappers/itenerary.mapper';
 
 @Injectable()
 export class ItineraryRepository

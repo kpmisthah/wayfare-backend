@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PaymentProvider } from 'src/application/usecases/stripe/interface/payment.interface';
+import { PaymentProvider } from '../../application/usecases/stripe/interface/payment.interface';
 import Stripe from 'stripe';
 
 @Injectable()

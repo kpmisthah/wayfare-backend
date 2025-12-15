@@ -1,7 +1,7 @@
 import { Controller, Get, Inject, Query, Req, UseGuards } from '@nestjs/common';
-import { RequestWithUser } from 'src/application/usecases/auth/interfaces/request-with-user';
-import { ITravellersUsecase } from 'src/application/usecases/travellers/interfaces/travellers.usecase.interface';
-import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
+import { RequestWithUser } from '../../application/usecases/auth/interfaces/request-with-user';
+import { ITravellersUsecase } from '../../application/usecases/travellers/interfaces/travellers.usecase.interface';
+import { AccessTokenGuard } from '../../infrastructure/common/guard/accessToken.guard';
 
 @Controller('travellers')
 @UseGuards(AccessTokenGuard)

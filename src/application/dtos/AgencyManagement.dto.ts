@@ -1,4 +1,4 @@
-import { AgencyEntity } from 'src/domain/entities/agency.entity';
+import { AgencyEntity } from '../../domain/entities/agency.entity';
 
 export class AgencyManageDto {
   domain: AgencyEntity;

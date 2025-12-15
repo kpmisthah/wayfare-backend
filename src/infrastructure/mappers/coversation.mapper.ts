@@ -1,5 +1,5 @@
 import { Conversation, Prisma, UserOnConversation } from '@prisma/client';
-import { ConversationEntity } from 'src/domain/entities/conversation.entity';
+import { ConversationEntity } from '../../domain/entities/conversation.entity';
 
 type ConversationWithParticipants = Conversation & {
   participants: UserOnConversation[];

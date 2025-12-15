@@ -1,5 +1,5 @@
 import { UserProfile } from '@prisma/client';
-import { UserProfileEntity } from 'src/domain/entities/user-profile.entity';
+import { UserProfileEntity } from '../../domain/entities/user-profile.entity';
 
 export class UserProfileMapper {
   static toDomain(userProfile: UserProfile): UserProfileEntity {

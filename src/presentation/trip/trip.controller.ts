@@ -9,15 +9,15 @@ import {
   UseGuards,
   Query,
 } from '@nestjs/common';
-import { GenerateTripDto } from 'src/application/dtos/generate-trip.dto';
-import { TripDto } from 'src/application/dtos/Trip.dto';
-import { RequestWithUser } from 'src/application/usecases/auth/interfaces/request-with-user';
-import { IAiTripPlanUsecase } from 'src/application/usecases/trip/interafaces/ai-trip-plan.usecase.interface';
-import { IGenerateAndSaveTrip } from 'src/application/usecases/trip/interafaces/generate-and-save-trip.usecase.interface';
-import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
+import { GenerateTripDto } from '../../application/dtos/generate-trip.dto';
+import { TripDto } from '../../application/dtos/Trip.dto';
+import { RequestWithUser } from '../../application/usecases/auth/interfaces/request-with-user';
+import { IAiTripPlanUsecase } from '../../application/usecases/trip/interafaces/ai-trip-plan.usecase.interface';
+import { IGenerateAndSaveTrip } from '../../application/usecases/trip/interafaces/generate-and-save-trip.usecase.interface';
+import { AccessTokenGuard } from '../../infrastructure/common/guard/accessToken.guard';
 import { RolesGuard } from '../roles/auth.guard';
 import { Roles } from '../roles/roles.decorator';
-import { Role } from 'src/domain/enums/role.enum';
+import { Role } from '../../domain/enums/role.enum';
 
 @Controller('trip')
 @UseGuards(AccessTokenGuard, RolesGuard)

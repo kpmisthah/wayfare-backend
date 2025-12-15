@@ -1,7 +1,7 @@
-import { RecentWalletTxDto } from 'src/application/dtos/recent-wallet.dto';
-import { WalletTransferDto } from 'src/application/dtos/wallet-tranfer.dto';
-import { WalletDto } from 'src/application/dtos/wallet.dto';
-import { WalletEntity } from 'src/domain/entities/wallet.entity';
+import { RecentWalletTxDto } from '../../dtos/recent-wallet.dto';
+import { WalletTransferDto } from '../../dtos/wallet-tranfer.dto';
+import { WalletDto } from '../../dtos/wallet.dto';
+import { WalletEntity } from '../../../domain/entities/wallet.entity';
 
 
 interface WalletTransactionWithBooking {

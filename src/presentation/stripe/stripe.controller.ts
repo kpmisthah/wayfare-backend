@@ -7,10 +7,10 @@ import {
   Req,
   Headers,
 } from '@nestjs/common';
-import { CreateBookingDto } from 'src/application/dtos/create-booking.dto';
-import { RequestWithUser } from 'src/application/usecases/auth/interfaces/request-with-user';
-import { IBookingUseCase } from 'src/application/usecases/booking/interfaces/bookiing.usecase.interface';
-import { StripeWebhookUsecase } from 'src/application/usecases/stripe/implementation/webhook.usecase';
+import { CreateBookingDto } from '../../application/dtos/create-booking.dto';
+import { RequestWithUser } from '../../application/usecases/auth/interfaces/request-with-user';
+import { IBookingUseCase } from '../../application/usecases/booking/interfaces/bookiing.usecase.interface';
+import { StripeWebhookUsecase } from '../../application/usecases/stripe/implementation/webhook.usecase';
 
 interface RawBodyRequest extends Request {
   rawBody?: Buffer;

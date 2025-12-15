@@ -1,8 +1,8 @@
-import { WalletTransferDto } from 'src/application/dtos/wallet-tranfer.dto';
-import { WalletDto } from 'src/application/dtos/wallet.dto';
-import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
-import { StatusCode } from 'src/domain/enums/status-code.enum';
-import { WalletTransactionEnum } from 'src/domain/enums/wallet-transaction.enum';
+import { WalletTransferDto } from '../../../dtos/wallet-tranfer.dto';
+import { WalletDto } from '../../../dtos/wallet.dto';
+import { PaymentStatus } from '../../../../domain/enums/payment-status.enum';
+import { StatusCode } from '../../../../domain/enums/status-code.enum';
+import { WalletTransactionEnum } from '../../../../domain/enums/wallet-transaction.enum';
 
 export interface IWalletUseCase {
   createWallet(balance: number, userId: string): Promise<WalletDto>;

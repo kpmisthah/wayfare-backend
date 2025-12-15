@@ -1,8 +1,8 @@
 import { User } from '@prisma/client';
-import { CreateProfileDto } from 'src/application/dtos/create-profile.dto';
-import { GetProfileDto } from 'src/application/dtos/get-profile.dto';
-import { UpdateUserProfileDto } from 'src/application/dtos/update-user-profile.dto';
-import { UserProfileDto } from 'src/application/dtos/user-profile.dto';
+import { CreateProfileDto } from '../../../dtos/create-profile.dto';
+import { GetProfileDto } from '../../../dtos/get-profile.dto';
+import { UpdateUserProfileDto } from '../../../dtos/update-user-profile.dto';
+import { UserProfileDto } from '../../../dtos/user-profile.dto';
 export interface IProfileService {
   getProfileData(id: string): Promise<GetProfileDto | null>;
   createProfile(

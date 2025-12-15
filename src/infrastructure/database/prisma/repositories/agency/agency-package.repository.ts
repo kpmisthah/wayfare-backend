@@ -1,8 +1,8 @@
-import { IAgencyPackageRepository } from 'src/domain/repositories/agency/agency-package.repository';
+import { IAgencyPackageRepository } from '../../../../../domain/repositories/agency/agency-package.repository';
 import { PrismaService } from '../../prisma.service';
 import { Injectable } from '@nestjs/common';
-import { PackageEntity } from 'src/domain/entities/package.entity';
-import { PackageMapper } from 'src/infrastructure/mappers/package.mapper';
+import { PackageEntity } from '../../../../../domain/entities/package.entity';
+import { PackageMapper } from '../../../../mappers/package.mapper';
 import { BaseRepository } from '../base.repository';
 
 @Injectable()

@@ -1,9 +1,9 @@
-import { SafeUser } from 'src/application/dtos/safe-user.dto';
-import { UpdateStatusDto } from 'src/application/dtos/update-status.dto';
-import { UpdateUserProfileDto } from 'src/application/dtos/update-user-profile.dto';
-import { UserProfileDto } from 'src/application/dtos/user-profile.dto';
-import { UserProfileEntity } from 'src/domain/entities/user-profile.entity';
-import { UserEntity } from 'src/domain/entities/user.entity';
+import { SafeUser } from '../../dtos/safe-user.dto';
+import { UpdateStatusDto } from '../../dtos/update-status.dto';
+import { UpdateUserProfileDto } from '../../dtos/update-user-profile.dto';
+import { UserProfileDto } from '../../dtos/user-profile.dto';
+import { UserProfileEntity } from '../../../domain/entities/user-profile.entity';
+import { UserEntity } from '../../../domain/entities/user.entity';
 
 export class UserMapper {
   static toSafeUserDto(userEntity: UserEntity): SafeUser {

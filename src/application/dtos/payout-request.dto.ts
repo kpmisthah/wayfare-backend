@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
-import { PayoutStatus } from 'src/domain/enums/payout-status.enum';
+import { PayoutStatus } from '../../domain/enums/payout-status.enum';
 
 export class PayoutRequestDto {
   @IsString()

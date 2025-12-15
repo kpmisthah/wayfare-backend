@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { BaseRepository } from '../base.repository';
-import { TransactionEntity } from 'src/domain/entities/transaction.entity';
-import { ITransactionRepository } from 'src/domain/repositories/transaction/transaction.repository';
+import { TransactionEntity } from '../../../../../domain/entities/transaction.entity';
+import { ITransactionRepository } from '../../../../../domain/repositories/transaction/transaction.repository';
 import { PrismaService } from '../../prisma.service';
-import { TransactionMapper } from 'src/infrastructure/mappers/transaction.mapper';
-import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
+import { TransactionMapper } from '../../../../mappers/transaction.mapper';
+import { PaymentStatus } from '../../../../../domain/enums/payment-status.enum';
 import { BookingStatus } from '@prisma/client';
 
 @Injectable()

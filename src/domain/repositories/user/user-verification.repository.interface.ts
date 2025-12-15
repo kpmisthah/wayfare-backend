@@ -1,4 +1,4 @@
-import { UserVerificationEntity } from 'src/domain/entities/user-verification';
+import { UserVerificationEntity } from '../../entities/user-verification';
 
 export interface IUserVerification {
   create(

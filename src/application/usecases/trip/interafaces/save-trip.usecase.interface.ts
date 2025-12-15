@@ -1,5 +1,5 @@
-import { SaveTripDto } from 'src/application/dtos/Save-ai-trip.dto';
-import { TripDto } from 'src/application/dtos/Trip.dto';
+import { SaveTripDto } from '../../../dtos/Save-ai-trip.dto';
+import { TripDto } from '../../../dtos/Trip.dto';
 
 export interface ISaveTrip {
   saveTrip(

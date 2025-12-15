@@ -4,7 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import { UnauthorizedExceptionFilter } from './infrastructure/filters/unauthorized.filter';
 import { json, urlencoded, Request, Response } from 'express';
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   try {
@@ -52,8 +52,9 @@ async function bootstrap() {
       // allowedHeaders: ['Content-Type', 'Authorization'],
     });
     app.useGlobalPipes(new ValidationPipe());
-    await app.listen(3005);
-    console.log('Server started at http://localhost:3005');
+    // await app.listen(3005);
+    await app.listen(3000, '0.0.0.0');
+    console.log('Server started on port 3000');
   } catch (error) {
     console.error(error);
   }

@@ -11,14 +11,14 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { BookingDto } from 'src/application/dtos/booking.dto';
-import { RequestWithUser } from 'src/application/usecases/auth/interfaces/request-with-user';
-import { IBookingUseCase } from 'src/application/usecases/booking/interfaces/bookiing.usecase.interface';
-import { ICreateCheckoutSession } from 'src/application/usecases/booking/interfaces/create-checkout-session.usecase.interface';
-import { BookingStatus } from 'src/domain/enums/booking-status.enum';
-import { StatusCode } from 'src/domain/enums/status-code.enum';
-import { Role } from 'src/domain/enums/role.enum';
-import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
+import { BookingDto } from '../../application/dtos/booking.dto';
+import { RequestWithUser } from '../../application/usecases/auth/interfaces/request-with-user';
+import { IBookingUseCase } from '../../application/usecases/booking/interfaces/bookiing.usecase.interface';
+import { ICreateCheckoutSession } from '../../application/usecases/booking/interfaces/create-checkout-session.usecase.interface';
+import { BookingStatus } from '../../domain/enums/booking-status.enum';
+import { StatusCode } from '../../domain/enums/status-code.enum';
+import { Role } from '../../domain/enums/role.enum';
+import { AccessTokenGuard } from '../../infrastructure/common/guard/accessToken.guard';
 import { RolesGuard } from '../roles/auth.guard';
 import { Roles } from '../roles/roles.decorator';
 import { Response } from 'express';

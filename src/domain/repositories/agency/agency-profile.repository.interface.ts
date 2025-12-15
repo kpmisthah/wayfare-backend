@@ -1,4 +1,4 @@
-import { AgencyEntity } from 'src/domain/entities/agency.entity';
+import { AgencyEntity } from '../../entities/agency.entity';
 
 export interface IAgencyProfileRepository {
   updateProfile(

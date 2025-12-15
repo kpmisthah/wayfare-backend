@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ProfileController } from './profile.controller';
-import { ProfileService } from 'src/application/usecases/profile/implementation/profile.usecase';
-import { PROFILE_TYPE } from 'src/domain/types';
-import { UploadProfileUseCase } from 'src/application/usecases/profile/implementation/upload-profile.usecase';
-import { CloudinaryModule } from 'src/infrastructure/cloudinary/cloudinary.module';
+import { ProfileService } from '../../application/usecases/profile/implementation/profile.usecase';
+import { PROFILE_TYPE } from '../../domain/types';
+import { UploadProfileUseCase } from '../../application/usecases/profile/implementation/upload-profile.usecase';
+import { CloudinaryModule } from '../../infrastructure/cloudinary/cloudinary.module';
 
 @Module({
   imports: [CloudinaryModule],

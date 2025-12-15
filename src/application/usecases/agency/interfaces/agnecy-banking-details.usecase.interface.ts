@@ -1,4 +1,4 @@
-import { BankDetailsDto } from 'src/application/dtos/request-payout.dto';
+import { BankDetailsDto } from '../../../dtos/request-payout.dto';
 
 export interface IBankingDetailsUsecase {
   bankDetails(bankDetailsDto: BankDetailsDto, userId: string): Promise<BankDetailsDto | null>;

@@ -12,21 +12,29 @@ import {
   Post,
   Query,
   UseGuards,
+  Res,
 } from '@nestjs/common';
-import { PreferenceDto } from 'src/application/dtos/preferences.dto';
-import { IAdminRevenue } from 'src/application/usecases/admin/interfaces/admin-revenue.usecase.interface';
-import { IAdminSumaryUsecase } from 'src/application/usecases/admin/interfaces/admin-summary-usecase.interface';
-import { IAdminService } from 'src/application/usecases/admin/interfaces/admin.usecase.interface';
-import { IAgencyRevenue } from 'src/application/usecases/admin/interfaces/agency-revenue.usecase.interface';
-import { IBookingUseCase } from 'src/application/usecases/booking/interfaces/bookiing.usecase.interface';
-import { ICreatePayoutRequestUsecase } from 'src/application/usecases/payment/interfaces/create-payout.usecase.interface';
-import { AgencyStatus } from 'src/domain/enums/agency-status.enum';
-import { PayoutStatus } from 'src/domain/enums/payout-status.enum';
-import { ADMIN_TYPE } from 'src/domain/types';
-import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
+import { Response } from 'express';
+import { CsvService, ExportColumn } from '../../infrastructure/utils/csv.service';
+import { IUserUsecase } from '../../application/usecases/users/interfaces/user.usecase.interface';
+import { SafeUser } from '../../application/dtos/safe-user.dto';
+import { PayoutDetailsDTO } from '../../application/dtos/payout-details.dto';
+import { WalletTransactionDto } from '../../application/dtos/wallet-transaction.dto';
+import { AgencyRevenueDTO } from '../../application/dtos/agency-revenue.dto';
+import { PreferenceDto } from '../../application/dtos/preferences.dto';
+import { IAdminRevenue } from '../../application/usecases/admin/interfaces/admin-revenue.usecase.interface';
+import { IAdminSumaryUsecase } from '../../application/usecases/admin/interfaces/admin-summary-usecase.interface';
+import { IAdminService } from '../../application/usecases/admin/interfaces/admin.usecase.interface';
+import { IAgencyRevenue } from '../../application/usecases/admin/interfaces/agency-revenue.usecase.interface';
+import { IBookingUseCase } from '../../application/usecases/booking/interfaces/bookiing.usecase.interface';
+import { ICreatePayoutRequestUsecase } from '../../application/usecases/payment/interfaces/create-payout.usecase.interface';
+import { AgencyStatus } from '../../domain/enums/agency-status.enum';
+import { PayoutStatus } from '../../domain/enums/payout-status.enum';
+import { ADMIN_TYPE } from '../../domain/types';
+import { AccessTokenGuard } from '../../infrastructure/common/guard/accessToken.guard';
 import { RolesGuard } from '../roles/auth.guard';
 import { Roles } from '../roles/roles.decorator';
-import { Role } from 'src/domain/enums/role.enum';
+import { Role } from '../../domain/enums/role.enum';
 
 @UseGuards(AccessTokenGuard, RolesGuard)
 @Roles(Role.Admin)
@@ -45,6 +53,9 @@ export class AdminController {
     private readonly _bookingUseCase: IBookingUseCase,
     @Inject('ICreatePayoutRequestUsecase')
     private readonly _payoutRequestUsecase: ICreatePayoutRequestUsecase,
+    private readonly _csvService: CsvService,
+    @Inject('IUserService')
+    private readonly _userService: IUserUsecase,
   ) { }
   @Get('/agencies')
   getAgencies(
@@ -144,5 +155,91 @@ export class AdminController {
     @Body() updateData: { name: string; email: string; status?: string },
   ) {
     return await this._adminUsecase.updateAgency(id, updateData);
+  }
+
+  @Get('/export/users')
+  async exportUsers(@Res() res: Response) {
+    const result = await this._userService.findAllUserFromDb(1, 10000, '');
+    const users: SafeUser[] = result.data || [];
+
+    const columns: ExportColumn<SafeUser>[] = [
+      { header: 'Name', accessor: 'name' },
+      { header: 'Email', accessor: 'email' },
+      { header: 'Phone', accessor: 'phone' },
+      { header: 'Location', accessor: 'location' as keyof SafeUser }, // casting if location is missing in strict SafeUser type
+      { header: 'Status', accessor: (u: SafeUser) => (u.isBlock ? 'Inactive' : 'Active') },
+      { header: 'Role', accessor: (u: SafeUser) => u.role ?? 'USER' },
+    ];
+
+    const csv = this._csvService.generateCsv(users, columns);
+
+    res.header('Content-Type', 'text/csv');
+    res.header('Content-Disposition', 'attachment; filename=users_export.csv');
+    res.send(csv);
+  }
+
+  @Get('/export/payouts')
+  async exportPayouts(@Res() res: Response) {
+    const result = await this._payoutRequestUsecase.payoutDetails(1, 10000);
+    const payouts: PayoutDetailsDTO[] = result.data || [];
+
+    const columns: ExportColumn<PayoutDetailsDTO>[] = [
+      { header: 'Agency Name', accessor: (r: PayoutDetailsDTO) => r.agencyInfo.name },
+      { header: 'Agency Email', accessor: (r: PayoutDetailsDTO) => r.agencyInfo.email },
+      { header: 'Phone', accessor: (r: PayoutDetailsDTO) => r.agencyInfo.phone },
+      { header: 'Amount', accessor: 'amount' },
+      { header: 'Status', accessor: 'status' },
+      { header: 'Bank Name', accessor: (r: PayoutDetailsDTO) => r.bankDetails.bankName },
+      { header: 'Account Number', accessor: (r: PayoutDetailsDTO) => r.bankDetails.accountNumber },
+      { header: 'IFSC Code', accessor: (r: PayoutDetailsDTO) => r.bankDetails.ifscCode },
+    ];
+
+    const csv = this._csvService.generateCsv(payouts, columns);
+
+    res.header('Content-Type', 'text/csv');
+    res.header('Content-Disposition', 'attachment; filename=payouts_export.csv');
+    res.send(csv);
+  }
+
+  @Get('/export/transactions')
+  async exportTransactions(@Res() res: Response) {
+    const result = await this._adminRevenue.getTransactionSummary(1, 10000);
+    const transactions: WalletTransactionDto[] = result.data || [];
+
+    const columns: ExportColumn<WalletTransactionDto>[] = [
+      { header: 'Date', accessor: (tx: WalletTransactionDto) => new Date(tx.date).toLocaleDateString() },
+      { header: 'Time', accessor: (tx: WalletTransactionDto) => new Date(tx.date).toLocaleTimeString() },
+      { header: 'Agency', accessor: (tx: WalletTransactionDto) => tx.agencyName || 'N/A' },
+      { header: 'Destination', accessor: (tx: WalletTransactionDto) => tx.destination || 'N/A' },
+      { header: 'Booking Code', accessor: (tx: WalletTransactionDto) => tx.bookingCode || 'N/A' },
+      { header: 'Commission', accessor: 'commission' },
+      { header: 'Status', accessor: 'status' },
+      { header: 'Type', accessor: 'type' },
+    ];
+
+    const csv = this._csvService.generateCsv(transactions, columns);
+
+    res.header('Content-Type', 'text/csv');
+    res.header('Content-Disposition', 'attachment; filename=transactions_export.csv');
+    res.send(csv);
+  }
+
+  @Get('/export/agency-revenue')
+  async exportAgencyRevenue(@Res() res: Response) {
+    const result: any = await this._agencyRevenue.getAgencyRevenueSummary(1, 10000);
+    const revenue: AgencyRevenueDTO[] = result.data || [];
+
+    const columns: ExportColumn<AgencyRevenueDTO>[] = [
+      { header: 'Agency Name', accessor: 'agencyName' },
+      { header: 'Agency ID', accessor: 'agencyId' },
+      { header: 'Platform Earning', accessor: 'platformEarning' },
+      { header: 'Total Bookings', accessor: 'all' },
+    ];
+
+    const csv = this._csvService.generateCsv(revenue, columns);
+
+    res.header('Content-Type', 'text/csv');
+    res.header('Content-Disposition', 'attachment; filename=agency_revenue_export.csv');
+    res.send(csv);
   }
 }

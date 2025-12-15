@@ -1,6 +1,6 @@
-import { CreateNotificationDto } from 'src/application/dtos/create-notification.dto';
-import { ResponseNotificationDto } from 'src/application/dtos/response-notification.dto';
-import { NotificationEntity } from 'src/domain/entities/notification.entity';
+import { CreateNotificationDto } from '../../../dtos/create-notification.dto';
+import { ResponseNotificationDto } from '../../../dtos/response-notification.dto';
+import { NotificationEntity } from '../../../../domain/entities/notification.entity';
 
 export interface INotifactionUsecase {
   createNotification(

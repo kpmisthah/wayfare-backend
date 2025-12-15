@@ -1,15 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { CreateProfileDto } from 'src/application/dtos/create-profile.dto';
-import { UserProfileDto } from 'src/application/dtos/user-profile.dto';
-import { IProfileRepository } from 'src/domain/repositories/user/profile.repository.interface';
-import { IProfileService } from 'src/application/usecases/profile/interfaces/profile.usecase.interface';
-import { UserProfileEntity } from 'src/domain/entities/user-profile.entity';
-import { IUserRepository } from 'src/domain/repositories/user/user.repository.interface';
-import { PROFILE_TYPE } from 'src/domain/types';
-import { UserMapper } from 'src/application/usecases/mapper/user.mapper';
-import { GetProfileDto } from 'src/application/dtos/get-profile.dto';
-import { UpdateUserProfileDto } from 'src/application/dtos/update-user-profile.dto';
+import { CreateProfileDto } from '../../../dtos/create-profile.dto';
+import { UserProfileDto } from '../../../dtos/user-profile.dto';
+import { IProfileRepository } from '../../../../domain/repositories/user/profile.repository.interface';
+import { IProfileService } from '../interfaces/profile.usecase.interface';
+import { UserProfileEntity } from '../../../../domain/entities/user-profile.entity';
+import { IUserRepository } from '../../../../domain/repositories/user/user.repository.interface';
+import { PROFILE_TYPE } from '../../../../domain/types';
+import { UserMapper } from '../../mapper/user.mapper';
+import { GetProfileDto } from '../../../dtos/get-profile.dto';
+import { UpdateUserProfileDto } from '../../../dtos/update-user-profile.dto';
 
 @Injectable()
 export class ProfileService implements IProfileService {

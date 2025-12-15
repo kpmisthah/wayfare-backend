@@ -1,4 +1,4 @@
-import { WalletTransactionDto } from 'src/application/dtos/wallet-transaction.dto';
+import { WalletTransactionDto } from '../../../dtos/wallet-transaction.dto';
 
 export interface TransactionSummaryResult {
   data: WalletTransactionDto[];

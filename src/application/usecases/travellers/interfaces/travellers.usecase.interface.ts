@@ -1,4 +1,4 @@
-import { TravellersDto } from 'src/application/dtos/travellers.dto';
+import { TravellersDto } from '../../../dtos/travellers.dto';
 
 export interface ITravellersUsecase {
   fetchTravellers(

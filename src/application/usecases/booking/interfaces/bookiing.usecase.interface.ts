@@ -1,14 +1,14 @@
-import { BookingResponseDto } from 'src/application/dtos/booking-details-response.dto';
-import { BookingStatusDto } from 'src/application/dtos/booking-status.dto';
-import { BookingDto } from 'src/application/dtos/booking.dto';
-import { CreateBookingDto } from 'src/application/dtos/create-booking.dto';
-import { FetchBookingDto } from 'src/application/dtos/fetch-booking.dto';
-import { FetchUserBookingDto } from 'src/application/dtos/fetch-user-booking.dto';
-import { RecentBookingResponse } from 'src/application/dtos/recent-booking-response.dto';
-import { ResponseBookingDto } from 'src/application/dtos/response-booking.dto';
-import { BookingEntity } from 'src/domain/entities/booking.entity';
-import { BookingStatus } from 'src/domain/enums/booking-status.enum';
-import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
+import { BookingResponseDto } from '../../../dtos/booking-details-response.dto';
+import { BookingStatusDto } from '../../../dtos/booking-status.dto';
+import { BookingDto } from '../../../dtos/booking.dto';
+import { CreateBookingDto } from '../../../dtos/create-booking.dto';
+import { FetchBookingDto } from '../../../dtos/fetch-booking.dto';
+import { FetchUserBookingDto } from '../../../dtos/fetch-user-booking.dto';
+import { RecentBookingResponse } from '../../../dtos/recent-booking-response.dto';
+import { ResponseBookingDto } from '../../../dtos/response-booking.dto';
+import { BookingEntity } from '../../../../domain/entities/booking.entity';
+import { BookingStatus } from '../../../../domain/enums/booking-status.enum';
+import { PaymentStatus } from '../../../../domain/enums/payment-status.enum';
 
 export interface IBookingUseCase {
   createBooking(

@@ -1,7 +1,7 @@
-import { CreateUserDto } from 'src/application/dtos/create-user.dto';
-import { UpdateUserDto } from 'src/application/dtos/update-user.dto';
-import { SafeUser } from 'src/application/dtos/safe-user.dto';
-import { UserEntity } from 'src/domain/entities/user.entity';
+import { CreateUserDto } from '../../../dtos/create-user.dto';
+import { UpdateUserDto } from '../../../dtos/update-user.dto';
+import { SafeUser } from '../../../dtos/safe-user.dto';
+import { UserEntity } from '../../../../domain/entities/user.entity';
 
 export interface IUserUsecase {
   create(createUserDto: CreateUserDto): Promise<SafeUser | null>;

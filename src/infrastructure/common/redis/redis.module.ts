@@ -1,5 +1,5 @@
 import { Module, Global } from '@nestjs/common';
-import { RedisService } from 'src/infrastructure/utils/redis.service';
+import { RedisService } from '../../utils/redis.service';
 
 @Global()
 @Module({

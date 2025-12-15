@@ -1,14 +1,14 @@
-import { SignupDto, LoginDto } from 'src/application/dtos/auth.dto';
-import { VerifyOtpDto } from 'src/application/dtos/verifyOtp.dto';
-import { ResendOtpDto } from 'src/application/dtos/resendOtp.dto';
-import { ForgotPasswordDto } from 'src/application/dtos/forgotPassword.dto';
-import { VerifyForgotPasswordDto } from 'src/application/dtos/verifyForgotPasswordDto';
-import { ResetPasswordDto } from 'src/application/dtos/resetPassword.dto';
+import { SignupDto, LoginDto } from '../../../dtos/auth.dto';
+import { VerifyOtpDto } from '../../../dtos/verifyOtp.dto';
+import { ResendOtpDto } from '../../../dtos/resendOtp.dto';
+import { ForgotPasswordDto } from '../../../dtos/forgotPassword.dto';
+import { VerifyForgotPasswordDto } from '../../../dtos/verifyForgotPasswordDto';
+import { ResetPasswordDto } from '../../../dtos/resetPassword.dto';
 import { Request, Response } from 'express';
-import { Role } from 'src/domain/enums/role.enum';
+import { Role } from '../../../../domain/enums/role.enum';
 import { $Enums } from '@prisma/client';
-import { ChangePassword } from 'src/application/dtos/change-password.dto';
-import { UserEntity } from 'src/domain/entities/user.entity';
+import { ChangePassword } from '../../../dtos/change-password.dto';
+import { UserEntity } from '../../../../domain/entities/user.entity';
 
 export interface AuthResponse {
   message?: string;

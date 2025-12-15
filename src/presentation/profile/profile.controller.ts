@@ -11,16 +11,16 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { RequestWithUser } from 'src/application/usecases/auth/interfaces/request-with-user';
-import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
+import { RequestWithUser } from '../../application/usecases/auth/interfaces/request-with-user';
+import { AccessTokenGuard } from '../../infrastructure/common/guard/accessToken.guard';
 import { RolesGuard } from '../roles/auth.guard';
 import { Roles } from '../roles/roles.decorator';
-import { Role } from 'src/domain/enums/role.enum';
-import { CreateProfileDto } from 'src/application/dtos/create-profile.dto';
-import { IProfileService } from 'src/application/usecases/profile/interfaces/profile.usecase.interface';
-import { PROFILE_TYPE } from 'src/domain/types';
+import { Role } from '../../domain/enums/role.enum';
+import { CreateProfileDto } from '../../application/dtos/create-profile.dto';
+import { IProfileService } from '../../application/usecases/profile/interfaces/profile.usecase.interface';
+import { PROFILE_TYPE } from '../../domain/types';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UploadProfileUseCase } from 'src/application/usecases/profile/implementation/upload-profile.usecase';
+import { UploadProfileUseCase } from '../../application/usecases/profile/implementation/upload-profile.usecase';
 
 @Controller('user')
 @UseGuards(AccessTokenGuard, RolesGuard) 

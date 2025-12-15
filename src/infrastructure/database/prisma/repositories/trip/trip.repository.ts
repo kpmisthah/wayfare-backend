@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
-import { AiTripEntity } from 'src/domain/entities/ai.trip.entity';
-import { TripMapper } from 'src/infrastructure/mappers/trip.mapper';
+import { AiTripEntity } from '../../../../../domain/entities/ai.trip.entity';
+import { TripMapper } from '../../../../mappers/trip.mapper';
 import { BaseRepository } from '../base.repository';
-import { ITripRepository } from 'src/domain/repositories/trip/trip.repository.interface';
+import { ITripRepository } from '../../../../../domain/repositories/trip/trip.repository.interface';
 
 @Injectable()
 export class TripRepository

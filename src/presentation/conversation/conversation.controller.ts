@@ -1,6 +1,6 @@
 import { Controller, Get, Inject, Param, UseGuards } from '@nestjs/common';
-import { IConversationUsecase } from 'src/application/usecases/conversation/interfaces/conversation.interface';
-import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
+import { IConversationUsecase } from '../../application/usecases/conversation/interfaces/conversation.interface';
+import { AccessTokenGuard } from '../../infrastructure/common/guard/accessToken.guard';
 
 @Controller('conversations')
 @UseGuards(AccessTokenGuard)

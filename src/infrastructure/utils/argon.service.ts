@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as argon2 from 'argon2';
-import { IArgonService } from 'src/domain/interfaces/argon.service.interface';
+import { IArgonService } from '../../domain/interfaces/argon.service.interface';
 //module kk import akekeela
 @Injectable()
 export class ArgonService implements IArgonService {

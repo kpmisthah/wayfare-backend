@@ -1,5 +1,5 @@
-import { TripDto } from 'src/application/dtos/Trip.dto';
-import { AiTripEntity } from 'src/domain/entities/ai.trip.entity';
+import { TripDto } from '../../dtos/Trip.dto';
+import { AiTripEntity } from '../../../domain/entities/ai.trip.entity';
 
 export class TripMapper {
   static toTripDto(aiTripEntity: AiTripEntity): TripDto {

@@ -14,35 +14,35 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { PackageDto } from 'src/application/dtos/add-package.dto';
-import { AgencyProfileDto } from 'src/application/dtos/agency-profile.dto';
-import { itineraryDto } from 'src/application/dtos/create-itenerary.dto';
-import { UpdateAgencyProfileDto } from 'src/application/dtos/update-agency-profile.dto';
-import { AgencyManagementDto } from 'src/application/dtos/agency-management.dto';
-import { IAgencyPackageService } from 'src/application/usecases/agency/interfaces/agency-package.interface';
-import { IAgencyProfileService } from 'src/application/usecases/agency/interfaces/agency-profile.service.usecase';
-import { IAgencyService } from 'src/application/usecases/agency/interfaces/agency.usecase.interface';
-import { RequestWithUser } from 'src/application/usecases/auth/interfaces/request-with-user';
+import { PackageDto } from '../../application/dtos/add-package.dto';
+import { AgencyProfileDto } from '../../application/dtos/agency-profile.dto';
+import { itineraryDto } from '../../application/dtos/create-itenerary.dto';
+import { UpdateAgencyProfileDto } from '../../application/dtos/update-agency-profile.dto';
+import { AgencyManagementDto } from '../../application/dtos/agency-management.dto';
+import { IAgencyPackageService } from '../../application/usecases/agency/interfaces/agency-package.interface';
+import { IAgencyProfileService } from '../../application/usecases/agency/interfaces/agency-profile.service.usecase';
+import { IAgencyService } from '../../application/usecases/agency/interfaces/agency.usecase.interface';
+import { RequestWithUser } from '../../application/usecases/auth/interfaces/request-with-user';
 import {
   ADMIN_TYPE,
   AGENCY_PACKAGE_TYPE,
   AGENCY_PROFILE_TYPE,
-} from 'src/domain/types';
-import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
+} from '../../domain/types';
+import { AccessTokenGuard } from '../../infrastructure/common/guard/accessToken.guard';
 import { Response } from 'express';
-import { CreateAgencyDto } from 'src/application/dtos/create-agency.dto';
-import { IAdminService } from 'src/application/usecases/admin/interfaces/admin.usecase.interface';
-import { FilterPackageDto } from 'src/application/dtos/filter-package.dto';
-import { UpdatePackageDto } from 'src/application/dtos/update-package.dto';
-import { PackageStatus } from 'src/domain/enums/package-status.enum';
-import { BankDetailsDto } from 'src/application/dtos/request-payout.dto';
-import { IBankingDetailsUsecase } from 'src/application/usecases/agency/interfaces/agnecy-banking-details.usecase.interface';
-import { IWalletUseCase } from 'src/application/usecases/wallet/interfaces/wallet.usecase.interface';
-import { PayoutRequestDto } from 'src/application/dtos/payout-request.dto';
-import { ICreatePayoutRequestUsecase } from 'src/application/usecases/payment/interfaces/create-payout.usecase.interface';
+import { CreateAgencyDto } from '../../application/dtos/create-agency.dto';
+import { IAdminService } from '../../application/usecases/admin/interfaces/admin.usecase.interface';
+import { FilterPackageDto } from '../../application/dtos/filter-package.dto';
+import { UpdatePackageDto } from '../../application/dtos/update-package.dto';
+import { PackageStatus } from '../../domain/enums/package-status.enum';
+import { BankDetailsDto } from '../../application/dtos/request-payout.dto';
+import { IBankingDetailsUsecase } from '../../application/usecases/agency/interfaces/agnecy-banking-details.usecase.interface';
+import { IWalletUseCase } from '../../application/usecases/wallet/interfaces/wallet.usecase.interface';
+import { PayoutRequestDto } from '../../application/dtos/payout-request.dto';
+import { ICreatePayoutRequestUsecase } from '../../application/usecases/payment/interfaces/create-payout.usecase.interface';
 import { RolesGuard } from '../roles/auth.guard';
 import { Roles } from '../roles/roles.decorator';
-import { Role } from 'src/domain/enums/role.enum';
+import { Role } from '../../domain/enums/role.enum';
 
 @Controller('agency')
 @UseGuards(AccessTokenGuard, RolesGuard)

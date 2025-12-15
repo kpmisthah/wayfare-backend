@@ -1,6 +1,6 @@
 import { Package, Prisma, Transportation } from '@prisma/client';
-import { PackageEntity } from 'src/domain/entities/package.entity';
-import { PackageStatus } from 'src/domain/enums/package-status.enum';
+import { PackageEntity } from '../../domain/entities/package.entity';
+import { PackageStatus } from '../../domain/enums/package-status.enum';
 
 export class PackageMapper {
   static toDomain(

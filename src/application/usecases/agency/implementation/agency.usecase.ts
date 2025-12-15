@@ -1,20 +1,20 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CreateAgencyDto } from 'src/application/dtos/create-agency.dto';
-import { IAgencyRepository } from 'src/domain/repositories/agency/agency.repository.interface';
-import { IAgencyService } from 'src/application/usecases/agency/interfaces/agency.usecase.interface';
-import { IOtpService } from 'src/application/usecases/otp/interfaces/otp.usecase.interface';
-import { AgencyEntity } from 'src/domain/entities/agency.entity';
-import { IUserUsecase } from 'src/application/usecases/users/interfaces/user.usecase.interface';
-import { AgencyMapper } from 'src/application/usecases/mapper/agency.mapper';
+import { CreateAgencyDto } from '../../../dtos/create-agency.dto';
+import { IAgencyRepository } from '../../../../domain/repositories/agency/agency.repository.interface';
+import { IAgencyService } from '../interfaces/agency.usecase.interface';
+import { IOtpService } from '../../otp/interfaces/otp.usecase.interface';
+import { AgencyEntity } from '../../../../domain/entities/agency.entity';
+import { IUserUsecase } from '../../users/interfaces/user.usecase.interface';
+import { AgencyMapper } from '../../mapper/agency.mapper';
 
-import { AgencyResponseDto } from 'src/application/dtos/agency-response.dto';
-import { IUserRepository } from 'src/domain/repositories/user/user.repository.interface';
-import { AgencyManagementDto } from 'src/application/dtos/agency-management.dto';
-import { AgencyProfileDto } from 'src/application/dtos/agency-profile.dto';
-import { IItineraryRepository } from 'src/domain/repositories/agency/itenerary.repository';
+import { AgencyResponseDto } from '../../../dtos/agency-response.dto';
+import { IUserRepository } from '../../../../domain/repositories/user/user.repository.interface';
+import { AgencyManagementDto } from '../../../dtos/agency-management.dto';
+import { AgencyProfileDto } from '../../../dtos/agency-profile.dto';
+import { IItineraryRepository } from '../../../../domain/repositories/agency/itenerary.repository';
 import { UserMapper } from '../../mapper/user.mapper';
-import { UpdateStatusDto } from 'src/application/dtos/update-status.dto';
-import { UserEntity } from 'src/domain/entities/user.entity';
+import { UpdateStatusDto } from '../../../dtos/update-status.dto';
+import { UserEntity } from '../../../../domain/entities/user.entity';
 
 @Injectable()
 export class AgencyService implements IAgencyService {

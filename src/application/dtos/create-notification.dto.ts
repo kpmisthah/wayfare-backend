@@ -1,5 +1,5 @@
 import { IsString } from 'class-validator';
-import { NotificationStatus } from 'src/domain/enums/notification-status.enum';
+import { NotificationStatus } from '../../domain/enums/notification-status.enum';
 
 export class CreateNotificationDto {
   @IsString()

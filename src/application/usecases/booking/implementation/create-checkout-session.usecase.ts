@@ -1,5 +1,5 @@
 import { BadRequestException, Inject, NotFoundException } from '@nestjs/common';
-import { IBookingRepository } from 'src/domain/repositories/booking/booking.repository';
+import { IBookingRepository } from '../../../../domain/repositories/booking/booking.repository';
 import { PaymentProvider } from '../../stripe/interface/payment.interface';
 import { ICreateCheckoutSession } from '../interfaces/create-checkout-session.usecase.interface';
 

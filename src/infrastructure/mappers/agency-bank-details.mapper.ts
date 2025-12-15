@@ -1,5 +1,5 @@
 import { AgencyBankDetails, Prisma } from '@prisma/client';
-import { BankingEntity } from 'src/domain/entities/banking.entity';
+import { BankingEntity } from '../../domain/entities/banking.entity';
 
 export class AgencyBankDetailsMapper {
   static toDomain(agencyBankDetails: AgencyBankDetails): BankingEntity {

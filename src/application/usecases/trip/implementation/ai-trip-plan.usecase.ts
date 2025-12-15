@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { IAiTripPlanUsecase, PaginationOptions, PaginatedTripsResponse } from '../interafaces/ai-trip-plan.usecase.interface';
-import { TripDto } from 'src/application/dtos/Trip.dto';
+import { TripDto } from '../../../dtos/Trip.dto';
 import { TripMapper } from '../../mapper/trip.mapper';
-import { ITripRepository } from 'src/domain/repositories/trip/trip.repository.interface';
+import { ITripRepository } from '../../../../domain/repositories/trip/trip.repository.interface';
 
 @Injectable()
 export class AiTripPlanUsecase implements IAiTripPlanUsecase {

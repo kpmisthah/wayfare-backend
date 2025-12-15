@@ -1,8 +1,8 @@
 import { $Enums, Prisma, WalletTransaction } from '@prisma/client';
-import { WalletTransactionEntity } from 'src/domain/entities/wallet-transaction.entity';
-import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
-import { Transaction } from 'src/domain/enums/transaction.enum';
-import { WalletTransactionEnum } from 'src/domain/enums/wallet-transaction.enum';
+import { WalletTransactionEntity } from '../../domain/entities/wallet-transaction.entity';
+import { PaymentStatus } from '../../domain/enums/payment-status.enum';
+import { Transaction } from '../../domain/enums/transaction.enum';
+import { WalletTransactionEnum } from '../../domain/enums/wallet-transaction.enum';
 export class WalletTransactionMapper {
   static toDomain(
     walletTransaction: WalletTransaction,

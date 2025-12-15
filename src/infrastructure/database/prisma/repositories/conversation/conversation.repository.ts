@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { IConversationRepository } from 'src/domain/repositories/conversation/conversation.repository.interface';
+import { IConversationRepository } from '../../../../../domain/repositories/conversation/conversation.repository.interface';
 import { PrismaService } from '../../prisma.service';
-import { ConversationEntity } from 'src/domain/entities/conversation.entity';
-import { ConversationMapper } from 'src/infrastructure/mappers/coversation.mapper';
+import { ConversationEntity } from '../../../../../domain/entities/conversation.entity';
+import { ConversationMapper } from '../../../../mappers/coversation.mapper';
 
 @Injectable()
 export class ConversationRepository implements IConversationRepository {

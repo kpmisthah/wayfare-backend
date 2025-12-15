@@ -1,4 +1,4 @@
-import { PayoutDetailsDTO } from 'src/application/dtos/payout-details.dto';
+import { PayoutDetailsDTO } from '../../application/dtos/payout-details.dto';
 import { PayoutRequestEntity } from '../entities/payout-request.entity';
 import { IBaseRepository } from '../repositories/base.repository';
 import { PayoutStatus } from '../enums/payout-status.enum';

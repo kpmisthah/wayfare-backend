@@ -1,6 +1,6 @@
-import { AgencyManagementDto } from 'src/application/dtos/agency-management.dto';
-import { SafeUser } from 'src/application/dtos/safe-user.dto';
-import { AgencyStatus } from 'src/domain/enums/agency-status.enum';
+import { AgencyManagementDto } from '../../../dtos/agency-management.dto';
+import { SafeUser } from '../../../dtos/safe-user.dto';
+import { AgencyStatus } from '../../../../domain/enums/agency-status.enum';
 
 export interface IAdminService {
   getAllAgencies(dto: {

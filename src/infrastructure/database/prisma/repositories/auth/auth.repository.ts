@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
-import { IAuthRepository } from 'src/domain/repositories/auth/auth.repository.interface';
-import { UserEntity } from 'src/domain/entities/user.entity';
-import { UserMapper } from 'src/infrastructure/mappers/user.mapper';
+import { IAuthRepository } from '../../../../../domain/repositories/auth/auth.repository.interface';
+import { UserEntity } from '../../../../../domain/entities/user.entity';
+import { UserMapper } from '../../../../mappers/user.mapper';
 
 @Injectable()
 export class AuthRepository implements IAuthRepository {

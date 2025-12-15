@@ -1,11 +1,11 @@
-import { PackageDto } from 'src/application/dtos/add-package.dto';
-import { AgencyProfileDto } from 'src/application/dtos/agency-profile.dto';
-import { AgencyResponseDto } from 'src/application/dtos/agency-response.dto';
-import { AgencyEntity } from 'src/domain/entities/agency.entity';
-import { ItineraryEntity } from 'src/domain/entities/itinerary.entity';
-import { PackageEntity } from 'src/domain/entities/package.entity';
-import { TransportationEntity } from 'src/domain/entities/transportation.entity';
-import { UserEntity } from 'src/domain/entities/user.entity';
+import { PackageDto } from '../../dtos/add-package.dto';
+import { AgencyProfileDto } from '../../dtos/agency-profile.dto';
+import { AgencyResponseDto } from '../../dtos/agency-response.dto';
+import { AgencyEntity } from '../../../domain/entities/agency.entity';
+import { ItineraryEntity } from '../../../domain/entities/itinerary.entity';
+import { PackageEntity } from '../../../domain/entities/package.entity';
+import { TransportationEntity } from '../../../domain/entities/transportation.entity';
+import { UserEntity } from '../../../domain/entities/user.entity';
 
 export class AgencyMapper {
   static toAgencyDto(agencyEntity: AgencyEntity): AgencyResponseDto {

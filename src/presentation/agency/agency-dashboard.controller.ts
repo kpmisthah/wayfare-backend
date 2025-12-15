@@ -5,11 +5,11 @@ import {
   Req,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
+import { AccessTokenGuard } from '../../infrastructure/common/guard/accessToken.guard';
 import { RolesGuard } from '../roles/auth.guard';
 import { Roles } from '../roles/roles.decorator';
-import { Role } from 'src/domain/enums/role.enum';
-import { AgencyDashboardUseCase } from 'src/application/usecases/agency/implementation/agency-dashboard.usecase';
+import { Role } from '../../domain/enums/role.enum';
+import { AgencyDashboardUseCase } from '../../application/usecases/agency/implementation/agency-dashboard.usecase';
 
 @Controller('agency/dashboard')
 @UseGuards(AccessTokenGuard, RolesGuard)

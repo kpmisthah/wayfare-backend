@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
-import { IAgencyProfileRepository } from 'src/domain/repositories/agency/agency-profile.repository.interface';
-import { AgencyEntity } from 'src/domain/entities/agency.entity';
-import { AgencyMapper } from 'src/infrastructure/mappers/agency.mapper';
+import { IAgencyProfileRepository } from '../../../../../domain/repositories/agency/agency-profile.repository.interface';
+import { AgencyEntity } from '../../../../../domain/entities/agency.entity';
+import { AgencyMapper } from '../../../../mappers/agency.mapper';
 
 @Injectable()
 export class AgencyProfileRepository implements IAgencyProfileRepository {

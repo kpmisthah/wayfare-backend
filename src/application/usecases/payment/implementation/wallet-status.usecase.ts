@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
-import { IBookingRepository } from 'src/domain/repositories/booking/booking.repository';
-import { IWalletTransactionRepository } from 'src/domain/repositories/wallet/wallet-transaction.repository.interface';
+import { PaymentStatus } from '../../../../domain/enums/payment-status.enum';
+import { IBookingRepository } from '../../../../domain/repositories/booking/booking.repository';
+import { IWalletTransactionRepository } from '../../../../domain/repositories/wallet/wallet-transaction.repository.interface';
 import { IWalletPaymentStatus } from '../interfaces/wallet-payment-status.usecase.interface';
 
 @Injectable()

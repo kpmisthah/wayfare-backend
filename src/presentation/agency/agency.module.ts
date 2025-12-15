@@ -1,22 +1,22 @@
 import { Module } from '@nestjs/common';
 import { AgencyController } from './agency.controller';
-import { AgencyService } from 'src/application/usecases/agency/implementation/agency.usecase';
-import { OtpService } from 'src/application/usecases/otp/implementation/otp.usecase';
-import { AgencyPackageService } from 'src/application/usecases/agency/implementation/agency.package.usecase';
-import { AGENCY_PACKAGE_TYPE, AGENCY_PROFILE_TYPE } from 'src/domain/types';
-import { AgencyProfilService } from 'src/application/usecases/agency/implementation/agency-profile.usecase';
-import { CloudinaryModule } from 'src/infrastructure/cloudinary/cloudinary.module';
+import { AgencyService } from '../../application/usecases/agency/implementation/agency.usecase';
+import { OtpService } from '../../application/usecases/otp/implementation/otp.usecase';
+import { AgencyPackageService } from '../../application/usecases/agency/implementation/agency.package.usecase';
+import { AGENCY_PACKAGE_TYPE, AGENCY_PROFILE_TYPE } from '../../domain/types';
+import { AgencyProfilService } from '../../application/usecases/agency/implementation/agency-profile.usecase';
+import { CloudinaryModule } from '../../infrastructure/cloudinary/cloudinary.module';
 import { UsersModule } from '../users/users.module';
-import { NodemailerService } from 'src/infrastructure/utils/nodemailer.service';
+import { NodemailerService } from '../../infrastructure/utils/nodemailer.service';
 import { AdminModule } from '../admin/admin.module';
-import { BankingDetailsUsecase } from 'src/application/usecases/agency/implementation/bank-details.usecase';
+import { BankingDetailsUsecase } from '../../application/usecases/agency/implementation/bank-details.usecase';
 import { WalletModule } from '../wallet/wallet.module';
 import { PaymentModule } from '../payment/payment.module';
-// import { SearchModule } from 'src/infrastructure/elastic-search/elastic-search.module';
+// import { SearchModule } from '../../infrastructure/elastic-search/elastic-search.module';
 
 import { AgencyDashboardController } from './agency-dashboard.controller';
-import { AgencyDashboardUseCase } from 'src/application/usecases/agency/implementation/agency-dashboard.usecase';
-import { AgencyDashboardRepository } from 'src/infrastructure/database/prisma/repositories/agency/agency-dashboard.repository';
+import { AgencyDashboardUseCase } from '../../application/usecases/agency/implementation/agency-dashboard.usecase';
+import { AgencyDashboardRepository } from '../../infrastructure/database/prisma/repositories/agency/agency-dashboard.repository';
 
 @Module({
   imports: [CloudinaryModule, UsersModule, AdminModule, WalletModule, PaymentModule],

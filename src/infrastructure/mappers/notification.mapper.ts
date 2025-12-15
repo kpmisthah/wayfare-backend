@@ -1,6 +1,6 @@
 import { $Enums, Notification } from '@prisma/client';
-import { NotificationEntity } from 'src/domain/entities/notification.entity';
-import { NotificationStatus } from 'src/domain/enums/notification-status.enum';
+import { NotificationEntity } from '../../domain/entities/notification.entity';
+import { NotificationStatus } from '../../domain/enums/notification-status.enum';
 
 export class NotificationMapper {
   static toDomain(notification: Notification): NotificationEntity {

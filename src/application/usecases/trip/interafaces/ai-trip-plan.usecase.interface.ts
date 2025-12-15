@@ -1,4 +1,4 @@
-import { TripDto } from 'src/application/dtos/Trip.dto';
+import { TripDto } from '../../../dtos/Trip.dto';
 
 export interface PaginationOptions {
   page: number;

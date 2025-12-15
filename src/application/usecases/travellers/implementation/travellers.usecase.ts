@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ITripRepository } from 'src/domain/repositories/trip/trip.repository.interface';
-import { IProfileRepository } from 'src/domain/repositories/user/profile.repository.interface';
-import { IUserRepository } from 'src/domain/repositories/user/user.repository.interface';
-import { PROFILE_TYPE } from 'src/domain/types';
+import { ITripRepository } from '../../../../domain/repositories/trip/trip.repository.interface';
+import { IProfileRepository } from '../../../../domain/repositories/user/profile.repository.interface';
+import { IUserRepository } from '../../../../domain/repositories/user/user.repository.interface';
+import { PROFILE_TYPE } from '../../../../domain/types';
 import { TravellersMapper } from '../../mapper/travellers.mapper';
-import { TravellersDto } from 'src/application/dtos/travellers.dto';
+import { TravellersDto } from '../../../dtos/travellers.dto';
 import { ITravellersUsecase } from '../interfaces/travellers.usecase.interface';
 
 @Injectable()

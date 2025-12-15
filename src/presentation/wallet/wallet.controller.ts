@@ -1,10 +1,10 @@
 import { Controller, Get, Inject, Query, Req, UseGuards } from '@nestjs/common';
-import { RequestWithUser } from 'src/application/usecases/auth/interfaces/request-with-user';
-import { IWalletUseCase } from 'src/application/usecases/wallet/interfaces/wallet.usecase.interface';
-import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
+import { RequestWithUser } from '../../application/usecases/auth/interfaces/request-with-user';
+import { IWalletUseCase } from '../../application/usecases/wallet/interfaces/wallet.usecase.interface';
+import { AccessTokenGuard } from '../../infrastructure/common/guard/accessToken.guard';
 import { RolesGuard } from '../roles/auth.guard';
 import { Roles } from '../roles/roles.decorator';
-import { Role } from 'src/domain/enums/role.enum';
+import { Role } from '../../domain/enums/role.enum';
 
 @Controller('wallet')
 @UseGuards(AccessTokenGuard, RolesGuard) 

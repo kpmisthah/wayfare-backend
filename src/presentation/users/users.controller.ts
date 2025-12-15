@@ -10,13 +10,13 @@ import {
   Patch,
 } from '@nestjs/common';
 
-import { CreateUserDto } from 'src/application/dtos/create-user.dto';
-import { UpdateUserDto } from 'src/application/dtos/update-user.dto';
-import { IUserUsecase } from 'src/application/usecases/users/interfaces/user.usecase.interface';
-import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
+import { CreateUserDto } from '../../application/dtos/create-user.dto';
+import { UpdateUserDto } from '../../application/dtos/update-user.dto';
+import { IUserUsecase } from '../../application/usecases/users/interfaces/user.usecase.interface';
+import { AccessTokenGuard } from '../../infrastructure/common/guard/accessToken.guard';
 import { RolesGuard } from '../roles/auth.guard';
 import { Roles } from '../roles/roles.decorator';
-import { Role } from 'src/domain/enums/role.enum';
+import { Role } from '../../domain/enums/role.enum';
 
 @UseGuards(AccessTokenGuard, RolesGuard)
 @Roles(Role.User)

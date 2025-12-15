@@ -1,11 +1,11 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { IConnectionRepository } from 'src/domain/repositories/connection/connection.repository';
+import { IConnectionRepository } from '../../../../domain/repositories/connection/connection.repository';
 import { IAcceptConnection } from '../interfaces/accept-connection.interface';
 import { IConversationUsecase } from '../../conversation/interfaces/conversation.interface';
-import { ChatGateway } from 'src/presentation/chat/chat.gateway';
-import { IUserRepository } from 'src/domain/repositories/user/user.repository.interface';
+import { ChatGateway } from '../../../../presentation/chat/chat.gateway';
+import { IUserRepository } from '../../../../domain/repositories/user/user.repository.interface';
 import { INotifactionUsecase } from '../../notification/interfaces/notifcation.interface';
-import { NotificationStatus } from 'src/domain/enums/notification-status.enum';
+import { NotificationStatus } from '../../../../domain/enums/notification-status.enum';
 import { ConnectionMapper } from '../../mapper/connection.mapper';
 
 @Injectable()

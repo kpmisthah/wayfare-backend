@@ -1,4 +1,4 @@
-import { AiTripEntity } from 'src/domain/entities/ai.trip.entity';
+import { AiTripEntity } from '../../entities/ai.trip.entity';
 import { IBaseRepository } from '../base.repository';
 
 export interface ITripRepository extends IBaseRepository<AiTripEntity> {

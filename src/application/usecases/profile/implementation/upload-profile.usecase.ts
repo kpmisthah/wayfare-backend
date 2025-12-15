@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ICloudinaryService } from 'src/domain/repositories/cloudinary/cloudinary.service.interface';
-import { PROFILE_TYPE } from 'src/domain/types';
-import { IUserRepository } from 'src/domain/repositories/user/user.repository.interface';
-import { IProfileRepository } from 'src/domain/repositories/user/profile.repository.interface';
+import { ICloudinaryService } from '../../../../domain/repositories/cloudinary/cloudinary.service.interface';
+import { PROFILE_TYPE } from '../../../../domain/types';
+import { IUserRepository } from '../../../../domain/repositories/user/user.repository.interface';
+import { IProfileRepository } from '../../../../domain/repositories/user/profile.repository.interface';
 import { IUploadProfileUseCase } from '../interfaces/uplaod-profile.usecase.interface';
 
 @Injectable()

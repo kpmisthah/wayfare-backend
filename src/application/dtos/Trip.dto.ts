@@ -1,4 +1,4 @@
-import { DayPlan, Hotel } from 'src/domain/types/ai.trip.type';
+import { DayPlan, Hotel } from '../../domain/types/ai.trip.type';
 
 export class TripDto {
   id: string;

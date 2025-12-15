@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { INotificationRepository } from 'src/domain/repositories/user/notification.repository.interface';
-import { CreateNotificationDto } from 'src/application/dtos/create-notification.dto';
-import { NotificationEntity } from 'src/domain/entities/notification.entity';
+import { INotificationRepository } from '../../../../domain/repositories/user/notification.repository.interface';
+import { CreateNotificationDto } from '../../../dtos/create-notification.dto';
+import { NotificationEntity } from '../../../../domain/entities/notification.entity';
 import { INotifactionUsecase } from '../interfaces/notifcation.interface';
-import { ChatGateway } from 'src/presentation/chat/chat.gateway';
+import { ChatGateway } from '../../../../presentation/chat/chat.gateway';
 import { NotificationMapper } from '../../mapper/notification.mapper';
 
 @Injectable()

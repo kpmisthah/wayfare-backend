@@ -4,18 +4,18 @@ import {
   Inject,
   NotFoundException,
 } from '@nestjs/common';
-import { ConnectionEntity } from 'src/domain/entities/connection.entity';
-import { IConnectionRepository } from 'src/domain/repositories/connection/connection.repository';
+import { ConnectionEntity } from '../../../../domain/entities/connection.entity';
+import { IConnectionRepository } from '../../../../domain/repositories/connection/connection.repository';
 import { ISendConnection } from '../interfaces/send-connection.interface';
 import { ConnectionMapper } from '../../mapper/connection.mapper';
-import { ConnectionDto } from 'src/application/dtos/connection.dto';
+import { ConnectionDto } from '../../../dtos/connection.dto';
 import { IConversationUsecase } from '../../conversation/interfaces/conversation.interface';
-import { IConversationRepository } from 'src/domain/repositories/conversation/conversation.repository.interface';
-import { AcceptedConnection } from 'src/domain/interfaces/accepted-connection.interface';
-import { ChatGateway } from 'src/presentation/chat/chat.gateway';
-import { IUserRepository } from 'src/domain/repositories/user/user.repository.interface';
+import { IConversationRepository } from '../../../../domain/repositories/conversation/conversation.repository.interface';
+import { AcceptedConnection } from '../../../../domain/interfaces/accepted-connection.interface';
+import { ChatGateway } from '../../../../presentation/chat/chat.gateway';
+import { IUserRepository } from '../../../../domain/repositories/user/user.repository.interface';
 import { INotifactionUsecase } from '../../notification/interfaces/notifcation.interface';
-import { NotificationStatus } from 'src/domain/enums/notification-status.enum';
+import { NotificationStatus } from '../../../../domain/enums/notification-status.enum';
 
 @Injectable()
 export class SendConnectionUseCase implements ISendConnection {

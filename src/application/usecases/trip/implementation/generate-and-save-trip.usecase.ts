@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { IGenerateAndSaveTrip } from '../interafaces/generate-and-save-trip.usecase.interface';
-import { GenerateTripDto } from 'src/application/dtos/generate-trip.dto';
+import { GenerateTripDto } from '../../../dtos/generate-trip.dto';
 import { IGenerateTripUsecase } from '../interafaces/generate-trip.usecase.interface';
 import { ISaveTrip } from '../interafaces/save-trip.usecase.interface';
-import { TripDto } from 'src/application/dtos/Trip.dto';
-import { TripResponse } from 'src/domain/types/ai.trip.type';
+import { TripDto } from '../../../dtos/Trip.dto';
+import { TripResponse } from '../../../../domain/types/ai.trip.type';
 
 @Injectable()
 export class GenerateAndSaveTrip implements IGenerateAndSaveTrip {

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { INotificationRepository } from 'src/domain/repositories/user/notification.repository.interface';
-import { NotificationEntity } from 'src/domain/entities/notification.entity';
+import { INotificationRepository } from '../../../../../domain/repositories/user/notification.repository.interface';
+import { NotificationEntity } from '../../../../../domain/entities/notification.entity';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { BaseRepository } from '../base.repository';
-import { NotificationMapper } from 'src/infrastructure/mappers/notification.mapper';
+import { NotificationMapper } from '../../../../mappers/notification.mapper';
 
 @Injectable()
 export class NotificationRepository

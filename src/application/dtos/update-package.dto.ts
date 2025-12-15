@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsNumber, IsString } from 'class-validator';
-import { PackageStatus } from 'src/domain/enums/package-status.enum';
+import { PackageStatus } from '../../domain/enums/package-status.enum';
 
 export class UpdatePackageDto {
   // @IsString()

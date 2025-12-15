@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import {
   IAdminRevenueRepository,
   TransactionSummaryResult,
-} from 'src/domain/repositories/admin/admin-revenue.repository.interface';
+} from '../../../../../domain/repositories/admin/admin-revenue.repository.interface';
 import { PrismaService } from '../../prisma.service';
 import { $Enums, Prisma } from '@prisma/client';
-import { WalletTransactionEntity } from 'src/domain/entities/wallet-transaction.entity';
-import { Transaction } from 'src/domain/enums/transaction.enum';
-import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
-import { WalletTransactionEnum } from 'src/domain/enums/wallet-transaction.enum';
+import { WalletTransactionEntity } from '../../../../../domain/entities/wallet-transaction.entity';
+import { Transaction } from '../../../../../domain/enums/transaction.enum';
+import { PaymentStatus } from '../../../../../domain/enums/payment-status.enum';
+import { WalletTransactionEnum } from '../../../../../domain/enums/wallet-transaction.enum';
 
 export interface WalletTransactionWithRelations {
   id: string;

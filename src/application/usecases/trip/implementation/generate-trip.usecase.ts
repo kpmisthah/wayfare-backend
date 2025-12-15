@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { GenerateTripDto } from 'src/application/dtos/generate-trip.dto';
-import { IAiModel } from 'src/domain/interfaces/aiModal.interface';
+import { GenerateTripDto } from '../../../dtos/generate-trip.dto';
+import { IAiModel } from '../../../../domain/interfaces/aiModal.interface';
 import { IGenerateTripUsecase } from '../interafaces/generate-trip.usecase.interface';
 
 @Injectable()

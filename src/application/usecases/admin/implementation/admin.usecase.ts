@@ -1,14 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { IAdminRepository } from 'src/domain/repositories/admin/admin.repository.interface';
-import { IAdminService } from 'src/application/usecases/admin/interfaces/admin.usecase.interface';
-import { ADMIN_TYPE } from 'src/domain/types';
-import { IAgencyRepository } from 'src/domain/repositories/agency/agency.repository.interface';
-import { AgencyManagementDto } from 'src/application/dtos/agency-management.dto';
-import { AgencyMapper } from 'src/application/usecases/mapper/agency.mapper';
-import { IUserRepository } from 'src/domain/repositories/user/user.repository.interface';
-import { SafeUser } from 'src/application/dtos/safe-user.dto';
+import { IAdminRepository } from '../../../../domain/repositories/admin/admin.repository.interface';
+import { IAdminService } from '../interfaces/admin.usecase.interface';
+import { ADMIN_TYPE } from '../../../../domain/types';
+import { IAgencyRepository } from '../../../../domain/repositories/agency/agency.repository.interface';
+import { AgencyManagementDto } from '../../../dtos/agency-management.dto';
+import { AgencyMapper } from '../../mapper/agency.mapper';
+import { IUserRepository } from '../../../../domain/repositories/user/user.repository.interface';
+import { SafeUser } from '../../../dtos/safe-user.dto';
 import { UserMapper } from '../../mapper/user.mapper';
-import { AgencyStatus } from 'src/domain/enums/agency-status.enum';
+import { AgencyStatus } from '../../../../domain/enums/agency-status.enum';
 
 @Injectable()
 export class AdminService implements IAdminService {

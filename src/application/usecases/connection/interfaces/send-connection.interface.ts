@@ -1,4 +1,4 @@
-import { ConnectionDto } from 'src/application/dtos/connection.dto';
+import { ConnectionDto } from '../../../dtos/connection.dto';
 
 export interface AcceptedConnection {
   conversationId: string | null;

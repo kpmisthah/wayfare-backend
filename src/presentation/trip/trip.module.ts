@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { GenerateTripUsecase } from 'src/application/usecases/trip/implementation/generate-trip.usecase';
+import { GenerateTripUsecase } from '../../application/usecases/trip/implementation/generate-trip.usecase';
 import { TripController } from './trip.controller';
-import { GenerateAndSaveTrip } from 'src/application/usecases/trip/implementation/generate-and-save-trip.usecase';
-import { SaveTrip } from 'src/application/usecases/trip/implementation/save-trip.usecase';
-import { AiTripPlanUsecase } from 'src/application/usecases/trip/implementation/ai-trip-plan.usecase';
+import { GenerateAndSaveTrip } from '../../application/usecases/trip/implementation/generate-and-save-trip.usecase';
+import { SaveTrip } from '../../application/usecases/trip/implementation/save-trip.usecase';
+import { AiTripPlanUsecase } from '../../application/usecases/trip/implementation/ai-trip-plan.usecase';
 
 @Module({
   controllers: [TripController],

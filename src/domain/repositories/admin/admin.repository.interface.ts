@@ -1,5 +1,5 @@
 import { preference } from '@prisma/client';
-import { UserEntity } from 'src/domain/entities/user.entity';
+import { UserEntity } from '../../entities/user.entity';
 
 // Interface for the raw booking data returned from the repository
 export interface RecentBookingData {

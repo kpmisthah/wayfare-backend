@@ -1,5 +1,5 @@
-import { BankDetailsDto } from 'src/application/dtos/request-payout.dto';
-import { BankingEntity } from 'src/domain/entities/banking.entity';
+import { BankDetailsDto } from '../../dtos/request-payout.dto';
+import { BankingEntity } from '../../../domain/entities/banking.entity';
 
 export class BankingMapper {
   static toBankingDetailsDto(bankingEntity: BankingEntity): BankDetailsDto {

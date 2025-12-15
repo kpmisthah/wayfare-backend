@@ -1,5 +1,5 @@
-import { GroupChatDto } from 'src/application/dtos/group-chat.dto';
-import { MessageDto } from 'src/application/dtos/message.dto';
+import { GroupChatDto } from '../../../dtos/group-chat.dto';
+import { MessageDto } from '../../../dtos/message.dto';
 
 export interface UserGroup {
   id: string;

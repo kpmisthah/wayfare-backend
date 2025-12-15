@@ -1,7 +1,7 @@
-import { AgencyEntity } from 'src/domain/entities/agency.entity';
+import { AgencyEntity } from '../../entities/agency.entity';
 import { IBaseRepository } from '../base.repository';
-import { AgencyStatus } from 'src/domain/enums/agency-status.enum';
-import { AgencyManageDto } from 'src/application/dtos/AgencyManagement.dto';
+import { AgencyStatus } from '../../enums/agency-status.enum';
+import { AgencyManageDto } from '../../../application/dtos/AgencyManagement.dto';
 
 export interface IAgencyRepository extends IBaseRepository<AgencyEntity> {
   findByEmail(email: string): Promise<AgencyEntity | null>;

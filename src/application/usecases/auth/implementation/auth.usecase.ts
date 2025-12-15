@@ -8,28 +8,28 @@ import {
 } from '@nestjs/common';
 
 import { Request, Response } from 'express';
-import { LoginDto, SignupDto } from 'src/application/dtos/auth.dto';
+import { LoginDto, SignupDto } from '../../../dtos/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { VerifyOtpDto } from 'src/application/dtos/verifyOtp.dto';
-import { ResendOtpDto } from 'src/application/dtos/resendOtp.dto';
-import { ForgotPasswordDto } from 'src/application/dtos/forgotPassword.dto';
-import { VerifyForgotPasswordDto } from 'src/application/dtos/verifyForgotPasswordDto';
-import { ResetPasswordDto } from 'src/application/dtos/resetPassword.dto';
-import { UserEntity } from 'src/domain/entities/user.entity';
+import { VerifyOtpDto } from '../../../dtos/verifyOtp.dto';
+import { ResendOtpDto } from '../../../dtos/resendOtp.dto';
+import { ForgotPasswordDto } from '../../../dtos/forgotPassword.dto';
+import { VerifyForgotPasswordDto } from '../../../dtos/verifyForgotPasswordDto';
+import { ResetPasswordDto } from '../../../dtos/resetPassword.dto';
+import { UserEntity } from '../../../../domain/entities/user.entity';
 import { JwtTokenFactory } from './jwt-token.factory';
-import { IUserUsecase } from 'src/application/usecases/users/interfaces/user.usecase.interface';
-import { IOtpService } from 'src/application/usecases/otp/interfaces/otp.usecase.interface';
-import { IAuthRepository } from 'src/domain/repositories/auth/auth.repository.interface';
-import { IAuthUsecase } from 'src/application/usecases/auth/interfaces/auth.usecase.interface';
-import { IAgencyService } from 'src/application/usecases/agency/interfaces/agency.usecase.interface';
-import { IArgonService } from 'src/domain/interfaces/argon.service.interface';
-import { IUserRepository } from 'src/domain/repositories/user/user.repository.interface';
-import { ChangePassword } from 'src/application/dtos/change-password.dto';
-import { IRedisService } from 'src/domain/interfaces/redis-service.interface';
-import { NodemailerService } from 'src/infrastructure/utils/nodemailer.service';
-import { StatusCode } from 'src/domain/enums/status-code.enum';
-import { Role } from 'src/domain/enums/role.enum';
+import { IUserUsecase } from '../../users/interfaces/user.usecase.interface';
+import { IOtpService } from '../../otp/interfaces/otp.usecase.interface';
+import { IAuthRepository } from '../../../../domain/repositories/auth/auth.repository.interface';
+import { IAuthUsecase } from '../interfaces/auth.usecase.interface';
+import { IAgencyService } from '../../agency/interfaces/agency.usecase.interface';
+import { IArgonService } from '../../../../domain/interfaces/argon.service.interface';
+import { IUserRepository } from '../../../../domain/repositories/user/user.repository.interface';
+import { ChangePassword } from '../../../dtos/change-password.dto';
+import { IRedisService } from '../../../../domain/interfaces/redis-service.interface';
+import { NodemailerService } from '../../../../infrastructure/utils/nodemailer.service';
+import { StatusCode } from '../../../../domain/enums/status-code.enum';
+import { Role } from '../../../../domain/enums/role.enum';
 @Injectable()
 export class AuthService implements IAuthUsecase {
   constructor(

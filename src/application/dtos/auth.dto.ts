@@ -7,7 +7,7 @@ import {
   IsOptional,
   IsEnum,
 } from 'class-validator';
-import { Role } from 'src/domain/enums/role.enum';
+import { Role } from '../../domain/enums/role.enum';
 
 // Password complexity regex:
 // - At least 8 characters

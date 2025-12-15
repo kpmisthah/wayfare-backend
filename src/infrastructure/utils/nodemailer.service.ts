@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { randomInt } from 'crypto';
 import * as nodemailer from 'nodemailer';
-import { INodeMailerService } from 'src/domain/interfaces/nodemailer.interface';
+import { INodeMailerService } from '../../domain/interfaces/nodemailer.interface';
 @Injectable()
 export class NodemailerService implements INodeMailerService {
   private readonly emailTransporter: nodemailer.Transporter;

@@ -1,5 +1,5 @@
 import { User } from '@prisma/client';
-import { UserProfileEntity } from 'src/domain/entities/user-profile.entity';
+import { UserProfileEntity } from '../../entities/user-profile.entity';
 
 export interface IProfileRepository {
   //preferences ozhivaakkiii

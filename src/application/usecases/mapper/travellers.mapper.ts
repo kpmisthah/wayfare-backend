@@ -1,7 +1,7 @@
-import { TravellersDto } from 'src/application/dtos/travellers.dto';
-import { AiTripEntity } from 'src/domain/entities/ai.trip.entity';
-import { UserProfileEntity } from 'src/domain/entities/user-profile.entity';
-import { UserEntity } from 'src/domain/entities/user.entity';
+import { TravellersDto } from '../../dtos/travellers.dto';
+import { AiTripEntity } from '../../../domain/entities/ai.trip.entity';
+import { UserProfileEntity } from '../../../domain/entities/user-profile.entity';
+import { UserEntity } from '../../../domain/entities/user.entity';
 
 export class TravellersMapper {
   static toTravellerDto(

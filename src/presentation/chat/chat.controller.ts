@@ -8,16 +8,16 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { GroupChatDto } from 'src/application/dtos/group-chat.dto';
-import { RequestWithUser } from 'src/application/usecases/auth/interfaces/request-with-user';
-import { IChatUsecase } from 'src/application/usecases/chat/interfaces/message.interface';
+import { GroupChatDto } from '../../application/dtos/group-chat.dto';
+import { RequestWithUser } from '../../application/usecases/auth/interfaces/request-with-user';
+import { IChatUsecase } from '../../application/usecases/chat/interfaces/message.interface';
 import {
   ISendConnection,
   AcceptedConnection,
-} from 'src/application/usecases/connection/interfaces/send-connection.interface';
-import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
+} from '../../application/usecases/connection/interfaces/send-connection.interface';
+import { AccessTokenGuard } from '../../infrastructure/common/guard/accessToken.guard';
 import { ChatGateway } from './chat.gateway';
-import { IChatRepository } from 'src/domain/repositories/chat/chat.repository.interface';
+import { IChatRepository } from '../../domain/repositories/chat/chat.repository.interface';
 
 @Controller('messages')
 @UseGuards(AccessTokenGuard)

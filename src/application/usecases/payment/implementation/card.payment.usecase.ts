@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { IPayment } from '../interfaces/payment.interface';
 import { PaymentProvider } from '../../stripe/interface/payment.interface';
-import { TransactionEntity } from 'src/domain/entities/transaction.entity';
-import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
-import { Role } from 'src/domain/enums/role.enum';
-import { ITransactionRepository } from 'src/domain/repositories/transaction/transaction.repository';
-import { BookingEntity } from 'src/domain/entities/booking.entity';
+import { TransactionEntity } from '../../../../domain/entities/transaction.entity';
+import { PaymentStatus } from '../../../../domain/enums/payment-status.enum';
+import { Role } from '../../../../domain/enums/role.enum';
+import { ITransactionRepository } from '../../../../domain/repositories/transaction/transaction.repository';
+import { BookingEntity } from '../../../../domain/entities/booking.entity';
 
 @Injectable()
 export class CardPaymentUsecase implements IPayment {

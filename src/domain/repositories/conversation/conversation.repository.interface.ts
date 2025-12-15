@@ -1,4 +1,4 @@
-import { ConversationEntity } from 'src/domain/entities/conversation.entity';
+import { ConversationEntity } from '../../entities/conversation.entity';
 
 export interface IConversationRepository {
   createConversation(userIds: string[]): Promise<ConversationEntity>;

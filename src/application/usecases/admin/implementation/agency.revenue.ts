@@ -1,7 +1,7 @@
 import {
   IAgencyRevenueRepository,
   AgencyRevenueSummaryResult,
-} from 'src/domain/repositories/admin/agency-revenue.repository.interface';
+} from '../../../../domain/repositories/admin/agency-revenue.repository.interface';
 import { IAgencyRevenue } from '../interfaces/agency-revenue.usecase.interface';
 import { Inject, Injectable } from '@nestjs/common';
 

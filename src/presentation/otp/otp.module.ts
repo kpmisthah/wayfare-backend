@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { OtpService } from 'src/application/usecases/otp/implementation/otp.usecase';
-import { NodemailerService } from 'src/infrastructure/utils/nodemailer.service';
-import { PrismaModule } from 'src/infrastructure/database/prisma/prisma.module';
+import { OtpService } from '../../application/usecases/otp/implementation/otp.usecase';
+import { NodemailerService } from '../../infrastructure/utils/nodemailer.service';
+import { PrismaModule } from '../../infrastructure/database/prisma/prisma.module';
 
 @Module({
   imports: [PrismaModule],

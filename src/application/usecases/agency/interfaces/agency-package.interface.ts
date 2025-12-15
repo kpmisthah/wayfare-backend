@@ -1,8 +1,8 @@
-import { PackageDto } from 'src/application/dtos/add-package.dto';
-import { FilterPackageDto } from 'src/application/dtos/filter-package.dto';
-import { TrendingDestinationDto } from 'src/application/dtos/trending-destination.dto';
-import { UpdatePackageDto } from 'src/application/dtos/update-package.dto';
-import { PackageStatus } from 'src/domain/enums/package-status.enum';
+import { PackageDto } from '../../../dtos/add-package.dto';
+import { FilterPackageDto } from '../../../dtos/filter-package.dto';
+import { TrendingDestinationDto } from '../../../dtos/trending-destination.dto';
+import { UpdatePackageDto } from '../../../dtos/update-package.dto';
+import { PackageStatus } from '../../../../domain/enums/package-status.enum';
 
 export interface IAgencyPackageService {
   addPackages(

@@ -1,7 +1,7 @@
 import { $Enums, Booking, Prisma } from '@prisma/client';
-import { BookingEntity } from 'src/domain/entities/booking.entity';
-import { BookingStatus } from 'src/domain/enums/booking-status.enum';
-import { BookingCode } from 'src/domain/value-objects/booking.code';
+import { BookingEntity } from '../../domain/entities/booking.entity';
+import { BookingStatus } from '../../domain/enums/booking-status.enum';
+import { BookingCode } from '../../domain/value-objects/booking.code';
 
 type BookingWithUser = Prisma.BookingGetPayload<{
   include: { user: true; package: true };

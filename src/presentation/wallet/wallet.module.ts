@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { WalletController } from './wallet.controller';
-import { WalletUsecase } from 'src/application/usecases/wallet/implementation/wallet.usecase';
+import { WalletUsecase } from '../../application/usecases/wallet/implementation/wallet.usecase';
 
 @Module({
   controllers: [WalletController],

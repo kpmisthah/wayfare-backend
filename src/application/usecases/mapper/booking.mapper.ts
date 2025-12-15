@@ -1,13 +1,13 @@
-import { BookingResponseDto } from 'src/application/dtos/booking-details-response.dto';
-import { BookingStatusDto } from 'src/application/dtos/booking-status.dto';
-import { CreateBookingDto } from 'src/application/dtos/create-booking.dto';
-import { FetchBookingDto } from 'src/application/dtos/fetch-booking.dto';
-import { FetchUserBookingDto } from 'src/application/dtos/fetch-user-booking.dto';
-import { ResponseBookingDto } from 'src/application/dtos/response-booking.dto';
-import { AgencyEntity } from 'src/domain/entities/agency.entity';
-import { BookingEntity } from 'src/domain/entities/booking.entity';
-import { PackageEntity } from 'src/domain/entities/package.entity';
-import { UserEntity } from 'src/domain/entities/user.entity';
+import { BookingResponseDto } from '../../dtos/booking-details-response.dto';
+import { BookingStatusDto } from '../../dtos/booking-status.dto';
+import { CreateBookingDto } from '../../dtos/create-booking.dto';
+import { FetchBookingDto } from '../../dtos/fetch-booking.dto';
+import { FetchUserBookingDto } from '../../dtos/fetch-user-booking.dto';
+import { ResponseBookingDto } from '../../dtos/response-booking.dto';
+import { AgencyEntity } from '../../../domain/entities/agency.entity';
+import { BookingEntity } from '../../../domain/entities/booking.entity';
+import { PackageEntity } from '../../../domain/entities/package.entity';
+import { UserEntity } from '../../../domain/entities/user.entity';
 
 export class BookingMapper {
   static toBookDto(bookingEntity: BookingEntity): CreateBookingDto {

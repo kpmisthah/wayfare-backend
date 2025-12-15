@@ -1,4 +1,4 @@
-import { GoogleLoginResponse } from 'src/application/dtos/google-login-response.dto';
+import { GoogleLoginResponse } from '../../../dtos/google-login-response.dto';
 
 export interface IGoogleLoginUseCase {
   execute(googleUser: {

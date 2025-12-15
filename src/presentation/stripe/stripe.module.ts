@@ -1,7 +1,7 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { StripeController } from './stripe.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { StripeWebhookUsecase } from 'src/application/usecases/stripe/implementation/webhook.usecase';
+import { StripeWebhookUsecase } from '../../application/usecases/stripe/implementation/webhook.usecase';
 import { BookingModule } from '../booking/booking.module';
 import { WalletModule } from '../wallet/wallet.module';
 

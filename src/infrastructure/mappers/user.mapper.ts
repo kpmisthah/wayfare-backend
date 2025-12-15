@@ -1,6 +1,6 @@
 import { User, $Enums } from '@prisma/client';
-import { UserEntity } from 'src/domain/entities/user.entity';
-import { Role } from 'src/domain/enums/role.enum';
+import { UserEntity } from '../../domain/entities/user.entity';
+import { Role } from '../../domain/enums/role.enum';
 export class UserMapper {
   static toDomain(user: User): UserEntity {
     return new UserEntity(

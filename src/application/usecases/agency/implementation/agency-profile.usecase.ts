@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UpdateAgencyProfileDto } from 'src/application/dtos/update-agency-profile.dto';
-import { IAgencyProfileRepository } from 'src/domain/repositories/agency/agency-profile.repository.interface';
-import { IAgencyProfileService } from 'src/application/usecases/agency/interfaces/agency-profile.service.usecase';
-import { AGENCY_PROFILE_TYPE } from 'src/domain/types';
-import { IAgencyRepository } from 'src/domain/repositories/agency/agency.repository.interface';
-import { IUserRepository } from 'src/domain/repositories/user/user.repository.interface';
-import { AgencyProfileDto } from 'src/application/dtos/agency-profile.dto';
+import { UpdateAgencyProfileDto } from '../../../dtos/update-agency-profile.dto';
+import { IAgencyProfileRepository } from '../../../../domain/repositories/agency/agency-profile.repository.interface';
+import { IAgencyProfileService } from '../interfaces/agency-profile.service.usecase';
+import { AGENCY_PROFILE_TYPE } from '../../../../domain/types';
+import { IAgencyRepository } from '../../../../domain/repositories/agency/agency.repository.interface';
+import { IUserRepository } from '../../../../domain/repositories/user/user.repository.interface';
+import { AgencyProfileDto } from '../../../dtos/agency-profile.dto';
 import { AgencyMapper } from '../../mapper/agency.mapper';
 
 @Injectable()

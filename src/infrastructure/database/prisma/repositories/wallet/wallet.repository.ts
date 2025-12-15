@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { BaseRepository } from '../base.repository';
-import { WalletEntity } from 'src/domain/entities/wallet.entity';
+import { WalletEntity } from '../../../../../domain/entities/wallet.entity';
 import { PrismaService } from '../../prisma.service';
-import { WalletMapper } from 'src/infrastructure/mappers/wallet.mapper';
-import { IWalletRepository } from 'src/domain/repositories/wallet/wallet.repository.interface';
+import { WalletMapper } from '../../../../mappers/wallet.mapper';
+import { IWalletRepository } from '../../../../../domain/repositories/wallet/wallet.repository.interface';
 
 @Injectable()
 export class WalletRepository

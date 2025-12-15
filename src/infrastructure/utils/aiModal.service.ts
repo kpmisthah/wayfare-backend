@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import OpenAI from 'openai';
-import { IAiModel } from 'src/domain/interfaces/aiModal.interface';
+import { IAiModel } from '../../domain/interfaces/aiModal.interface';
 
 @Injectable()
 export class AiModal implements IAiModel {

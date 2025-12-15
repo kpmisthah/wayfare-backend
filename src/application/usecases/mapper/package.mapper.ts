@@ -1,7 +1,7 @@
-import { ResponsePackageDto } from 'src/application/dtos/response-package.dto';
-import { TrendingDestinationDto } from 'src/application/dtos/trending-destination.dto';
-import { PackageEntity } from 'src/domain/entities/package.entity';
-import { TransportationEntity } from 'src/domain/entities/transportation.entity';
+import { ResponsePackageDto } from '../../dtos/response-package.dto';
+import { TrendingDestinationDto } from '../../dtos/trending-destination.dto';
+import { PackageEntity } from '../../../domain/entities/package.entity';
+import { TransportationEntity } from '../../../domain/entities/transportation.entity';
 
 export class PackageMapper {
   static toPackageDto(

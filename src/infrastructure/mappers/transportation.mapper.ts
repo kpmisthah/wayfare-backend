@@ -1,5 +1,5 @@
 import { Prisma, Transportation } from '@prisma/client';
-import { TransportationEntity } from 'src/domain/entities/transportation.entity';
+import { TransportationEntity } from '../../domain/entities/transportation.entity';
 
 export class TransportationMapper {
   static toDomain(transportation: Transportation): TransportationEntity {

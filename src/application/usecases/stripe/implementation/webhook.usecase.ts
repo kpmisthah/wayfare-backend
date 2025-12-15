@@ -1,9 +1,9 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { PaymentProvider } from '../interface/payment.interface';
-import { ITransactionRepository } from 'src/domain/repositories/transaction/transaction.repository';
-import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
-import { IBookingRepository } from 'src/domain/repositories/booking/booking.repository';
-import { BookingStatus } from 'src/domain/enums/booking-status.enum';
+import { ITransactionRepository } from '../../../../domain/repositories/transaction/transaction.repository';
+import { PaymentStatus } from '../../../../domain/enums/payment-status.enum';
+import { IBookingRepository } from '../../../../domain/repositories/booking/booking.repository';
+import { BookingStatus } from '../../../../domain/enums/booking-status.enum';
 import { IWalletUseCase } from '../../wallet/interfaces/wallet.usecase.interface';
 
 @Injectable()

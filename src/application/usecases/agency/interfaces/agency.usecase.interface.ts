@@ -1,9 +1,9 @@
-import { AgencyManagementDto } from 'src/application/dtos/agency-management.dto';
-import { AgencyProfileDto } from 'src/application/dtos/agency-profile.dto';
-import { AgencyResponseDto } from 'src/application/dtos/agency-response.dto';
-import { CreateAgencyDto } from 'src/application/dtos/create-agency.dto';
-import { UpdateStatusDto } from 'src/application/dtos/update-status.dto';
-import { AgencyEntity } from 'src/domain/entities/agency.entity';
+import { AgencyManagementDto } from '../../../dtos/agency-management.dto';
+import { AgencyProfileDto } from '../../../dtos/agency-profile.dto';
+import { AgencyResponseDto } from '../../../dtos/agency-response.dto';
+import { CreateAgencyDto } from '../../../dtos/create-agency.dto';
+import { UpdateStatusDto } from '../../../dtos/update-status.dto';
+import { AgencyEntity } from '../../../../domain/entities/agency.entity';
 
 export interface IAgencyService {
 

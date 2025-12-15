@@ -1,7 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { ChatGateway } from './chat.gateway';
 import { MessageController } from './chat.controller';
-import { ChatUsecase } from 'src/application/usecases/chat/implementation/message.usecase';
+import { ChatUsecase } from '../../application/usecases/chat/implementation/message.usecase';
 import { ConnectionModule } from '../connection/connection.module';
 
 @Module({

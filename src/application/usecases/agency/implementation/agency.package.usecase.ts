@@ -1,22 +1,22 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { PackageDto } from 'src/application/dtos/add-package.dto';
-import { IAgencyPackageService } from 'src/application/usecases/agency/interfaces/agency-package.interface';
-import { IAgencyPackageRepository } from 'src/domain/repositories/agency/agency-package.repository';
-import { ICloudinaryService } from 'src/domain/repositories/cloudinary/cloudinary.service.interface';
-import { AGENCY_PACKAGE_TYPE } from 'src/domain/types';
-import { ItineraryEntity } from 'src/domain/entities/itinerary.entity';
-import { PackageEntity } from 'src/domain/entities/package.entity';
-import { IAgencyRepository } from 'src/domain/repositories/agency/agency.repository.interface';
-import { IItineraryRepository } from 'src/domain/repositories/agency/itenerary.repository';
-import { AgencyMapper } from 'src/application/usecases/mapper/agency.mapper';
-import { IUserRepository } from 'src/domain/repositories/user/user.repository.interface';
-import { PackageStatus } from 'src/domain/enums/package-status.enum';
-import { TransportationEntity } from 'src/domain/entities/transportation.entity';
-import { ITransportationRepository } from 'src/domain/repositories/agency/transportation.repository';
-import { FilterPackageDto } from 'src/application/dtos/filter-package.dto';
-import { UpdatePackageDto } from 'src/application/dtos/update-package.dto';
+import { PackageDto } from '../../../dtos/add-package.dto';
+import { IAgencyPackageService } from '../interfaces/agency-package.interface';
+import { IAgencyPackageRepository } from '../../../../domain/repositories/agency/agency-package.repository';
+import { ICloudinaryService } from '../../../../domain/repositories/cloudinary/cloudinary.service.interface';
+import { AGENCY_PACKAGE_TYPE } from '../../../../domain/types';
+import { ItineraryEntity } from '../../../../domain/entities/itinerary.entity';
+import { PackageEntity } from '../../../../domain/entities/package.entity';
+import { IAgencyRepository } from '../../../../domain/repositories/agency/agency.repository.interface';
+import { IItineraryRepository } from '../../../../domain/repositories/agency/itenerary.repository';
+import { AgencyMapper } from '../../mapper/agency.mapper';
+import { IUserRepository } from '../../../../domain/repositories/user/user.repository.interface';
+import { PackageStatus } from '../../../../domain/enums/package-status.enum';
+import { TransportationEntity } from '../../../../domain/entities/transportation.entity';
+import { ITransportationRepository } from '../../../../domain/repositories/agency/transportation.repository';
+import { FilterPackageDto } from '../../../dtos/filter-package.dto';
+import { UpdatePackageDto } from '../../../dtos/update-package.dto';
 import { PackageMapper } from '../../mapper/package.mapper';
-import { TrendingDestinationDto } from 'src/application/dtos/trending-destination.dto';
+import { TrendingDestinationDto } from '../../../dtos/trending-destination.dto';
 
 @Injectable()
 export class AgencyPackageService implements IAgencyPackageService {

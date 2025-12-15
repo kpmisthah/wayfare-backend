@@ -1,6 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { NotificationController } from './notification.controller';
-import { NotificationUsecase } from 'src/application/usecases/notification/implementation/notification.usecase';
+import { NotificationUsecase } from '../../application/usecases/notification/implementation/notification.usecase';
 import { ChatModule } from '../chat/chat.module';
 
 @Module({

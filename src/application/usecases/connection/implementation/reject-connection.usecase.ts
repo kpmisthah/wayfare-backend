@@ -1,5 +1,5 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { IConnectionRepository } from 'src/domain/repositories/connection/connection.repository';
+import { IConnectionRepository } from '../../../../domain/repositories/connection/connection.repository';
 import { IRejectConnection } from '../interfaces/reject-connection.interface';
 
 @Injectable()

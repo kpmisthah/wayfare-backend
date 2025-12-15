@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { BankDetailsDto } from 'src/application/dtos/request-payout.dto';
-import { BankingEntity } from 'src/domain/entities/banking.entity';
-import { IBankingDetailsRepository } from 'src/domain/interfaces/agency-bookibnng-details.interface';
+import { BankDetailsDto } from '../../../dtos/request-payout.dto';
+import { BankingEntity } from '../../../../domain/entities/banking.entity';
+import { IBankingDetailsRepository } from '../../../../domain/interfaces/agency-bookibnng-details.interface';
 import { BankingMapper } from '../../mapper/banking-detail.mapper';
 import { IBankingDetailsUsecase } from '../interfaces/agnecy-banking-details.usecase.interface';
-import { IAgencyRepository } from 'src/domain/repositories/agency/agency.repository.interface';
+import { IAgencyRepository } from '../../../../domain/repositories/agency/agency.repository.interface';
 
 @Injectable()
 export class BankingDetailsUsecase implements IBankingDetailsUsecase {

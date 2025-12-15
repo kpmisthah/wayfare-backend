@@ -1,6 +1,6 @@
-import { MessageEntity } from 'src/domain/entities/message.entity';
+import { MessageEntity } from '../../entities/message.entity';
 import { IBaseRepository } from '../base.repository';
-import { UserGroup } from 'src/application/usecases/chat/interfaces/message.interface';
+import { UserGroup } from '../../../application/usecases/chat/interfaces/message.interface';
 
 // Interface for created group return value
 interface CreatedGroup {

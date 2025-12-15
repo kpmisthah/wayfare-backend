@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
 import { BaseRepository } from '../base.repository';
-import { BookingEntity } from 'src/domain/entities/booking.entity';
-import { IBookingRepository } from 'src/domain/repositories/booking/booking.repository';
-import { BookingMapper } from 'src/infrastructure/mappers/booking.mapper';
-import { BookingStatus } from 'src/domain/enums/booking-status.enum';
+import { BookingEntity } from '../../../../../domain/entities/booking.entity';
+import { IBookingRepository } from '../../../../../domain/repositories/booking/booking.repository';
+import { BookingMapper } from '../../../../mappers/booking.mapper';
+import { BookingStatus } from '../../../../../domain/enums/booking-status.enum';
 
 @Injectable()
 export class BookingRepository

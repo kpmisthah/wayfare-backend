@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { IUserRepository } from 'src/domain/repositories/user/user.repository.interface';
-import { UserEntity } from 'src/domain/entities/user.entity';
+import { IUserRepository } from '../../../../domain/repositories/user/user.repository.interface';
+import { UserEntity } from '../../../../domain/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
-import { Role } from 'src/domain/enums/role.enum';
+import { Role } from '../../../../domain/enums/role.enum';
 import { JwtTokenFactory } from './jwt-token.factory';
 import { IGoogleLoginUseCase } from '../interfaces/google-login.usecase.interface';
 

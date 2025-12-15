@@ -1,6 +1,6 @@
 import { IsNumber, IsString } from 'class-validator';
 import { itineraryDto } from './create-itenerary.dto';
-import { PackageStatus } from 'src/domain/enums/package-status.enum';
+import { PackageStatus } from '../../domain/enums/package-status.enum';
 import { Type } from 'class-transformer';
 
 export class PackageDto {

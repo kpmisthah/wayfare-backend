@@ -1,18 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { WalletEntity } from 'src/domain/entities/wallet.entity';
-import { IWalletRepository } from 'src/domain/repositories/wallet/wallet.repository.interface';
+import { WalletEntity } from '../../../../domain/entities/wallet.entity';
+import { IWalletRepository } from '../../../../domain/repositories/wallet/wallet.repository.interface';
 import { IWalletUseCase } from '../interfaces/wallet.usecase.interface';
-import { WalletDto } from 'src/application/dtos/wallet.dto';
+import { WalletDto } from '../../../dtos/wallet.dto';
 import { WalletMapper } from '../../mapper/waller.mapper';
-import { IAgencyRepository } from 'src/domain/repositories/agency/agency.repository.interface';
-import { ADMIN_TYPE } from 'src/domain/types';
-import { IAdminRepository } from 'src/domain/repositories/admin/admin.repository.interface';
-import { WalletTransactionEntity } from 'src/domain/entities/wallet-transaction.entity';
-import { Transaction } from 'src/domain/enums/transaction.enum';
-import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
-import { IWalletTransactionRepository } from 'src/domain/repositories/wallet/wallet-transaction.repository.interface';
-import { WalletTransactionEnum } from 'src/domain/enums/wallet-transaction.enum';
-import { StatusCode } from 'src/domain/enums/status-code.enum';
+import { IAgencyRepository } from '../../../../domain/repositories/agency/agency.repository.interface';
+import { ADMIN_TYPE } from '../../../../domain/types';
+import { IAdminRepository } from '../../../../domain/repositories/admin/admin.repository.interface';
+import { WalletTransactionEntity } from '../../../../domain/entities/wallet-transaction.entity';
+import { Transaction } from '../../../../domain/enums/transaction.enum';
+import { PaymentStatus } from '../../../../domain/enums/payment-status.enum';
+import { IWalletTransactionRepository } from '../../../../domain/repositories/wallet/wallet-transaction.repository.interface';
+import { WalletTransactionEnum } from '../../../../domain/enums/wallet-transaction.enum';
+import { StatusCode } from '../../../../domain/enums/status-code.enum';
 
 @Injectable()
 export class WalletUsecase implements IWalletUseCase {

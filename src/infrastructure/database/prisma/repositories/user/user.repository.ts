@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
 import * as argon2 from 'argon2';
-import { IUserRepository } from 'src/domain/repositories/user/user.repository.interface';
-import { UserEntity } from 'src/domain/entities/user.entity';
-import { UserMapper } from 'src/infrastructure/mappers/user.mapper';
-import { BaseRepository } from 'src/infrastructure/database/prisma/repositories/base.repository';
+import { IUserRepository } from '../../../../../domain/repositories/user/user.repository.interface';
+import { UserEntity } from '../../../../../domain/entities/user.entity';
+import { UserMapper } from '../../../../mappers/user.mapper';
+import { BaseRepository } from '../base.repository';
 @Injectable()
 export class UserRepository
   extends BaseRepository<UserEntity>

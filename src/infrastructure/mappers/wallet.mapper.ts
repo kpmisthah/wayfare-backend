@@ -1,5 +1,5 @@
 import { Prisma, Wallet } from '@prisma/client';
-import { WalletEntity } from 'src/domain/entities/wallet.entity';
+import { WalletEntity } from '../../domain/entities/wallet.entity';
 
 export class WalletMapper {
   static toDomain(wallet: Wallet | null): WalletEntity {

@@ -1,5 +1,5 @@
-import { AgencyProfileDto } from 'src/application/dtos/agency-profile.dto';
-import { UpdateAgencyProfileDto } from 'src/application/dtos/update-agency-profile.dto';
+import { AgencyProfileDto } from '../../../dtos/agency-profile.dto';
+import { UpdateAgencyProfileDto } from '../../../dtos/update-agency-profile.dto';
 export interface IAgencyProfileService {
   updateProfile(
     agencyId,

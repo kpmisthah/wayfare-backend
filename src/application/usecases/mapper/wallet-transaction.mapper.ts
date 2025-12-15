@@ -1,5 +1,5 @@
-import { WalletTransactionDto } from 'src/application/dtos/wallet-transaction.dto';
-import { WalletTransactionEntity } from 'src/domain/entities/wallet-transaction.entity';
+import { WalletTransactionDto } from '../../dtos/wallet-transaction.dto';
+import { WalletTransactionEntity } from '../../../domain/entities/wallet-transaction.entity';
 
 interface ExtendedWalletTransactionEntity extends WalletTransactionEntity {
   agencyName?: string;

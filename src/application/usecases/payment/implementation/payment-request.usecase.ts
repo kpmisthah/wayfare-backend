@@ -1,16 +1,16 @@
 // application/usecases/create-payout-request.usecase.ts
 import { Inject, Injectable } from '@nestjs/common';
-import { PayoutRequestDto } from 'src/application/dtos/payout-request.dto';
-import { IPayoutRequestRepository } from 'src/domain/interfaces/payout-request.interface';
-import { PayoutRequestEntity } from 'src/domain/entities/payout-request.entity';
+import { PayoutRequestDto } from '../../../dtos/payout-request.dto';
+import { IPayoutRequestRepository } from '../../../../domain/interfaces/payout-request.interface';
+import { PayoutRequestEntity } from '../../../../domain/entities/payout-request.entity';
 import { PayoutRequestMapper } from '../../mapper/payout-request.mapper';
 import { ICreatePayoutRequestUsecase } from '../interfaces/create-payout.usecase.interface';
-import { PayoutDetailsDTO } from 'src/application/dtos/payout-details.dto';
-import { PayoutStatus } from 'src/domain/enums/payout-status.enum';
-import { StatusCode } from 'src/domain/enums/status-code.enum';
-import { ResponseDto } from 'src/application/dtos/reponse.dto';
-import { IWalletUseCase } from 'src/application/usecases/wallet/interfaces/wallet.usecase.interface';
-import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
+import { PayoutDetailsDTO } from '../../../dtos/payout-details.dto';
+import { PayoutStatus } from '../../../../domain/enums/payout-status.enum';
+import { StatusCode } from '../../../../domain/enums/status-code.enum';
+import { ResponseDto } from '../../../dtos/reponse.dto';
+import { IWalletUseCase } from '../../wallet/interfaces/wallet.usecase.interface';
+import { PaymentStatus } from '../../../../domain/enums/payment-status.enum';
 
 @Injectable()
 export class CreatePayoutRequestUsecase implements ICreatePayoutRequestUsecase {

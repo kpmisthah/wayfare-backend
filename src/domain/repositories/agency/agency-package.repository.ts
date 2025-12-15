@@ -1,4 +1,4 @@
-import { PackageEntity } from 'src/domain/entities/package.entity';
+import { PackageEntity } from '../../entities/package.entity';
 import { IBaseRepository } from '../base.repository';
 
 export interface IAgencyPackageRepository

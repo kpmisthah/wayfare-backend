@@ -10,12 +10,12 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { CreateNotificationDto } from 'src/application/dtos/create-notification.dto';
-import { RequestWithUser } from 'src/application/usecases/auth/interfaces/request-with-user';
-import { INotifactionUsecase } from 'src/application/usecases/notification/interfaces/notifcation.interface';
-import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
-import { NotificationEntity } from 'src/domain/entities/notification.entity';
-import { ResponseNotificationDto } from 'src/application/dtos/response-notification.dto';
+import { CreateNotificationDto } from '../../application/dtos/create-notification.dto';
+import { RequestWithUser } from '../../application/usecases/auth/interfaces/request-with-user';
+import { INotifactionUsecase } from '../../application/usecases/notification/interfaces/notifcation.interface';
+import { AccessTokenGuard } from '../../infrastructure/common/guard/accessToken.guard';
+import { NotificationEntity } from '../../domain/entities/notification.entity';
+import { ResponseNotificationDto } from '../../application/dtos/response-notification.dto';
 
 @Controller('notifications')
 @UseGuards(AccessTokenGuard)

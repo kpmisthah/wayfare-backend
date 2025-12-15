@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CreateUserDto } from 'src/application/dtos/create-user.dto';
-import { SafeUser } from 'src/application/dtos/safe-user.dto';
-import { UpdateUserDto } from 'src/application/dtos/update-user.dto';
-import { IUserRepository } from 'src/domain/repositories/user/user.repository.interface';
-import { IUserUsecase } from 'src/application/usecases/users/interfaces/user.usecase.interface';
-import { UserEntity } from 'src/domain/entities/user.entity';
-import { UserMapper } from 'src/application/usecases/mapper/user.mapper';
+import { CreateUserDto } from '../../../dtos/create-user.dto';
+import { SafeUser } from '../../../dtos/safe-user.dto';
+import { UpdateUserDto } from '../../../dtos/update-user.dto';
+import { IUserRepository } from '../../../../domain/repositories/user/user.repository.interface';
+import { IUserUsecase } from '../interfaces/user.usecase.interface';
+import { UserEntity } from '../../../../domain/entities/user.entity';
+import { UserMapper } from '../../mapper/user.mapper';
 
 @Injectable()
 export class UserService implements IUserUsecase {

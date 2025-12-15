@@ -4,7 +4,7 @@ import {
   IAdminRevenue,
   TransactionSummaryResult,
 } from '../interfaces/admin-revenue.usecase.interface';
-import { IAdminRevenueRepository } from 'src/domain/repositories/admin/admin-revenue.repository.interface';
+import { IAdminRevenueRepository } from '../../../../domain/repositories/admin/admin-revenue.repository.interface';
 import { WalletTransactionMapper } from '../../mapper/wallet-transaction.mapper';
 
 @Injectable()

@@ -1,4 +1,4 @@
-import { WalletTransactionEntity } from 'src/domain/entities/wallet-transaction.entity';
+import { WalletTransactionEntity } from '../../entities/wallet-transaction.entity';
 
 export interface TransactionSummaryResult {
   data: WalletTransactionEntity[];

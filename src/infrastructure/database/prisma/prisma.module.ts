@@ -9,24 +9,24 @@ import {
   AGENCY_PACKAGE_TYPE,
   AGENCY_PROFILE_TYPE,
   PROFILE_TYPE,
-} from 'src/domain/types';
+} from '../../../domain/types';
 import { AdminRepository } from './repositories/admin/admin.repository';
 import { AgencyPackageRepository } from './repositories/agency/agency-package.repository';
 import { AgencyProfileRepository } from './repositories/agency/agency-profile.repository';
-import { ArgonService } from 'src/infrastructure/utils/argon.service';
-import { NodemailerService } from 'src/infrastructure/utils/nodemailer.service';
+import { ArgonService } from '../../utils/argon.service';
+import { NodemailerService } from '../../utils/nodemailer.service';
 import { ItineraryRepository } from './repositories/agency/itinerary';
 import { TransportationRepository } from './repositories/agency/tranportation';
-import { AiModal } from 'src/infrastructure/utils/aiModal.service';
+import { AiModal } from '../../utils/aiModal.service';
 import { TripRepository } from './repositories/trip/trip.repository';
 import { BookingRepository } from './repositories/booking/booking.repository';
-import { StripeService } from 'src/infrastructure/utils/stripe.service';
+import { StripeService } from '../../utils/stripe.service';
 import { TransactionRepository } from './repositories/transaction/transaction.repository';
 import { WalletRepository } from './repositories/wallet/wallet.repository';
 import { WalletTransactionRepository } from './repositories/wallet/wallet.transaction.repository';
 import { AdminRevenueRepository } from './repositories/admin/admin-revenue.reposiotry';
 import { AgenciesRevenueRepository } from './repositories/admin/agency-revenue.repository';
-import { GoogleStrategy } from 'src/infrastructure/common/strategies/google.strategy';
+import { GoogleStrategy } from '../../common/strategies/google.strategy';
 import { ConnectionRepository } from './repositories/connection/connection.repository';
 import { ConversationRepository } from './repositories/conversation/conversation.repository';
 import { MessageRepository } from './repositories/chat/message.repository';

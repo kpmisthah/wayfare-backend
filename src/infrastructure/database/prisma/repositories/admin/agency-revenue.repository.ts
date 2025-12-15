@@ -3,8 +3,8 @@ import { PrismaService } from '../../prisma.service';
 import {
   IAgencyRevenueRepository,
   AgencyRevenueSummaryResult,
-} from 'src/domain/repositories/admin/agency-revenue.repository.interface';
-import { AgencyRevenueDTO } from 'src/application/dtos/agency-revenue.dto';
+} from '../../../../../domain/repositories/admin/agency-revenue.repository.interface';
+import { AgencyRevenueDTO } from '../../../../../application/dtos/agency-revenue.dto';
 
 @Injectable()
 export class AgenciesRevenueRepository implements IAgencyRevenueRepository {

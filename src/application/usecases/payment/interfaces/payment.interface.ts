@@ -1,4 +1,4 @@
-import { BookingEntity } from 'src/domain/entities/booking.entity';
+import { BookingEntity } from '../../../../domain/entities/booking.entity';
 
 export interface IPayment {
   supports(type: string): boolean;

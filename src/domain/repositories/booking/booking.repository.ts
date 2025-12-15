@@ -1,6 +1,6 @@
-import { BookingEntity } from 'src/domain/entities/booking.entity';
+import { BookingEntity } from '../../entities/booking.entity';
 import { IBaseRepository } from '../base.repository';
-import { BookingStatus } from 'src/domain/enums/booking-status.enum';
+import { BookingStatus } from '../../enums/booking-status.enum';
 
 export interface IBookingRepository
   extends IBaseRepository<BookingEntity | null> {

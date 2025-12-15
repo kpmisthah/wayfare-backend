@@ -11,8 +11,8 @@ import {
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { ChatUsecase } from 'src/application/usecases/chat/implementation/message.usecase';
-import { MessageDto } from 'src/application/dtos/message.dto';
+import { ChatUsecase } from '../../application/usecases/chat/implementation/message.usecase';
+import { MessageDto } from '../../application/dtos/message.dto';
 
 interface JwtPayload {
   sub: string;

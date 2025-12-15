@@ -1,6 +1,6 @@
 import { Prisma, TripPlan } from '@prisma/client';
-import { AiTripEntity } from 'src/domain/entities/ai.trip.entity';
-import { DayPlan, Hotel } from 'src/domain/types/ai.trip.type';
+import { AiTripEntity } from '../../domain/entities/ai.trip.entity';
+import { DayPlan, Hotel } from '../../domain/types/ai.trip.type';
 
 type TripWithUserProfile = Prisma.TripPlanGetPayload<{
   include: {

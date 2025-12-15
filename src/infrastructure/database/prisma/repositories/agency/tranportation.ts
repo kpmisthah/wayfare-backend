@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { BaseRepository } from 'src/infrastructure/database/prisma/repositories/base.repository';
-import { TransportationEntity } from 'src/domain/entities/transportation.entity';
+import { BaseRepository } from '../base.repository';
+import { TransportationEntity } from '../../../../../domain/entities/transportation.entity';
 import { PrismaService } from '../../prisma.service';
-import { TransportationMapper } from 'src/infrastructure/mappers/transportation.mapper';
-import { ITransportationRepository } from 'src/domain/repositories/agency/transportation.repository';
+import { TransportationMapper } from '../../../../mappers/transportation.mapper';
+import { ITransportationRepository } from '../../../../../domain/repositories/agency/transportation.repository';
 
 @Injectable()
 export class TransportationRepository

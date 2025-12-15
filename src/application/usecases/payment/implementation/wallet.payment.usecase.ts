@@ -1,17 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CreateBookingDto } from 'src/application/dtos/create-booking.dto';
-import { IWalletTransactionRepository } from 'src/domain/repositories/wallet/wallet-transaction.repository.interface';
-import { WalletTransactionEntity } from 'src/domain/entities/wallet-transaction.entity';
-import { IAgencyRepository } from 'src/domain/repositories/agency/agency.repository.interface';
-import { IWalletRepository } from 'src/domain/repositories/wallet/wallet.repository.interface';
-import { Transaction } from 'src/domain/enums/transaction.enum';
-import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
+import { CreateBookingDto } from '../../../dtos/create-booking.dto';
+import { IWalletTransactionRepository } from '../../../../domain/repositories/wallet/wallet-transaction.repository.interface';
+import { WalletTransactionEntity } from '../../../../domain/entities/wallet-transaction.entity';
+import { IAgencyRepository } from '../../../../domain/repositories/agency/agency.repository.interface';
+import { IWalletRepository } from '../../../../domain/repositories/wallet/wallet.repository.interface';
+import { Transaction } from '../../../../domain/enums/transaction.enum';
+import { PaymentStatus } from '../../../../domain/enums/payment-status.enum';
 import { IPayment } from '../interfaces/payment.interface';
-import { IBookingRepository } from 'src/domain/repositories/booking/booking.repository';
-import { BookingStatus } from 'src/domain/enums/booking-status.enum';
+import { IBookingRepository } from '../../../../domain/repositories/booking/booking.repository';
+import { BookingStatus } from '../../../../domain/enums/booking-status.enum';
 import { IWalletUseCase } from '../../wallet/interfaces/wallet.usecase.interface';
-import { WalletEntity } from 'src/domain/entities/wallet.entity';
-import { WalletTransactionEnum } from 'src/domain/enums/wallet-transaction.enum';
+import { WalletEntity } from '../../../../domain/entities/wallet.entity';
+import { WalletTransactionEnum } from '../../../../domain/enums/wallet-transaction.enum';
 
 @Injectable()
 export class WalletPaymentUsecase implements IPayment {

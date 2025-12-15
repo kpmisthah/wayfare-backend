@@ -4,7 +4,7 @@ import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import * as argon2 from 'argon2';
-import { IUserUsecase } from 'src/application/usecases/users/interfaces/user.usecase.interface';
+import { IUserUsecase } from '../../../application/usecases/users/interfaces/user.usecase.interface';
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(
   Strategy,

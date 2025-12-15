@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { preference, Role } from '@prisma/client';
 import { PrismaService } from '../../prisma.service';
-import { IAdminRepository } from 'src/domain/repositories/admin/admin.repository.interface';
-import { UserEntity } from 'src/domain/entities/user.entity';
-import { UserMapper } from 'src/infrastructure/mappers/user.mapper';
+import { IAdminRepository } from '../../../../../domain/repositories/admin/admin.repository.interface';
+import { UserEntity } from '../../../../../domain/entities/user.entity';
+import { UserMapper } from '../../../../mappers/user.mapper';
 
 @Injectable()
 export class AdminRepository implements IAdminRepository {

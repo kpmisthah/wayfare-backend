@@ -1,17 +1,21 @@
 import { Module } from '@nestjs/common';
+import { UsersModule } from '../users/users.module';
 import { AdminController } from './admin.controller';
-import { ADMIN_TYPE } from 'src/domain/types';
-import { AdminService } from 'src/application/usecases/admin/implementation/admin.usecase';
-import { AdminRevenue } from 'src/application/usecases/admin/implementation/total-revenue.usecase';
-import { AgencyRevenue } from 'src/application/usecases/admin/implementation/agency.revenue';
-import { GetAdminSummaryUseCase } from 'src/application/usecases/admin/implementation/get-admin-summary-usecase';
+import { ADMIN_TYPE } from '../../domain/types';
+import { AdminService } from '../../application/usecases/admin/implementation/admin.usecase';
+import { AdminRevenue } from '../../application/usecases/admin/implementation/total-revenue.usecase';
+import { AgencyRevenue } from '../../application/usecases/admin/implementation/agency.revenue';
+import { GetAdminSummaryUseCase } from '../../application/usecases/admin/implementation/get-admin-summary-usecase';
 import { BookingModule } from '../booking/booking.module';
 import { PaymentModule } from '../payment/payment.module';
 
+import { CsvService } from '../../infrastructure/utils/csv.service';
+
 @Module({
-  imports: [BookingModule, PaymentModule],
+  imports: [BookingModule, PaymentModule, UsersModule],
   controllers: [AdminController],
   providers: [
+    CsvService,
     {
       provide: ADMIN_TYPE.IAdminService,
       useClass: AdminService,
@@ -31,4 +35,4 @@ import { PaymentModule } from '../payment/payment.module';
   ],
   exports: [ADMIN_TYPE.IAdminService],
 })
-export class AdminModule {}
+export class AdminModule { }

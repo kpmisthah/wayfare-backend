@@ -1,5 +1,5 @@
 import { Itenerary, Prisma } from '@prisma/client';
-import { ItineraryEntity } from 'src/domain/entities/itinerary.entity';
+import { ItineraryEntity } from '../../domain/entities/itinerary.entity';
 
 export class IteneraryMapper {
   static toDomain(itn: Itenerary): ItineraryEntity {

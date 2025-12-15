@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { IWalletPaymentStatus } from 'src/application/usecases/payment/interfaces/wallet-payment-status.usecase.interface';
+import { IWalletPaymentStatus } from '../../application/usecases/payment/interfaces/wallet-payment-status.usecase.interface';
 
 @Injectable()
 export class WalletSchedulerService {
