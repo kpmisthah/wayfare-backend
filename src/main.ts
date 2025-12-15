@@ -8,7 +8,6 @@ import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   try {
-
     const app = await NestFactory.create(AppModule);
     app.use(
       json({

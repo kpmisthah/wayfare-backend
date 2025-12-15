@@ -80,4 +80,4 @@ const customLogger = new Logging();
   ],
   exports: [WINSTON_MODULE_NEST_PROVIDER],
 })
-export class AppModule { }
+export class AppModule {}

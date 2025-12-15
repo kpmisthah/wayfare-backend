@@ -9,7 +9,8 @@ import { PaymentStatus } from '../../../../../domain/enums/payment-status.enum';
 @Injectable()
 export class WalletTransactionRepository
   extends BaseRepository<WalletTransactionEntity>
-  implements IWalletTransactionRepository {
+  implements IWalletTransactionRepository
+{
   constructor(private readonly _prisma: PrismaService) {
     super(_prisma.walletTransaction, WalletTransactionMapper);
   }
@@ -88,33 +89,30 @@ export class WalletTransactionRepository
   }
 
   async getWalletSummary(agencyId: string) {
-
     const creditAmount = await this._prisma.walletTransaction.aggregate({
       where: {
         agencyId,
         status: PaymentStatus.SUCCEEDED,
-        type: 'CREDIT', 
+        type: 'CREDIT',
       },
       _sum: { amount: true },
     });
 
-  
     const debitAmount = await this._prisma.walletTransaction.aggregate({
       where: {
         agencyId,
         status: PaymentStatus.SUCCEEDED,
-        type: 'DEBIT', 
+        type: 'DEBIT',
       },
       _sum: { amount: true },
     });
 
-  
-    const walletAmount = (creditAmount._sum.amount || 0) - (debitAmount._sum.amount || 0);
+    const walletAmount =
+      (creditAmount._sum.amount || 0) - (debitAmount._sum.amount || 0);
 
- 
-    const wholeAmount = (creditAmount._sum.amount || 0) - (debitAmount._sum.amount || 0);
+    const wholeAmount =
+      (creditAmount._sum.amount || 0) - (debitAmount._sum.amount || 0);
 
- 
     const pendingCredit = await this._prisma.walletTransaction.aggregate({
       where: { agencyId, status: PaymentStatus.PENDING, type: 'CREDIT' },
       _sum: { amount: true },
@@ -125,7 +123,8 @@ export class WalletTransactionRepository
       _sum: { amount: true },
     });
 
-    const pendingWalletAmount = (pendingCredit._sum.amount || 0) - (pendingDebit._sum.amount || 0);
+    const pendingWalletAmount =
+      (pendingCredit._sum.amount || 0) - (pendingDebit._sum.amount || 0);
 
     return {
       walletAmount,

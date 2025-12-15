@@ -8,7 +8,8 @@ import { ITripRepository } from '../../../../../domain/repositories/trip/trip.re
 @Injectable()
 export class TripRepository
   extends BaseRepository<AiTripEntity>
-  implements ITripRepository {
+  implements ITripRepository
+{
   constructor(private _prisma: PrismaService) {
     super(_prisma.tripPlan, TripMapper);
   }

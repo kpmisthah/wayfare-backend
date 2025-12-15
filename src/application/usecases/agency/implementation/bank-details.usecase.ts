@@ -13,7 +13,7 @@ export class BankingDetailsUsecase implements IBankingDetailsUsecase {
     private readonly _bankingDetailsRepo: IBankingDetailsRepository,
     @Inject('IAgencyRepository')
     private readonly _agencyRepo: IAgencyRepository,
-  ) { }
+  ) {}
   async bankDetails(
     bankDetailsDto: BankDetailsDto,
     userId: string,

@@ -24,8 +24,7 @@ export class AgencyProfileRepository implements IAgencyProfileRepository {
   }
 
   async getAgencyProfile(): Promise<AgencyEntity[] | null> {
-    const getAgencies = await this.prisma.agency
-      .findMany();
+    const getAgencies = await this.prisma.agency.findMany();
     if (!getAgencies) {
       return null;
     }

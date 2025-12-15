@@ -62,7 +62,7 @@ export class AuthService implements IAuthUsecase {
 
     @Inject('INodemailerService')
     private readonly nodemailerService: NodemailerService,
-  ) { }
+  ) {}
 
   async signUp(signupDto: SignupDto) {
     try {
@@ -206,7 +206,6 @@ export class AuthService implements IAuthUsecase {
 
     await this.otpService.sendForgotPasswordOtp(user.email, user.name);
   }
-
 
   async verifyForgotPassword(verifyForgotPassword: VerifyForgotPasswordDto) {
     try {

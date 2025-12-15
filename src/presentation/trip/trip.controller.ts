@@ -21,14 +21,14 @@ import { Role } from '../../domain/enums/role.enum';
 
 @Controller('trip')
 @UseGuards(AccessTokenGuard, RolesGuard)
-@Roles(Role.User) 
+@Roles(Role.User)
 export class TripController {
   constructor(
     @Inject('IGenerateAndSaveTrip')
     private readonly _generateAndSaveTrip: IGenerateAndSaveTrip,
     @Inject('IAiTripPlanUsecase')
     private readonly _tripPlan: IAiTripPlanUsecase,
-  ) { }
+  ) {}
 
   @Post('generate')
   async generateTripPlan(

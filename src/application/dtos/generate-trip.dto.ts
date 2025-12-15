@@ -1,4 +1,13 @@
-import { IsString, Min, Max, IsDateString, IsOptional, IsArray, IsIn, ValidateNested } from 'class-validator';
+import {
+  IsString,
+  Min,
+  Max,
+  IsDateString,
+  IsOptional,
+  IsArray,
+  IsIn,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class TripPreferencesDto {

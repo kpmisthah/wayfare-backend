@@ -15,5 +15,8 @@ export interface PaginatedTripsResponse {
 
 export interface IAiTripPlanUsecase {
   fetchTripPlan(id: string): Promise<TripDto | null>;
-  fetchAllTrip(userId: string, options?: PaginationOptions): Promise<PaginatedTripsResponse>;
+  fetchAllTrip(
+    userId: string,
+    options?: PaginationOptions,
+  ): Promise<PaginatedTripsResponse>;
 }

@@ -11,13 +11,17 @@ export class SaveTrip implements ISaveTrip {
   constructor(
     @Inject('ITripRepository')
     private readonly _tripRepo: TripRepository,
-  ) { }
+  ) {}
   async saveTrip(
     userId: string,
     response: SaveTripDto,
     startDate: string,
     visibility: boolean,
-    preferences?: { activities?: string[]; pace?: string; interests?: string[] },
+    preferences?: {
+      activities?: string[];
+      pace?: string;
+      interests?: string[];
+    },
   ): Promise<TripDto> {
     console.log(
       startDate,

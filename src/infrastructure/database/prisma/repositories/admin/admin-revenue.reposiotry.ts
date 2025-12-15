@@ -40,7 +40,7 @@ export interface WalletTransactionWithRelations {
 
 @Injectable()
 export class AdminRevenueRepository implements IAdminRevenueRepository {
-  constructor(private readonly _prisma: PrismaService) { }
+  constructor(private readonly _prisma: PrismaService) {}
 
   async getAllRevenue() {
     const totalStripeTransaction = await this._prisma.transaction.aggregate({

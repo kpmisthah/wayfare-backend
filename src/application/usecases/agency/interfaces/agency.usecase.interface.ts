@@ -6,13 +6,12 @@ import { UpdateStatusDto } from '../../../dtos/update-status.dto';
 import { AgencyEntity } from '../../../../domain/entities/agency.entity';
 
 export interface IAgencyService {
-
   createAgency(
     createAgencyDto: CreateAgencyDto,
     userId: string,
   ): Promise<AgencyResponseDto | null>;
   findById(id: string): Promise<AgencyProfileDto | null>;
- 
+
   updateStatus(id: string): Promise<UpdateStatusDto | null>;
   findByEmail(email: string): Promise<AgencyEntity | null>;
   findAll(): Promise<AgencyManagementDto[] | null>;

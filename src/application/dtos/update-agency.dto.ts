@@ -1,16 +1,22 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { AgencyStatus } from '../../domain/enums/agency-status.enum';
 
 export class UpdateAgencyDto {
-    @IsString()
-    @IsNotEmpty()
-    name: string;
+  @IsString()
+  @IsNotEmpty()
+  name: string;
 
-    @IsEmail()
-    @IsNotEmpty()
-    email: string;
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
 
-    @IsOptional()
-    @IsEnum(AgencyStatus)
-    status?: AgencyStatus;
+  @IsOptional()
+  @IsEnum(AgencyStatus)
+  status?: AgencyStatus;
 }

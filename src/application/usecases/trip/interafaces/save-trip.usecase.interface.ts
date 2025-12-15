@@ -7,6 +7,10 @@ export interface ISaveTrip {
     response: SaveTripDto,
     startDate: string,
     visibility: boolean,
-    preferences?: { activities?: string[]; pace?: string; interests?: string[] },
+    preferences?: {
+      activities?: string[];
+      pace?: string;
+      interests?: string[];
+    },
   ): Promise<TripDto>;
 }

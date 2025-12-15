@@ -113,9 +113,7 @@ export class MessageController {
     return allChats;
   }
   @Get(':conversationId')
-  async getMessages(
-    @Param('conversationId') conversationId: string,
-  ) {
+  async getMessages(@Param('conversationId') conversationId: string) {
     const isGroup = await this._chatUsecase.isGroupId(conversationId);
     if (isGroup) {
       console.log(isGroup, '=========isGroup=========...');

@@ -15,7 +15,10 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { CsvService, ExportColumn } from '../../infrastructure/utils/csv.service';
+import {
+  CsvService,
+  ExportColumn,
+} from '../../infrastructure/utils/csv.service';
 import { IUserUsecase } from '../../application/usecases/users/interfaces/user.usecase.interface';
 import { SafeUser } from '../../application/dtos/safe-user.dto';
 import { PayoutDetailsDTO } from '../../application/dtos/payout-details.dto';
@@ -56,7 +59,7 @@ export class AdminController {
     private readonly _csvService: CsvService,
     @Inject('IUserService')
     private readonly _userService: IUserUsecase,
-  ) { }
+  ) {}
   @Get('/agencies')
   getAgencies(
     @Query('page') page = 1,
@@ -167,7 +170,10 @@ export class AdminController {
       { header: 'Email', accessor: 'email' },
       { header: 'Phone', accessor: 'phone' },
       { header: 'Location', accessor: 'location' as keyof SafeUser }, // casting if location is missing in strict SafeUser type
-      { header: 'Status', accessor: (u: SafeUser) => (u.isBlock ? 'Inactive' : 'Active') },
+      {
+        header: 'Status',
+        accessor: (u: SafeUser) => (u.isBlock ? 'Inactive' : 'Active'),
+      },
       { header: 'Role', accessor: (u: SafeUser) => u.role ?? 'USER' },
     ];
 
@@ -184,20 +190,41 @@ export class AdminController {
     const payouts: PayoutDetailsDTO[] = result.data || [];
 
     const columns: ExportColumn<PayoutDetailsDTO>[] = [
-      { header: 'Agency Name', accessor: (r: PayoutDetailsDTO) => r.agencyInfo.name },
-      { header: 'Agency Email', accessor: (r: PayoutDetailsDTO) => r.agencyInfo.email },
-      { header: 'Phone', accessor: (r: PayoutDetailsDTO) => r.agencyInfo.phone },
+      {
+        header: 'Agency Name',
+        accessor: (r: PayoutDetailsDTO) => r.agencyInfo.name,
+      },
+      {
+        header: 'Agency Email',
+        accessor: (r: PayoutDetailsDTO) => r.agencyInfo.email,
+      },
+      {
+        header: 'Phone',
+        accessor: (r: PayoutDetailsDTO) => r.agencyInfo.phone,
+      },
       { header: 'Amount', accessor: 'amount' },
       { header: 'Status', accessor: 'status' },
-      { header: 'Bank Name', accessor: (r: PayoutDetailsDTO) => r.bankDetails.bankName },
-      { header: 'Account Number', accessor: (r: PayoutDetailsDTO) => r.bankDetails.accountNumber },
-      { header: 'IFSC Code', accessor: (r: PayoutDetailsDTO) => r.bankDetails.ifscCode },
+      {
+        header: 'Bank Name',
+        accessor: (r: PayoutDetailsDTO) => r.bankDetails.bankName,
+      },
+      {
+        header: 'Account Number',
+        accessor: (r: PayoutDetailsDTO) => r.bankDetails.accountNumber,
+      },
+      {
+        header: 'IFSC Code',
+        accessor: (r: PayoutDetailsDTO) => r.bankDetails.ifscCode,
+      },
     ];
 
     const csv = this._csvService.generateCsv(payouts, columns);
 
     res.header('Content-Type', 'text/csv');
-    res.header('Content-Disposition', 'attachment; filename=payouts_export.csv');
+    res.header(
+      'Content-Disposition',
+      'attachment; filename=payouts_export.csv',
+    );
     res.send(csv);
   }
 
@@ -207,11 +234,28 @@ export class AdminController {
     const transactions: WalletTransactionDto[] = result.data || [];
 
     const columns: ExportColumn<WalletTransactionDto>[] = [
-      { header: 'Date', accessor: (tx: WalletTransactionDto) => new Date(tx.date).toLocaleDateString() },
-      { header: 'Time', accessor: (tx: WalletTransactionDto) => new Date(tx.date).toLocaleTimeString() },
-      { header: 'Agency', accessor: (tx: WalletTransactionDto) => tx.agencyName || 'N/A' },
-      { header: 'Destination', accessor: (tx: WalletTransactionDto) => tx.destination || 'N/A' },
-      { header: 'Booking Code', accessor: (tx: WalletTransactionDto) => tx.bookingCode || 'N/A' },
+      {
+        header: 'Date',
+        accessor: (tx: WalletTransactionDto) =>
+          new Date(tx.date).toLocaleDateString(),
+      },
+      {
+        header: 'Time',
+        accessor: (tx: WalletTransactionDto) =>
+          new Date(tx.date).toLocaleTimeString(),
+      },
+      {
+        header: 'Agency',
+        accessor: (tx: WalletTransactionDto) => tx.agencyName || 'N/A',
+      },
+      {
+        header: 'Destination',
+        accessor: (tx: WalletTransactionDto) => tx.destination || 'N/A',
+      },
+      {
+        header: 'Booking Code',
+        accessor: (tx: WalletTransactionDto) => tx.bookingCode || 'N/A',
+      },
       { header: 'Commission', accessor: 'commission' },
       { header: 'Status', accessor: 'status' },
       { header: 'Type', accessor: 'type' },
@@ -220,13 +264,19 @@ export class AdminController {
     const csv = this._csvService.generateCsv(transactions, columns);
 
     res.header('Content-Type', 'text/csv');
-    res.header('Content-Disposition', 'attachment; filename=transactions_export.csv');
+    res.header(
+      'Content-Disposition',
+      'attachment; filename=transactions_export.csv',
+    );
     res.send(csv);
   }
 
   @Get('/export/agency-revenue')
   async exportAgencyRevenue(@Res() res: Response) {
-    const result: any = await this._agencyRevenue.getAgencyRevenueSummary(1, 10000);
+    const result: any = await this._agencyRevenue.getAgencyRevenueSummary(
+      1,
+      10000,
+    );
     const revenue: AgencyRevenueDTO[] = result.data || [];
 
     const columns: ExportColumn<AgencyRevenueDTO>[] = [
@@ -239,7 +289,10 @@ export class AdminController {
     const csv = this._csvService.generateCsv(revenue, columns);
 
     res.header('Content-Type', 'text/csv');
-    res.header('Content-Disposition', 'attachment; filename=agency_revenue_export.csv');
+    res.header(
+      'Content-Disposition',
+      'attachment; filename=agency_revenue_export.csv',
+    );
     res.send(csv);
   }
 }

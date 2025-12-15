@@ -7,8 +7,8 @@ import { Roles } from '../roles/roles.decorator';
 import { Role } from '../../domain/enums/role.enum';
 
 @Controller('wallet')
-@UseGuards(AccessTokenGuard, RolesGuard) 
-@Roles(Role.User, Role.Agency) 
+@UseGuards(AccessTokenGuard, RolesGuard)
+@Roles(Role.User, Role.Agency)
 export class WalletController {
   constructor(
     @Inject('IWalletUseCase')

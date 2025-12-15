@@ -17,7 +17,7 @@ import { Role } from '../../domain/enums/role.enum';
 import { PaymentStatus } from '../../domain/enums/payment-status.enum';
 
 @Controller('payment')
-@UseGuards(AccessTokenGuard, RolesGuard) 
+@UseGuards(AccessTokenGuard, RolesGuard)
 export class PaymentController {
   constructor(
     @Inject('IBookingUseCase')
@@ -27,7 +27,7 @@ export class PaymentController {
   ) {}
 
   @Get(':id')
-  @Roles(Role.User, Role.Agency) 
+  @Roles(Role.User, Role.Agency)
   async paymentVerification(
     @Param('id') id: string,
   ): Promise<{ status: PaymentStatus } | null> {
@@ -36,7 +36,7 @@ export class PaymentController {
   }
 
   @Post('payout')
-  @Roles(Role.Agency) 
+  @Roles(Role.Agency)
   async request(
     @Body() dto: PayoutRequestDto,
   ): Promise<PayoutRequestDto | null> {

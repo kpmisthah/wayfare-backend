@@ -20,4 +20,4 @@ import { WalletModule } from '../wallet/wallet.module';
   ],
   exports: ['IWalletPaymentStatus', 'ICreatePayoutRequestUsecase'],
 })
-export class PaymentModule { }
+export class PaymentModule {}

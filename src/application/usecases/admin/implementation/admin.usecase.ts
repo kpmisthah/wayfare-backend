@@ -19,7 +19,7 @@ export class AdminService implements IAdminService {
     private readonly _agencyRepo: IAgencyRepository,
     @Inject('IUserRepository')
     private readonly _userRepo: IUserRepository,
-  ) { }
+  ) {}
 
   async getAllAgencies(dto: {
     page: number;
@@ -52,12 +52,10 @@ export class AdminService implements IAdminService {
     id: string,
     updateData: { name: string; email: string; status?: string },
   ): Promise<AgencyManagementDto> {
-
     const agency = await this._agencyRepo.findById(id);
     if (!agency) {
       throw new Error('Agency not found');
     }
-
 
     const user = await this._userRepo.findById(agency.userId);
     if (!user) {
@@ -71,7 +69,6 @@ export class AdminService implements IAdminService {
 
     await this._userRepo.update(agency.userId, updatedUserEntity);
 
-
     const updatedAgency = await this._agencyRepo.findById(id);
     const finalUser = await this._userRepo.findById(agency.userId);
 
@@ -80,5 +77,4 @@ export class AdminService implements IAdminService {
     }
     return AgencyMapper.toAgencyManagement(finalUser, updatedAgency);
   }
-
 }

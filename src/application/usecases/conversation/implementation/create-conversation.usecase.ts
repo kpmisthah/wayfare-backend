@@ -18,7 +18,7 @@ export class ConversationUseCase implements IConversationUsecase {
 
     console.log(userA, 'userrrAAAA');
     console.log(userB, 'userBBBB');
-    if (existing) return existing.id; 
+    if (existing) return existing.id;
     const res = await this._conversationRepo.createConversation([userA, userB]);
     console.log(res, 'in ===========>conversation enitty==========>');
     return res.id;

@@ -3,7 +3,6 @@ import { WalletTransferDto } from '../../dtos/wallet-tranfer.dto';
 import { WalletDto } from '../../dtos/wallet.dto';
 import { WalletEntity } from '../../../domain/entities/wallet.entity';
 
-
 interface WalletTransactionWithBooking {
   id: string;
   amount: number;
@@ -18,7 +17,6 @@ interface WalletTransactionWithBooking {
     };
   };
 }
-
 
 interface WalletTransactionWithRelations {
   id: string;

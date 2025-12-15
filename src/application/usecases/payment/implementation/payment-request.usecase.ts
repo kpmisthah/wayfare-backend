@@ -19,7 +19,7 @@ export class CreatePayoutRequestUsecase implements ICreatePayoutRequestUsecase {
     private readonly _payoutRepo: IPayoutRequestRepository,
     @Inject('IWalletUseCase')
     private readonly _walletUseCase: IWalletUseCase,
-  ) { }
+  ) {}
 
   async execute(dto: PayoutRequestDto): Promise<PayoutRequestDto | null> {
     const entity = PayoutRequestEntity.create({
@@ -52,15 +52,16 @@ export class CreatePayoutRequestUsecase implements ICreatePayoutRequestUsecase {
     console.log(payoutRequest, 'payoutreq');
     if (!payoutRequest) return null;
 
- 
     if (status === PayoutStatus.APPROVED) {
-      console.log(`Deducting ${payoutRequest.amount} from agency ${payoutRequest.agencyId}`);
+      console.log(
+        `Deducting ${payoutRequest.amount} from agency ${payoutRequest.agencyId}`,
+      );
 
       const deductResult = await this._walletUseCase.deductAgency(
         payoutRequest.agencyId,
         payoutRequest.amount,
         PaymentStatus.SUCCEEDED,
-        payoutRequest.id, 
+        payoutRequest.id,
       );
 
       if (!deductResult || deductResult.status !== StatusCode.SUCCESS) {

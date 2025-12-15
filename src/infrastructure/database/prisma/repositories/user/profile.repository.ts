@@ -67,7 +67,6 @@ export class ProfileRepository implements IProfileRepository {
         phone: data.phone,
       },
       create: UserProfileMapper.toPrisma(data),
-
     });
     if (!updateUserProfile) return null;
     return UserProfileMapper.toDomain(updateUserProfile);

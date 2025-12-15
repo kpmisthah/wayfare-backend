@@ -78,7 +78,7 @@ export class AuthController {
   }
 
   @Post('signin')
-  @Throttle({ default: { limit: 5, ttl: 60000 } }) 
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   async signin(
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) res: Response,
@@ -105,7 +105,7 @@ export class AuthController {
   }
 
   @Post('signup')
-  @Throttle({ default: { limit: 5, ttl: 60000 } }) 
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   signup(@Body() singupDto: SignupDto) {
     console.log(singupDto, 'signupDto gooys');
     return this._authUsecase.signUp(singupDto);
@@ -138,14 +138,14 @@ export class AuthController {
   }
 
   @Post('resend-otp')
-  @Throttle({ default: { limit: 3, ttl: 60000 } }) 
+  @Throttle({ default: { limit: 3, ttl: 60000 } })
   async resendOtp(@Body() resendOtpDto: ResendOtpDto) {
     const result = await this._authUsecase.resendOtp(resendOtpDto);
     return result;
   }
 
   @Post('forgot-password')
-  @Throttle({ default: { limit: 3, ttl: 60000 } }) 
+  @Throttle({ default: { limit: 3, ttl: 60000 } })
   forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
     console.log('forgot password controller l ethunnund');
 

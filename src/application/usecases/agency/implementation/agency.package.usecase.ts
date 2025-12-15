@@ -33,7 +33,7 @@ export class AgencyPackageService implements IAgencyPackageService {
     private readonly _userRepo: IUserRepository,
     @Inject('ITransportationRepository')
     private readonly _transportationRepo: ITransportationRepository,
-  ) { }
+  ) {}
   async addPackages(
     addPackageDto: PackageDto,
     userId: string,
@@ -190,11 +190,15 @@ export class AgencyPackageService implements IAgencyPackageService {
     limit: number,
     search?: string,
   ): Promise<{ data: PackageDto[]; total: number; totalPages: number }> {
-    console.log(agencyId,'agencyidddddd');
-    
-    let getPackages = await this._agencyPackageRepo.findActiveByAgencyId(agencyId);
-    console.log(getPackages,'----------------->>>>>getPakcagesss,,,,,,,,,,,,--');
-    
+    console.log(agencyId, 'agencyidddddd');
+
+    let getPackages =
+      await this._agencyPackageRepo.findActiveByAgencyId(agencyId);
+    console.log(
+      getPackages,
+      '----------------->>>>>getPakcagesss,,,,,,,,,,,,--',
+    );
+
     if (search && search.trim()) {
       const searchLower = search.toLowerCase();
       getPackages = getPackages.filter(

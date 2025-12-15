@@ -19,7 +19,13 @@ import { AgencyDashboardUseCase } from '../../application/usecases/agency/implem
 import { AgencyDashboardRepository } from '../../infrastructure/database/prisma/repositories/agency/agency-dashboard.repository';
 
 @Module({
-  imports: [CloudinaryModule, UsersModule, AdminModule, WalletModule, PaymentModule],
+  imports: [
+    CloudinaryModule,
+    UsersModule,
+    AdminModule,
+    WalletModule,
+    PaymentModule,
+  ],
   controllers: [AgencyDashboardController, AgencyController],
   providers: [
     {
@@ -62,4 +68,4 @@ import { AgencyDashboardRepository } from '../../infrastructure/database/prisma/
     AGENCY_PROFILE_TYPE.IAgencyProfileService,
   ],
 })
-export class AgencyModule { }
+export class AgencyModule {}

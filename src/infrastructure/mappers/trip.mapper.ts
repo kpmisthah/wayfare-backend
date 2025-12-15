@@ -40,7 +40,11 @@ export class TripMapper {
       trip.itinerary as unknown as DayPlan[],
       trip.startDate,
       trip.visibility,
-      trip.preferences as unknown as { activities?: string[]; pace?: string; interests?: string[] } | null,
+      trip.preferences as unknown as {
+        activities?: string[];
+        pace?: string;
+        interests?: string[];
+      } | null,
     );
   }
   static toDomainMany(trips: TripPlan[]): AiTripEntity[] {
@@ -61,7 +65,11 @@ export class TripMapper {
       trip.itinerary as unknown as DayPlan[],
       trip.startDate,
       trip.visibility,
-      trip.preferences as unknown as { activities?: string[]; pace?: string; interests?: string[] } | null,
+      trip.preferences as unknown as {
+        activities?: string[];
+        pace?: string;
+        interests?: string[];
+      } | null,
       trip.user?.name ?? '',
       trip.user?.profileImage ?? '',
       trip.user?.userProfile?.location ?? '',

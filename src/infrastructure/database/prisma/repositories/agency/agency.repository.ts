@@ -11,7 +11,8 @@ import { $Enums, Prisma } from '@prisma/client';
 @Injectable()
 export class AgencyRepository
   extends BaseRepository<AgencyEntity>
-  implements IAgencyRepository {
+  implements IAgencyRepository
+{
   constructor(private readonly _prisma: PrismaService) {
     super(_prisma.agency, AgencyMapper);
   }

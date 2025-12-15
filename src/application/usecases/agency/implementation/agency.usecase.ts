@@ -30,7 +30,7 @@ export class AgencyService implements IAgencyService {
     @Inject('IIteneraryRepository')
     private readonly _IteneraryRepo: IItineraryRepository,
     // private readonly _searchService:SearchService
-  ) { }
+  ) {}
 
   async createAgency(
     createAgencyDto: CreateAgencyDto,

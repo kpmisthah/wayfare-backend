@@ -63,7 +63,7 @@ export class AgencyController {
     private readonly _walletUseCase: IWalletUseCase,
     @Inject('ICreatePayoutRequestUsecase')
     private readonly _payoutUsecase: ICreatePayoutRequestUsecase,
-  ) { }
+  ) {}
   @Post('/agency-profile')
   async createAgencyProfile(
     @Body() createAgencyDto: CreateAgencyDto,
@@ -275,7 +275,10 @@ export class AgencyController {
     @Body() bankDetailsDto: BankDetailsDto,
   ) {
     const userId = req.user['userId'];
-    return await this._bankingDetailsUsecase.bankDetails(bankDetailsDto, userId);
+    return await this._bankingDetailsUsecase.bankDetails(
+      bankDetailsDto,
+      userId,
+    );
   }
   @Patch('/update/bankdetails')
   async updateBankDetails(
@@ -304,7 +307,7 @@ export class AgencyController {
     const payoutRequest: PayoutRequestDto = {
       agencyId: agency.id,
       amount: payoutDto.amount,
-      status: undefined as any, 
+      status: undefined as any,
     };
 
     return await this._payoutUsecase.execute(payoutRequest);

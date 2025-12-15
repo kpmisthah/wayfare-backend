@@ -35,4 +35,4 @@ import { CsvService } from '../../infrastructure/utils/csv.service';
   ],
   exports: [ADMIN_TYPE.IAdminService],
 })
-export class AdminModule { }
+export class AdminModule {}

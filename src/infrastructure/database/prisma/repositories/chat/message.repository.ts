@@ -8,7 +8,8 @@ import { MessageMapper } from '../../../../mappers/message.mapper';
 @Injectable()
 export class MessageRepository
   extends BaseRepository<MessageEntity>
-  implements IChatRepository {
+  implements IChatRepository
+{
   constructor(private readonly _prisma: PrismaService) {
     super(_prisma.message, MessageMapper);
   }

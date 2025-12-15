@@ -298,7 +298,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       from: fromUserId,
       conversationId: data.conversationId,
       callType: data.callType,
-      signalData: data.signalData, 
+      signalData: data.signalData,
     });
   }
   @SubscribeMessage('acceptCall')

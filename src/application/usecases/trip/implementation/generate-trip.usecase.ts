@@ -8,7 +8,7 @@ export class GenerateTripUsecase implements IGenerateTripUsecase {
   constructor(
     @Inject('IAiModel')
     private readonly aiService: IAiModel,
-  ) { }
+  ) {}
   async execute(dto: GenerateTripDto) {
     console.log(dto, 'in dto GenerateTripDto in ai');
 
@@ -25,7 +25,7 @@ export class GenerateTripUsecase implements IGenerateTripUsecase {
         const paceGuide = {
           relaxed: '2-3 activities per day with plenty of free time',
           moderate: '4-5 activities per day with balanced schedule',
-          packed: '6+ activities per day for maximum exploration'
+          packed: '6+ activities per day for maximum exploration',
         };
         preferencesSection += `\n- Travel Pace: ${dto.preferences.pace} (${paceGuide[dto.preferences.pace as keyof typeof paceGuide]})`;
       }

@@ -25,7 +25,7 @@ export class WalletUsecase implements IWalletUseCase {
     private readonly _adminRepo: IAdminRepository,
     @Inject('IWalletTransactionRepo')
     private readonly _walletTransactionRepo: IWalletTransactionRepository,
-  ) { }
+  ) {}
   async createWallet(balance: number, userId: string): Promise<WalletDto> {
     console.log(userId, 'userId');
 
@@ -129,7 +129,9 @@ export class WalletUsecase implements IWalletUseCase {
     bookingId: string,
   ): Promise<{ status: StatusCode } | null> {
     console.log(`\n=== DEDUCT AGENCY START ===`);
-    console.log(`AgencyId: ${agencyId}, Amount: ${deductAmount}, BookingId: ${bookingId}`);
+    console.log(
+      `AgencyId: ${agencyId}, Amount: ${deductAmount}, BookingId: ${bookingId}`,
+    );
 
     const agencyUser = await this._agencyRepo.findById(agencyId);
     if (!agencyUser) {
@@ -165,17 +167,21 @@ export class WalletUsecase implements IWalletUseCase {
         paymentStatus: status,
         category: WalletTransactionEnum.PAYOUT,
         createdAt: new Date(),
-        bookingId: '', // Empty for payouts - no booking involved  
+        bookingId: '', // Empty for payouts - no booking involved
         agencyId,
       });
 
-      const created = await this._walletTransactionRepo.create(walletTransactionEntity);
+      const created = await this._walletTransactionRepo.create(
+        walletTransactionEntity,
+      );
       console.log('✅ Wallet transaction created:', created?.id);
     }
 
     // Update wallet balance
     const newBalance = wallet.balance - deductAmount;
-    console.log(`🔄 Updating balance: ${wallet.balance} - ${deductAmount} = ${newBalance}`);
+    console.log(
+      `🔄 Updating balance: ${wallet.balance} - ${deductAmount} = ${newBalance}`,
+    );
 
     const updateWallet = wallet.updateWallet({
       balance: newBalance,
