@@ -1,0 +1,219 @@
+# ============================================
+# Backend CI Pipeline
+# ============================================
+# This pipeline runs automatically when you push code or create a PR
+# It checks code quality, builds the app, and runs tests
+
+name: Backend CI
+
+# WHEN does this run?
+on:
+  push:
+    branches: [main, develop]    # Runs when you push to main or develop
+  pull_request:
+    branches: [main, develop]    # Runs when you create a PR to these branches
+
+# Environment variables available to all jobs
+env:
+  NODE_VERSION: '22'
+
+jobs:
+  # ============================================
+  # Job 1: Lint - Check code style
+  # ============================================
+  lint:
+    name: 🔍 Lint Code
+    runs-on: ubuntu-latest    # Uses a fresh Ubuntu Linux machine
+
+    steps:
+      # Step 1: Get your code from GitHub
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Install Node.js
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'    # Cache node_modules for faster builds
+
+      # Step 3: Install dependencies
+      - name: 📚 Install dependencies
+        run: npm ci
+
+      # Step 4: Run ESLint to check code quality
+      - name: 🔍 Run ESLint
+        run: npm run lint
+
+      # Step 5: Check code formatting with Prettier
+      - name: 🎨 Check Prettier formatting
+        run: npx prettier --check "src/**/*.ts"
+
+  # ============================================
+  # Job 2: Build - Compile TypeScript
+  # ============================================
+  build:
+    name: 🔨 Build
+    runs-on: ubuntu-latest
+    needs: lint    # Only runs if lint passes!
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📚 Install dependencies
+        run: npm ci
+
+      # Generate Prisma client (required for build)
+      - name: 🗄️ Generate Prisma Client
+        run: npx prisma generate
+
+      # Compile TypeScript to JavaScript
+      - name: 🔨 Build application
+        run: npm run build
+
+      # Save the build output for other jobs
+      - name: 📤 Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 7
+
+  # ============================================
+  # Job 3: Test - Run unit tests
+  # ============================================
+  test:
+    name: 🧪 Test
+    runs-on: ubuntu-latest
+    needs: build    # Only runs if build passes!
+
+    # Spin up databases for testing
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        # Wait until PostgreSQL is ready
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:alpine
+        ports:
+          - 6379:6379
+        # Wait until Redis is ready
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📚 Install dependencies
+        run: npm ci
+
+      - name: 🗄️ Generate Prisma Client
+        run: npx prisma generate
+
+      # Run unit tests
+      - name: 🧪 Run tests
+        run: npm run test
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/test_db?schema=public
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          JWT_ACCESS_SECRET: test-secret-for-ci
+          JWT_REFRESH_SECRET: test-refresh-secret-for-ci
+
+      # Generate test coverage report
+      - name: 📊 Generate coverage report
+        run: npm run test:cov
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/test_db?schema=public
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          JWT_ACCESS_SECRET: test-secret-for-ci
+          JWT_REFRESH_SECRET: test-refresh-secret-for-ci
+
+      # Upload coverage for review
+      - name: 📤 Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage
+          retention-days: 7
+
+  # ============================================
+  # Job 4: Security - Check for vulnerabilities
+  # ============================================
+  security:
+    name: 🔒 Security Scan
+    runs-on: ubuntu-latest
+    needs: lint
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📚 Install dependencies
+        run: npm ci
+
+      # Check for known vulnerabilities
+      - name: 🔒 Run npm audit
+        run: npm audit --audit-level=high || true
+
+  # ============================================
+  # Job 5: Docker - Build Docker image
+  # ============================================
+  docker:
+    name: 🐳 Docker Build
+    runs-on: ubuntu-latest
+    needs: [build, test]    # Only after build and test pass
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐳 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Build the Docker image (but don't push yet)
+      - name: 🔨 Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          tags: wanderly-backend:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
