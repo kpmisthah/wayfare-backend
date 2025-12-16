@@ -14,7 +14,6 @@ import { CreateNotificationDto } from '../../application/dtos/create-notificatio
 import { RequestWithUser } from '../../application/usecases/auth/interfaces/request-with-user';
 import { INotifactionUsecase } from '../../application/usecases/notification/interfaces/notifcation.interface';
 import { AccessTokenGuard } from '../../infrastructure/common/guard/accessToken.guard';
-import { NotificationEntity } from '../../domain/entities/notification.entity';
 import { ResponseNotificationDto } from '../../application/dtos/response-notification.dto';
 
 @Controller('notifications')
@@ -51,7 +50,9 @@ export class NotificationController {
   }
 
   @Patch(':id/read')
-  async markRead(@Param('id') id: string): Promise<NotificationEntity | null> {
+  async markRead(
+    @Param('id') id: string,
+  ): Promise<ResponseNotificationDto | null> {
     return await this._notificationUsecase.markRead(id);
   }
 }
