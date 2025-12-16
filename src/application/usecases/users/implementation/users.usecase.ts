@@ -108,12 +108,12 @@ export class UserService implements IUserUsecase {
     return UserMapper.toSafeUserDto(persistedUser);
   }
 
-  async findByEmail(email: string): Promise<UserEntity | null> {
+  async findByEmail(email: string) {
     const existingUser = await this._userRepo.findByEmail(email);
     if (!existingUser) {
       return null;
     }
-    return existingUser;
+    return UserMapper.toUserWithPasswordDto(existingUser);
   }
 
   async updateRefreshToken(

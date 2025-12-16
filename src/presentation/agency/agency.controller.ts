@@ -29,9 +29,8 @@ import {
   AGENCY_PROFILE_TYPE,
 } from '../../domain/types';
 import { AccessTokenGuard } from '../../infrastructure/common/guard/accessToken.guard';
-import { Response } from 'express';
 import { CreateAgencyDto } from '../../application/dtos/create-agency.dto';
-import { IAdminService } from '../../application/usecases/admin/interfaces/admin.usecase.interface';
+import { IAdminUsecase } from '../../application/usecases/admin/interfaces/admin.usecase.interface';
 import { FilterPackageDto } from '../../application/dtos/filter-package.dto';
 import { UpdatePackageDto } from '../../application/dtos/update-package.dto';
 import { PackageStatus } from '../../domain/enums/package-status.enum';
@@ -56,7 +55,7 @@ export class AgencyController {
     @Inject(AGENCY_PROFILE_TYPE.IAgencyProfileService)
     private readonly _agencyProfileUsecase: IAgencyProfileService,
     @Inject(ADMIN_TYPE.IAdminService)
-    private readonly _adminUsecase: IAdminService,
+    private readonly _adminUsecase: IAdminUsecase,
     @Inject('IBankingDetailsUsecase')
     private readonly _bankingDetailsUsecase: IBankingDetailsUsecase,
     @Inject('IWalletUseCase')
@@ -307,7 +306,6 @@ export class AgencyController {
     const payoutRequest: PayoutRequestDto = {
       agencyId: agency.id,
       amount: payoutDto.amount,
-      status: undefined as any,
     };
 
     return await this._payoutUsecase.execute(payoutRequest);

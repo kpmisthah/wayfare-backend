@@ -26,7 +26,7 @@ export class AgencyPackageService implements IAgencyPackageService {
     @Inject('ICloudinaryService')
     private readonly _cloudinaryService: ICloudinaryService,
     @Inject('IAgencyRepository')
-    private readonly agencyRepo: IAgencyRepository,
+    private readonly _agencyRepo: IAgencyRepository,
     @Inject('IIteneraryRepository')
     private readonly _iteneraryRepo: IItineraryRepository,
     @Inject('IUserService')
@@ -55,7 +55,7 @@ export class AgencyPackageService implements IAgencyPackageService {
       uploadedUrls,
       '---------------------uploadImageUrls--------------------------------',
     );
-    const existingAgency = await this.agencyRepo.findByUserId(userId);
+    const existingAgency = await this._agencyRepo.findByUserId(userId);
     console.log(existingAgency, 'exisitng agency');
 
     if (!existingAgency) {
@@ -143,7 +143,7 @@ export class AgencyPackageService implements IAgencyPackageService {
     totalPages: number;
     total: number;
   } | null> {
-    const agency = await this.agencyRepo.findByUserId(userId);
+    const agency = await this._agencyRepo.findByUserId(userId);
     console.log(agency, 'agency');
     if (!agency) return { items: [], page: 1, totalPages: 1, total: 0 };
     const total = await this._agencyPackageRepo.countPackages(
@@ -170,7 +170,7 @@ export class AgencyPackageService implements IAgencyPackageService {
   }
 
   async getAgencyPackages(userId: string): Promise<PackageDto[] | null> {
-    const getAgencies = await this.agencyRepo.findByUserId(userId);
+    const getAgencies = await this._agencyRepo.findByUserId(userId);
     const packages = await this._agencyPackageRepo.findByAgencyId(
       getAgencies?.id,
     );

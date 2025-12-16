@@ -1,10 +1,10 @@
 import { Controller, Get, UseGuards, Req } from '@nestjs/common';
-import { Request, Response } from 'express';
 import { AccessTokenGuard } from '../../infrastructure/common/guard/accessToken.guard';
 import { RolesGuard } from '../roles/auth.guard';
 import { Roles } from '../roles/roles.decorator';
 import { Role } from '../../domain/enums/role.enum';
 import { AgencyDashboardUseCase } from '../../application/usecases/agency/implementation/agency-dashboard.usecase';
+import { RequestWithUser } from '../../application/usecases/auth/interfaces/request-with-user';
 
 @Controller('agency/dashboard')
 @UseGuards(AccessTokenGuard, RolesGuard)
@@ -15,7 +15,7 @@ export class AgencyDashboardController {
   ) {}
 
   @Get()
-  async getDashboardData(@Req() req: any) {
+  async getDashboardData(@Req() req: RequestWithUser) {
     console.log('[AgencyDashboardController] GET /agency/dashboard called');
     try {
       const userId = req.user['userId'];

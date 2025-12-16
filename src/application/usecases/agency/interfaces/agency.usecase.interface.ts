@@ -1,9 +1,9 @@
+import { AgencyInternalDto } from '../../../dtos/agency-internal.dto';
 import { AgencyManagementDto } from '../../../dtos/agency-management.dto';
 import { AgencyProfileDto } from '../../../dtos/agency-profile.dto';
 import { AgencyResponseDto } from '../../../dtos/agency-response.dto';
 import { CreateAgencyDto } from '../../../dtos/create-agency.dto';
 import { UpdateStatusDto } from '../../../dtos/update-status.dto';
-import { AgencyEntity } from '../../../../domain/entities/agency.entity';
 
 export interface IAgencyService {
   createAgency(
@@ -13,7 +13,10 @@ export interface IAgencyService {
   findById(id: string): Promise<AgencyProfileDto | null>;
 
   updateStatus(id: string): Promise<UpdateStatusDto | null>;
-  findByEmail(email: string): Promise<AgencyEntity | null>;
+  /**
+   * Returns agency data for internal use cases.
+   */
+  findByEmail(email: string): Promise<AgencyInternalDto | null>;
   findAll(): Promise<AgencyManagementDto[] | null>;
   agencyApproval(
     id: string,

@@ -1,4 +1,4 @@
-import { PayoutDetailsDTO } from '../../application/dtos/payout-details.dto';
+import { PayoutDetailsResult } from '../../application/dtos/repository-results';
 import { PayoutRequestEntity } from '../entities/payout-request.entity';
 import { IBaseRepository } from '../repositories/base.repository';
 import { PayoutStatus } from '../enums/payout-status.enum';
@@ -11,5 +11,5 @@ export interface IPayoutRequestRepository
     take: number;
     status?: PayoutStatus;
     search?: string;
-  }): Promise<{ data: PayoutDetailsDTO[]; total: number }>;
+  }): Promise<PayoutDetailsResult>;
 }

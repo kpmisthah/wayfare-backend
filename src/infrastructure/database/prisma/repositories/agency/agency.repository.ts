@@ -4,7 +4,7 @@ import { IAgencyRepository } from '../../../../../domain/repositories/agency/age
 import { AgencyEntity } from '../../../../../domain/entities/agency.entity';
 import { AgencyMapper } from '../../../../mappers/agency.mapper';
 import { BaseRepository } from '../base.repository';
-import { AgencyManageDto } from '../../../../../application/dtos/AgencyManagement.dto';
+import { AgencyWithUserResult } from '../../../../../application/dtos/repository-results';
 import { AgencyStatus } from '../../../../../domain/enums/agency-status.enum';
 import { $Enums, Prisma } from '@prisma/client';
 
@@ -86,7 +86,7 @@ export class AgencyRepository
     orderBy: Record<string, 'asc' | 'desc'>,
     skip = 0,
     limit = 6,
-  ): Promise<AgencyManageDto[] | null> {
+  ): Promise<AgencyWithUserResult[] | null> {
     const agencies = await this._prisma.agency.findMany({
       where: {
         user: {

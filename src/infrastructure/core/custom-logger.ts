@@ -1,16 +1,12 @@
 import * as winston from 'winston';
-import * as DailyRotateFile from 'winston-daily-rotate-file';
+import DailyRotateFile from 'winston-daily-rotate-file';
 
 export class Logging {
   dailyRotateFileTransport: DailyRotateFile;
   createLoggerConfig: winston.LoggerOptions;
 
   constructor() {
-    const DailyRotateFileConstructor = DailyRotateFile as unknown as new (
-      options: Record<string, unknown>,
-    ) => DailyRotateFile;
-
-    this.dailyRotateFileTransport = new DailyRotateFileConstructor({
+    this.dailyRotateFileTransport = new DailyRotateFile({
       filename: `logs/app-%DATE%.log`,
       datePattern: 'YYYY-MM-DD',
       zippedArchive: true,
@@ -22,7 +18,7 @@ export class Logging {
       ),
     });
 
-    const errorFileTransport = new DailyRotateFileConstructor({
+    const errorFileTransport = new DailyRotateFile({
       filename: `logs/error-%DATE%.log`,
       datePattern: 'YYYY-MM-DD',
       zippedArchive: true,
@@ -41,7 +37,9 @@ export class Logging {
       winston.format.colorize({ all: true }),
       winston.format.printf(
         ({ timestamp, level, message, context, ...meta }) => {
-          const contextStr = context ? `[${String(context)}]` : '';
+          const contextStr = context
+            ? `[${typeof context === 'string' ? context : JSON.stringify(context)}]`
+            : '';
           const metaStr = Object.keys(meta).length
             ? ` ${JSON.stringify(meta)}`
             : '';

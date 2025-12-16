@@ -15,18 +15,18 @@ import { UpdateUserProfileDto } from '../../../dtos/update-user-profile.dto';
 export class ProfileService implements IProfileService {
   constructor(
     @Inject(PROFILE_TYPE.IProfileRepository)
-    private readonly profileRepo: IProfileRepository,
+    private readonly _profileRepo: IProfileRepository,
     @Inject('IUserRepository')
-    private readonly userRepo: IUserRepository,
+    private readonly _userRepo: IUserRepository,
   ) {}
 
   async getProfileData(id: string): Promise<GetProfileDto | null> {
     console.log('service l ethundo ', id);
-    const userEntity = await this.userRepo.findById(id);
+    const userEntity = await this._userRepo.findById(id);
     if (!userEntity) {
       return null;
     }
-    const getProfile = await this.profileRepo.getUserData(id);
+    const getProfile = await this._profileRepo.getUserData(id);
     if (!getProfile) return null;
     return UserMapper.toUserProfileDto(getProfile, userEntity);
   }
@@ -35,16 +35,16 @@ export class ProfileService implements IProfileService {
     id: string,
     createProfileDto: CreateProfileDto,
   ): Promise<UserProfileDto | null> {
-    const existingUser = await this.userRepo.findById(id);
+    const existingUser = await this._userRepo.findById(id);
     if (!existingUser) {
       return null;
     }
 
     const updateUser = existingUser.update(createProfileDto);
-    await this.userRepo.update(id, updateUser);
+    await this._userRepo.update(id, updateUser);
     const userProfile = UserProfileEntity.createProfile(createProfileDto, id);
     const createUserProfileEntity =
-      await this.profileRepo.createProfile(userProfile);
+      await this._profileRepo.createProfile(userProfile);
     if (!createUserProfileEntity) return null;
     return UserMapper.toUserProfileDto(createUserProfileEntity, existingUser);
   }
@@ -54,7 +54,7 @@ export class ProfileService implements IProfileService {
     imageUrl: string,
   ): Promise<Pick<User, 'profileImage' | 'bannerImage'>> {
     console.log(imageUrl, 'in profile service');
-    return this.profileRepo.updateProfileImage(userId, {
+    return this._profileRepo.updateProfileImage(userId, {
       profileImage: imageUrl,
     });
   }
@@ -63,7 +63,7 @@ export class ProfileService implements IProfileService {
     userId: string,
     updateUserProfileDto: UpdateUserProfileDto,
   ): Promise<UpdateUserProfileDto | null> {
-    const user = await this.userRepo.findById(userId);
+    const user = await this._userRepo.findById(userId);
     console.log(user, 'from updateProfile in Backend');
     if (!user) return null;
     const userRepoUpdate = user?.update(updateUserProfileDto);
@@ -71,9 +71,9 @@ export class ProfileService implements IProfileService {
     if (!userRepoUpdate) {
       return null;
     }
-    const userRepoUpdated = await this.userRepo.update(userId, userRepoUpdate);
+    const userRepoUpdated = await this._userRepo.update(userId, userRepoUpdate);
     console.log(userRepoUpdated, 'userRepoUpdated broo');
-    const existingProfile = await this.profileRepo.findById(userId);
+    const existingProfile = await this._profileRepo.findById(userId);
     let updateProfileEntity: UserProfileEntity;
     if (existingProfile) {
       updateProfileEntity =
@@ -85,7 +85,7 @@ export class ProfileService implements IProfileService {
       );
     }
 
-    const updateUserProfile = await this.profileRepo.updateProfile(
+    const updateUserProfile = await this._profileRepo.updateProfile(
       userId,
       updateProfileEntity,
     );
@@ -98,11 +98,11 @@ export class ProfileService implements IProfileService {
   }
 
   async findById(userId: string): Promise<UpdateUserProfileDto | null> {
-    const user = await this.userRepo.findById(userId);
+    const user = await this._userRepo.findById(userId);
     console.log(user, 'in profileRepo');
 
     if (!user) return null;
-    const userProfile = await this.profileRepo.findById(userId);
+    const userProfile = await this._profileRepo.findById(userId);
     console.log(userProfile, 'userProfile in profile repo');
 
     if (!userProfile) return null;

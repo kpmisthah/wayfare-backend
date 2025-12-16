@@ -1,11 +1,44 @@
+import { AuthUserDto } from '../../dtos/auth-user.dto';
 import { SafeUser } from '../../dtos/safe-user.dto';
 import { UpdateStatusDto } from '../../dtos/update-status.dto';
 import { UpdateUserProfileDto } from '../../dtos/update-user-profile.dto';
 import { UserProfileDto } from '../../dtos/user-profile.dto';
+import { UserWithPasswordDto } from '../../dtos/user-with-password.dto';
 import { UserProfileEntity } from '../../../domain/entities/user-profile.entity';
 import { UserEntity } from '../../../domain/entities/user.entity';
 
 export class UserMapper {
+
+  static toAuthUserDto(userEntity: UserEntity): AuthUserDto {
+    return {
+      id: userEntity.id,
+      name: userEntity.name,
+      email: userEntity.email,
+      role: userEntity.role,
+      isVerified: userEntity.isVerified,
+      isBlock: userEntity.isBlock,
+      phone: userEntity.phone,
+      profileImage: userEntity.profileImage,
+      bannerImage: userEntity.bannerImage,
+    };
+  }
+
+  static toUserWithPasswordDto(userEntity: UserEntity): UserWithPasswordDto {
+    return {
+      id: userEntity.id,
+      name: userEntity.name,
+      email: userEntity.email,
+      password: userEntity.password,
+      role: userEntity.role,
+      isVerified: userEntity.isVerified,
+      isBlock: userEntity.isBlock,
+      phone: userEntity.phone,
+      profileImage: userEntity.profileImage,
+      bannerImage: userEntity.bannerImage,
+      refreshToken: userEntity.refreshToken,
+    };
+  }
+
   static toSafeUserDto(userEntity: UserEntity): SafeUser {
     return {
       id: userEntity.id,

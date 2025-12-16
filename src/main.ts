@@ -43,15 +43,12 @@ async function bootstrap() {
 
     app.use(cookieParser());
 
-    // CORS Setup
     app.enableCors({
       origin: ['http://localhost:3000', 'http://frontend:3000'],
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-      // allowedHeaders: ['Content-Type', 'Authorization'],
     });
     app.useGlobalPipes(new ValidationPipe());
-    // await app.listen(3005);
     await app.listen(3000, '0.0.0.0');
     console.log('Server started on port 3000');
   } catch (error) {

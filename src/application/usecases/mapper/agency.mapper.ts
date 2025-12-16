@@ -1,3 +1,4 @@
+import { AgencyInternalDto } from '../../dtos/agency-internal.dto';
 import { PackageDto } from '../../dtos/add-package.dto';
 import { AgencyProfileDto } from '../../dtos/agency-profile.dto';
 import { AgencyResponseDto } from '../../dtos/agency-response.dto';
@@ -8,6 +9,24 @@ import { TransportationEntity } from '../../../domain/entities/transportation.en
 import { UserEntity } from '../../../domain/entities/user.entity';
 
 export class AgencyMapper {
+  /**
+   * Converts AgencyEntity to AgencyInternalDto for internal use cases.
+   */
+  static toAgencyInternalDto(agencyEntity: AgencyEntity): AgencyInternalDto {
+    return {
+      id: agencyEntity.id,
+      userId: agencyEntity.userId,
+      description: agencyEntity.description,
+      address: agencyEntity.address ?? undefined,
+      licenseNumber: agencyEntity.licenseNumber,
+      ownerName: agencyEntity.ownerName,
+      websiteUrl: agencyEntity.websiteUrl,
+      pendingPayouts: agencyEntity.pendingPayouts,
+      totalEarnings: agencyEntity.totalEarnings,
+      reason: agencyEntity.reason ?? undefined,
+    };
+  }
+
   static toAgencyDto(agencyEntity: AgencyEntity): AgencyResponseDto {
     return {
       description: agencyEntity.description,
@@ -19,6 +38,7 @@ export class AgencyMapper {
       websiteUrl: agencyEntity.websiteUrl,
     };
   }
+
   static toAgencyProfileDto(
     agencyEntity: AgencyEntity,
     userEntity: UserEntity,

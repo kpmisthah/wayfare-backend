@@ -5,9 +5,9 @@ import * as nodemailer from 'nodemailer';
 import { INodeMailerService } from '../../domain/interfaces/nodemailer.interface';
 @Injectable()
 export class NodemailerService implements INodeMailerService {
-  private readonly emailTransporter: nodemailer.Transporter;
+  private readonly _emailTransporter: nodemailer.Transporter;
   constructor(private readonly configService: ConfigService) {
-    this.emailTransporter = nodemailer.createTransport({
+    this._emailTransporter = nodemailer.createTransport({
       host: this.configService.get<string>('EMAIL_HOST'),
       port: this.configService.get<number>('EMAIL_PORT'),
       auth: {
@@ -23,7 +23,7 @@ export class NodemailerService implements INodeMailerService {
   async sendOtpToEmail(email: string): Promise<string> {
     const otp = this.generateOtp();
     try {
-      await this.emailTransporter.sendMail({
+      await this._emailTransporter.sendMail({
         from: this.configService.get<string>('EMAIL_USER'),
         to: email,
         subject: 'Your Otp Code',
@@ -41,7 +41,7 @@ export class NodemailerService implements INodeMailerService {
   async sendForgotPasswordOtp(email: string, name: string): Promise<string> {
     const otp = this.generateOtp();
     try {
-      await this.emailTransporter.sendMail({
+      await this._emailTransporter.sendMail({
         from: this.configService.get<string>('EMAIL_USER'),
         to: email,
         subject: 'Reset Your Password - OTP',
@@ -70,7 +70,7 @@ export class NodemailerService implements INodeMailerService {
     loginLink: string,
   ): Promise<void> {
     try {
-      await this.emailTransporter.sendMail({
+      await this._emailTransporter.sendMail({
         from: this.configService.get<string>('EMAIL_USER'),
         to: email,
         subject: 'Agency Verification Approved',

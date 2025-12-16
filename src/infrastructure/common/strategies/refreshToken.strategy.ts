@@ -11,12 +11,12 @@ export class RefreshTokenStrategy extends PassportStrategy(
   'jwt-refresh',
 ) {
   constructor(
-    private readonly configService: ConfigService,
+    private readonly _configService: ConfigService,
     @Inject('IUserService')
-    private readonly userService: IUserUsecase,
+    private readonly _userService: IUserUsecase,
   ) {
     console.log('refreshToken');
-    const refreshSecret = configService.get<string>('JWT_REFRESH_SECRET');
+    const refreshSecret = _configService.get<string>('JWT_REFRESH_SECRET');
     if (!refreshSecret) {
       throw new Error('JWT_REFRESH_SECRET is not defined');
     }
@@ -41,7 +41,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token missing');
     }
-    const user = await this.userService.findById(payload.sub);
+    const user = await this._userService.findById(payload.sub);
 
     console.log(user, 'User frk access');
     if (!user || user.isBlock) {

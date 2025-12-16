@@ -9,11 +9,11 @@ import { IUploadProfileUseCase } from '../interfaces/uplaod-profile.usecase.inte
 export class UploadProfileUseCase implements IUploadProfileUseCase {
   constructor(
     @Inject('ICloudinaryService')
-    private readonly cloudinaryService: ICloudinaryService,
+    private readonly _cloudinaryService: ICloudinaryService,
     @Inject('IUserRepository')
-    private readonly userRepo: IUserRepository,
+    private readonly _userRepo: IUserRepository,
     @Inject(PROFILE_TYPE.IProfileRepository)
-    private readonly profileRepo: IProfileRepository,
+    private readonly _profileRepo: IProfileRepository,
   ) {}
 
   async execute(
@@ -22,19 +22,19 @@ export class UploadProfileUseCase implements IUploadProfileUseCase {
     type: 'profile' | 'banner',
   ): Promise<string> {
     console.log(file, 'file in service and userId', userId);
-    const user = await this.userRepo.findById(userId);
+    const user = await this._userRepo.findById(userId);
     if (!user) {
       throw new Error('User not found');
     }
     console.log(user);
 
-    const imageUrl = await this.cloudinaryService.uploadImage(file);
+    const imageUrl = await this._cloudinaryService.uploadImage(file);
     if (type == 'profile') {
-      await this.profileRepo.updateProfileImage(userId, {
+      await this._profileRepo.updateProfileImage(userId, {
         profileImage: imageUrl,
       });
     } else {
-      await this.profileRepo.updateProfileImage(userId, {
+      await this._profileRepo.updateProfileImage(userId, {
         bannerImage: imageUrl,
       });
     }

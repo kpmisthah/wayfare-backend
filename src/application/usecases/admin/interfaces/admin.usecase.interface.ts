@@ -2,7 +2,7 @@ import { AgencyManagementDto } from '../../../dtos/agency-management.dto';
 import { SafeUser } from '../../../dtos/safe-user.dto';
 import { AgencyStatus } from '../../../../domain/enums/agency-status.enum';
 
-export interface IAdminService {
+export interface IAdminUsecase {
   getAllAgencies(dto: {
     page: number;
     limit: number;

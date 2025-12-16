@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma.service';
 import { BaseRepository } from '../base.repository';
 import { BookingEntity } from '../../../../../domain/entities/booking.entity';
@@ -93,7 +94,7 @@ export class BookingRepository
     search?: string,
   ): Promise<{ data: BookingEntity[]; total: number }> {
     const skip = (page - 1) * limit;
-    const where: any = { packageId };
+    const where: Prisma.BookingWhereInput = { packageId };
     if (search) {
       where.user = {
         name: { contains: search, mode: 'insensitive' },

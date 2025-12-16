@@ -6,7 +6,6 @@ import { FetchBookingDto } from '../../../dtos/fetch-booking.dto';
 import { FetchUserBookingDto } from '../../../dtos/fetch-user-booking.dto';
 import { RecentBookingResponse } from '../../../dtos/recent-booking-response.dto';
 import { ResponseBookingDto } from '../../../dtos/response-booking.dto';
-import { BookingEntity } from '../../../../domain/entities/booking.entity';
 import { BookingStatus } from '../../../../domain/enums/booking-status.enum';
 import { PaymentStatus } from '../../../../domain/enums/payment-status.enum';
 
@@ -33,7 +32,7 @@ export interface IBookingUseCase {
     bookingId: string,
     agencyId: string,
     status: BookingStatus,
-  ): Promise<BookingEntity>;
+  ): Promise<BookingStatusDto>;
   execute(
     packageId: string,
     page: number,

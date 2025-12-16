@@ -1,22 +1,9 @@
 import { GroupChatDto } from '../../../dtos/group-chat.dto';
 import { MessageDto } from '../../../dtos/message.dto';
+import { UserGroupResult } from '../../../dtos/repository-results';
 
-export interface UserGroup {
-  id: string;
-  name: string;
-  avatar: string | null;
-  creatorId: string;
-  createdAt: Date;
-  type: string;
-  members: {
-    user: {
-      id: string;
-      name: string;
-      profileImage: string | null;
-    };
-    role: string;
-  }[];
-}
+// Re-export UserGroupResult as UserGroup for backward compatibility
+export type UserGroup = UserGroupResult;
 
 export interface IChatUsecase {
   saveMessages(

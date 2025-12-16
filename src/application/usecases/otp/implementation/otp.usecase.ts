@@ -8,9 +8,9 @@ import { IRedisService } from '../../../../domain/interfaces/redis-service.inter
 @Injectable()
 export class OtpService implements IOtpService {
   constructor(
-    private readonly configService: ConfigService,
+    private readonly _configService: ConfigService,
     @Inject('INodemailerService')
-    private readonly nodemailerService: NodemailerService,
+    private readonly _nodemailerService: NodemailerService,
     @Inject('IRedisService')
     private readonly _redisService: IRedisService,
   ) {}
@@ -23,7 +23,7 @@ export class OtpService implements IOtpService {
     phone?: string,
   ) {
     try {
-      const otp = await this.nodemailerService.sendOtpToEmail(email);
+      const otp = await this._nodemailerService.sendOtpToEmail(email);
       console.log(otp, 'otp');
       const key = `otp:${email}`;
       await this._redisService.set(
@@ -38,7 +38,7 @@ export class OtpService implements IOtpService {
   }
   async agencyVerification(email: string, loginLink: string) {
     try {
-      await this.nodemailerService.sendAgencyVerificationEmail(
+      await this._nodemailerService.sendAgencyVerificationEmail(
         email,
         loginLink,
       );
@@ -48,7 +48,10 @@ export class OtpService implements IOtpService {
   }
 
   async sendForgotPasswordOtp(email: string, name: string = 'User') {
-    const otp = await this.nodemailerService.sendForgotPasswordOtp(email, name);
+    const otp = await this._nodemailerService.sendForgotPasswordOtp(
+      email,
+      name,
+    );
     const key = `forgot:${email}`;
 
     await this._redisService.set(key, JSON.stringify({ otp }), 300);

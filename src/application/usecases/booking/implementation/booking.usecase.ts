@@ -328,11 +328,15 @@ export class BookingUseCase implements IBookingUseCase {
     bookingId: string,
     agencyId: string,
     status: BookingStatus,
-  ): Promise<BookingEntity> {
+  ) {
     console.log(agencyId, 'agencyId');
     console.log(bookingId, 'bookingId');
 
-    return await this._bookingRepo.updateStatus(bookingId, status);
+    const updatedBooking = await this._bookingRepo.updateStatus(
+      bookingId,
+      status,
+    );
+    return BookingMapper.toUpdateBookingStatus(updatedBooking);
   }
 
   async execute(

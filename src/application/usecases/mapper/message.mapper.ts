@@ -1,9 +1,20 @@
 import { MessageDto } from '../../dtos/message.dto';
 import { MessageEntity } from '../../../domain/entities/message.entity';
 
+/**
+ * Interface for MessageEntity with sender information
+ * Used when messages are fetched with user relation included
+ */
+interface MessageWithSender extends MessageEntity {
+  sender?: {
+    name: string;
+    profileImage: string | null;
+  };
+}
+
 export class MessageMapper {
   static toMessageDto(message: MessageEntity): MessageDto {
-    const entityWithSender = message as any;
+    const entityWithSender = message as MessageWithSender;
 
     return {
       id: message.id,

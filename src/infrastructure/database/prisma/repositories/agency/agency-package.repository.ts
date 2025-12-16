@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { PackageEntity } from '../../../../../domain/entities/package.entity';
 import { PackageMapper } from '../../../../mappers/package.mapper';
 import { BaseRepository } from '../base.repository';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class AgencyPackageRepository
@@ -21,7 +22,7 @@ export class AgencyPackageRepository
     return PackageMapper.toPackageEntity(createPackage);
   }
   async countPackages(agencyId: string, search?: string): Promise<number> {
-    const where: any = { agencyId };
+    const where: Prisma.PackageWhereInput = { agencyId };
     if (search) {
       where.OR = [
         { destination: { contains: search, mode: 'insensitive' } },
@@ -44,7 +45,7 @@ export class AgencyPackageRepository
     search?: string,
   ): Promise<PackageEntity[]> {
     const skip = (page - 1) * limit;
-    const where: any = { agencyId };
+    const where: Prisma.PackageWhereInput = { agencyId };
 
     if (search) {
       where.OR = [

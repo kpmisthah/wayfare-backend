@@ -5,12 +5,12 @@ import Stripe from 'stripe';
 
 @Injectable()
 export class StripeService implements PaymentProvider {
-  private stripe: Stripe;
-  private readonly logger = new Logger(StripeService.name);
+  private _stripe: Stripe;
+  private readonly _logger = new Logger(StripeService.name);
 
   constructor(private readonly _configService: ConfigService) {
     const apiKey = this._configService.get<string>('STRIPE_SECRET_KEY');
-    this.stripe = new Stripe(apiKey!, {
+    this._stripe = new Stripe(apiKey!, {
       apiVersion: '2025-08-27.basil',
     });
   }
@@ -22,7 +22,7 @@ export class StripeService implements PaymentProvider {
     cancelUrl: string;
     expiresAt?: number;
   }): Promise<string> {
-    const session = await this.stripe.checkout.sessions.create({
+    const session = await this._stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
         {
@@ -43,14 +43,14 @@ export class StripeService implements PaymentProvider {
       metadata: params.metadata,
     });
 
-    this.logger.log(`Checkout Session created: ${session.id}`);
+    this._logger.log(`Checkout Session created: ${session.id}`);
     return session.url!; // This is the redirect URL
   }
 
   async confirmPayment(paymentIntentId: string): Promise<void> {
-    await this.stripe.paymentIntents.confirm(paymentIntentId);
+    await this._stripe.paymentIntents.confirm(paymentIntentId);
   }
   constructEvent(rawBody: Buffer, sig: string, secret: string): Stripe.Event {
-    return this.stripe.webhooks.constructEvent(rawBody, sig, secret);
+    return this._stripe.webhooks.constructEvent(rawBody, sig, secret);
   }
 }

@@ -8,16 +8,15 @@ import { Request, Response } from 'express';
 import { Role } from '../../../../domain/enums/role.enum';
 import { $Enums } from '@prisma/client';
 import { ChangePassword } from '../../../dtos/change-password.dto';
-import { UserEntity } from '../../../../domain/entities/user.entity';
+import { AuthUserDto } from '../../../dtos/auth-user.dto';
 
 export interface AuthResponse {
   message?: string;
   accessToken?: string;
   refreshToken?: string;
   user?:
-    | UserEntity
+    | AuthUserDto
     | { id: string; name: string; email: string; role: $Enums.Role };
-  userEntity?: UserEntity;
 }
 
 export interface RefreshTokenResponse {
@@ -32,7 +31,7 @@ export interface IAuthUsecase {
     accessToken: string;
     refreshToken: string;
     user:
-      | UserEntity
+      | AuthUserDto
       | { id: string; name: string; email: string; role: $Enums.Role };
   }>;
   resendOtp(dto: ResendOtpDto): Promise<{ message: string }>;
@@ -48,13 +47,11 @@ export interface IAuthUsecase {
   }>;
   signIn(
     dto: LoginDto,
-  ): Promise<{ user: UserEntity; accessToken: string; refreshToken: string }>;
+  ): Promise<{ user: AuthUserDto; accessToken: string; refreshToken: string }>;
   logout(userId: string): Promise<{ success: number; role: Role }>;
   refreshToken(
     userId: string,
     refreshToken: string | null | undefined,
-    // res: Response, // Removed unused param based on implementation
-    // role: string, // Removed unused param based on implementation
   ): Promise<RefreshTokenResponse>;
   updateRefreshToken(userId: string, refreshToken: string): Promise<void>;
   googleLoginResponse(

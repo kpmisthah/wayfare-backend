@@ -9,10 +9,10 @@ import {
 export class AgencyDashboardUseCase implements IAgencyDashboardUseCase {
   constructor(
     @Inject('IAgencyDashboardRepository')
-    private readonly agencyDashboardRepository: IAgencyDashboardRepository,
+    private readonly _agencyDashboardRepository: IAgencyDashboardRepository,
   ) {}
 
   async execute(userId: string): Promise<AgencyDashboardData> {
-    return this.agencyDashboardRepository.getDashboardData(userId);
+    return this._agencyDashboardRepository.getDashboardData(userId);
   }
 }

@@ -1,7 +1,7 @@
 import { AgencyEntity } from '../../entities/agency.entity';
 import { IBaseRepository } from '../base.repository';
 import { AgencyStatus } from '../../enums/agency-status.enum';
-import { AgencyManageDto } from '../../../application/dtos/AgencyManagement.dto';
+import { AgencyWithUserResult } from '../../../application/dtos/repository-results';
 
 export interface IAgencyRepository extends IBaseRepository<AgencyEntity> {
   findByEmail(email: string): Promise<AgencyEntity | null>;
@@ -20,7 +20,7 @@ export interface IAgencyRepository extends IBaseRepository<AgencyEntity> {
     orderBy: Record<string, unknown> | undefined,
     skip: number,
     limit: number,
-  ): Promise<AgencyManageDto[] | null>;
+  ): Promise<AgencyWithUserResult[] | null>;
   countAll(): Promise<number>;
   findAlll(): Promise<AgencyEntity[] | null>;
 }

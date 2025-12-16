@@ -22,11 +22,13 @@ export class MessageMapper {
 
     // Add sender info if available
     if (message.sender) {
-      (entity as any).sender = {
-        id: message.sender.id,
-        name: message.sender.name,
-        profileImage: message.sender.profileImage,
-      };
+      Object.assign(entity, {
+        sender: {
+          id: message.sender.id,
+          name: message.sender.name,
+          profileImage: message.sender.profileImage,
+        },
+      });
     }
 
     return entity;

@@ -99,12 +99,12 @@ export class AgencyService implements IAgencyService {
     if (!user) return null;
     return AgencyMapper.toAgencyProfileDto(agency, user);
   }
-  async findByEmail(email: string): Promise<AgencyEntity | null> {
+  async findByEmail(email: string) {
     const agency = await this._agencyRepo.findByEmail(email);
     if (!agency) {
       return null;
     }
-    return agency;
+    return AgencyMapper.toAgencyInternalDto(agency);
   }
 
   async findAll(): Promise<AgencyManagementDto[] | null> {

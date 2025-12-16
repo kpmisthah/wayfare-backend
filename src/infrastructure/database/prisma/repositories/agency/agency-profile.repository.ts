@@ -6,12 +6,12 @@ import { AgencyMapper } from '../../../../mappers/agency.mapper';
 
 @Injectable()
 export class AgencyProfileRepository implements IAgencyProfileRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly _prisma: PrismaService) {}
   async updateProfile(
     updateAgencyProfile: AgencyEntity,
     agencyId: string,
   ): Promise<AgencyEntity | null> {
-    const agencyProfileUpdate = await this.prisma.agency.update({
+    const agencyProfileUpdate = await this._prisma.agency.update({
       where: { userId: agencyId },
       data: AgencyMapper.toPrisma(updateAgencyProfile),
     });
@@ -24,14 +24,14 @@ export class AgencyProfileRepository implements IAgencyProfileRepository {
   }
 
   async getAgencyProfile(): Promise<AgencyEntity[] | null> {
-    const getAgencies = await this.prisma.agency.findMany();
+    const getAgencies = await this._prisma.agency.findMany();
     if (!getAgencies) {
       return null;
     }
     return AgencyMapper.toDomainMany(getAgencies);
   }
   async findByUserId(id: string): Promise<AgencyEntity | null> {
-    const agencyProfile = await this.prisma.agency.findFirst({
+    const agencyProfile = await this._prisma.agency.findFirst({
       where: { userId: id },
       include: {
         user: {

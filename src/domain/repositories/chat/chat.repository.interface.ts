@@ -1,6 +1,6 @@
 import { MessageEntity } from '../../entities/message.entity';
 import { IBaseRepository } from '../base.repository';
-import { UserGroup } from '../../../application/usecases/chat/interfaces/message.interface';
+import { UserGroupResult } from '../../../application/dtos/repository-results';
 
 // Interface for created group return value
 interface CreatedGroup {
@@ -40,7 +40,7 @@ export interface IChatRepository extends IBaseRepository<MessageEntity> {
     members: { userId: string; role: 'ADMIN' | 'MEMBER' }[];
   }): Promise<CreatedGroup>;
   isUserInGroup(userId: string, groupId: string): Promise<boolean>;
-  getUserGroups(userId: string): Promise<UserGroup[]>;
+  getUserGroups(userId: string): Promise<UserGroupResult[]>;
   getGroupById(groupId: string): Promise<GroupData | null>;
   getMessagesByGroup(groupId: string): Promise<MessageEntity[]>;
   incrementUnreadCount(conversationId: string, userId: string): Promise<void>;

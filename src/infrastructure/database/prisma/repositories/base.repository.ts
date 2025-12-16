@@ -5,7 +5,8 @@ export interface IMapper<T, U> {
   toDomain(data: unknown): T;
 }
 
-export interface IModel<U = any> {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export interface IModel<_U = unknown> {
   create(args: any): Promise<unknown>;
 
   findUnique(args: any): Promise<unknown>;

@@ -14,5 +14,6 @@ export class PayoutRequestDto {
   @IsNumber()
   amount: number;
 
-  status: PayoutStatus;
+  @IsOptional()
+  status?: PayoutStatus;
 }

@@ -12,8 +12,6 @@ import { AdminModule } from '../admin/admin.module';
 import { BankingDetailsUsecase } from '../../application/usecases/agency/implementation/bank-details.usecase';
 import { WalletModule } from '../wallet/wallet.module';
 import { PaymentModule } from '../payment/payment.module';
-// import { SearchModule } from '../../infrastructure/elastic-search/elastic-search.module';
-
 import { AgencyDashboardController } from './agency-dashboard.controller';
 import { AgencyDashboardUseCase } from '../../application/usecases/agency/implementation/agency-dashboard.usecase';
 import { AgencyDashboardRepository } from '../../infrastructure/database/prisma/repositories/agency/agency-dashboard.repository';

@@ -14,10 +14,7 @@ export class NotificationUsecase implements INotifactionUsecase {
     private readonly _chatGateway: ChatGateway,
   ) {}
 
-  async createNotification(
-    dto: CreateNotificationDto,
-    userId: string,
-  ): Promise<NotificationEntity | null> {
+  async createNotification(dto: CreateNotificationDto, userId: string) {
     console.log(dto, 'in createNotifacation');
 
     const entity = NotificationEntity.create({
@@ -42,7 +39,7 @@ export class NotificationUsecase implements INotifactionUsecase {
       date: new Date().toISOString(),
       type: mappedNotification.type,
     });
-    return notification;
+    return mappedNotification;
   }
 
   async listNotification(userId: string, limit = 20, offset = 0) {
@@ -53,6 +50,9 @@ export class NotificationUsecase implements INotifactionUsecase {
   }
 
   async markRead(notificationId: string) {
-    return this._notificationRepo.markAsRead(notificationId);
+    const notification =
+      await this._notificationRepo.markAsRead(notificationId);
+    if (!notification) return null;
+    return NotificationMapper.toNotificationDto(notification);
   }
 }

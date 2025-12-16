@@ -14,14 +14,14 @@ type JwtPayload = {
 @Injectable()
 export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
-    private readonly configService: ConfigService,
+    private readonly _configService: ConfigService,
     @Inject('IUserService')
-    private readonly userService: IUserUsecase,
+    private readonly _userService: IUserUsecase,
     @Inject('IAgencyService')
-    private readonly agencyService: IAgencyService,
+    private readonly _agencyService: IAgencyService,
   ) {
     console.log('starting stragegy...');
-    const accessSecret = configService.get<string>('JWT_ACCESS_SECRET');
+    const accessSecret = _configService.get<string>('JWT_ACCESS_SECRET');
     if (!accessSecret) {
       throw new Error('JWT_ACCESS_SECRET is not defined');
     }
@@ -40,7 +40,7 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   async validate(payload: JwtPayload) {
     console.log(payload, 'payload');
-    const user = await this.userService.findById(payload.sub);
+    const user = await this._userService.findById(payload.sub);
     console.log(user, 'user in accessToken strategy');
     if (!user) {
       throw new UnauthorizedException({

@@ -1,11 +1,4 @@
-import { AgencyRevenueDTO } from '../../../application/dtos/agency-revenue.dto';
-
-export interface AgencyRevenueSummaryResult {
-  data: AgencyRevenueDTO[];
-  total: number;
-  page: number;
-  totalPages: number;
-}
+import { AgencyRevenueSummaryResult } from '../../../application/dtos/repository-results';
 
 export interface IAgencyRevenueRepository {
   getAgencyRevenueSummary(

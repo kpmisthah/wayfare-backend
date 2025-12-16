@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
-import {
-  IAgencyRevenueRepository,
-  AgencyRevenueSummaryResult,
-} from '../../../../../domain/repositories/admin/agency-revenue.repository.interface';
+import { IAgencyRevenueRepository } from '../../../../../domain/repositories/admin/agency-revenue.repository.interface';
+import { AgencyRevenueSummaryResult } from '../../../../../application/dtos/repository-results';
 import { AgencyRevenueDTO } from '../../../../../application/dtos/agency-revenue.dto';
 
 @Injectable()

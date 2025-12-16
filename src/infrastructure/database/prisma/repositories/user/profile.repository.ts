@@ -7,10 +7,10 @@ import { UserProfileEntity } from '../../../../../domain/entities/user-profile.e
 
 @Injectable()
 export class ProfileRepository implements IProfileRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly _prisma: PrismaService) {}
   async findById(userId: string): Promise<UserProfileEntity | null> {
     console.log(userId, 'userIddds');
-    const profile = await this.prisma.userProfile.findFirst({
+    const profile = await this._prisma.userProfile.findFirst({
       where: {
         userId,
       },
@@ -19,7 +19,7 @@ export class ProfileRepository implements IProfileRepository {
     return UserProfileMapper.toDomain(profile);
   }
   async getUserData(id: string): Promise<UserProfileEntity | null> {
-    const userProfile = await this.prisma.userProfile.findFirst({
+    const userProfile = await this._prisma.userProfile.findFirst({
       where: { userId: id },
     });
     if (!userProfile) return null;
@@ -28,7 +28,7 @@ export class ProfileRepository implements IProfileRepository {
   async createProfile(
     createProfile: UserProfileEntity,
   ): Promise<UserProfileEntity | null> {
-    const userProfile = await this.prisma.userProfile.create({
+    const userProfile = await this._prisma.userProfile.create({
       data: UserProfileMapper.toPrisma(createProfile),
     });
     if (!userProfile) {
@@ -43,7 +43,7 @@ export class ProfileRepository implements IProfileRepository {
   ): Promise<Pick<User, 'profileImage' | 'bannerImage'>> {
     console.log('updateProfile l ethundo');
 
-    return await this.prisma.user.update({
+    return await this._prisma.user.update({
       where: { id: userId },
       data: {
         ...(data.profileImage && { profileImage: data.profileImage }),
@@ -60,7 +60,7 @@ export class ProfileRepository implements IProfileRepository {
     userId: string,
     data: UserProfileEntity,
   ): Promise<UserProfileEntity | null> {
-    const updateUserProfile = await this.prisma.userProfile.upsert({
+    const updateUserProfile = await this._prisma.userProfile.upsert({
       where: { userId },
       update: {
         location: data.location,
@@ -72,7 +72,7 @@ export class ProfileRepository implements IProfileRepository {
     return UserProfileMapper.toDomain(updateUserProfile);
   }
   async findByUserId(userId: string): Promise<UserProfileEntity | null> {
-    const userProfile = await this.prisma.userProfile.findFirst({
+    const userProfile = await this._prisma.userProfile.findFirst({
       where: { userId },
     });
     if (!userProfile) return null;

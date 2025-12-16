@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { preference, Role } from '@prisma/client';
+import { Role } from '@prisma/client';
 import { PrismaService } from '../../prisma.service';
 import { IAdminRepository } from '../../../../../domain/repositories/admin/admin.repository.interface';
 import { UserEntity } from '../../../../../domain/entities/user.entity';
@@ -7,10 +7,10 @@ import { UserMapper } from '../../../../mappers/user.mapper';
 
 @Injectable()
 export class AdminRepository implements IAdminRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly _prisma: PrismaService) {}
 
   async findAdmin(): Promise<UserEntity | null> {
-    const admin = await this.prisma.user.findFirst({
+    const admin = await this._prisma.user.findFirst({
       where: {
         role: Role.ADMIN,
       },
@@ -21,7 +21,7 @@ export class AdminRepository implements IAdminRepository {
   }
 
   async findRecentBookings(limit: number) {
-    const bookings = await this.prisma.booking.findMany({
+    const bookings = await this._prisma.booking.findMany({
       take: limit,
       orderBy: { createdAt: 'desc' },
       select: {

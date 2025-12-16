@@ -1,8 +1,19 @@
 import { Agency, Prisma } from '@prisma/client';
 import { AgencyEntity } from '../../domain/entities/agency.entity';
 
+/**
+ * Type for Agency with optional user relation
+ */
+type AgencyWithUser = Agency & {
+  user?: {
+    bannerImage: string | null;
+    profileImage: string | null;
+  };
+};
+
 export class AgencyMapper {
   static toDomain(agency: Agency): AgencyEntity {
+    const agencyWithUser = agency as AgencyWithUser;
     return new AgencyEntity(
       agency.id,
       agency.description,
@@ -19,8 +30,8 @@ export class AgencyMapper {
       agency.websiteUrl ?? '',
       agency.transactionId ?? '',
       agency.rejectionReason,
-      (agency as any).user?.bannerImage,
-      (agency as any).user?.profileImage,
+      agencyWithUser.user?.bannerImage ?? null,
+      agencyWithUser.user?.profileImage ?? null,
     );
   }
 
@@ -60,17 +71,18 @@ export class AgencyMapper {
   ) {
     console.log(a.user, 'in frompirsma');
     return {
-      domain: new AgencyEntity(
-        a.id,
-        a.description,
-        a.userId,
-        a.pendingPayouts,
-        a.totalEarnings,
-        a.address,
-        a.licenseNumber ?? '',
-        a.ownerName ?? '',
-        a.websiteUrl ?? '',
-      ),
+      domain: {
+        id: a.id,
+        userId: a.userId,
+        description: a.description,
+        address: a.address,
+        licenseNumber: a.licenseNumber ?? '',
+        ownerName: a.ownerName ?? '',
+        websiteUrl: a.websiteUrl ?? '',
+        pendingPayouts: a.pendingPayouts,
+        totalEarnings: a.totalEarnings,
+        reason: a.rejectionReason,
+      },
 
       user: {
         id: a.user.id,

@@ -12,21 +12,21 @@ import { AgencyMapper } from '../../mapper/agency.mapper';
 export class AgencyProfilService implements IAgencyProfileService {
   constructor(
     @Inject(AGENCY_PROFILE_TYPE.IAgencyProfileRepository)
-    private readonly agencyProfileRepo: IAgencyProfileRepository,
+    private readonly _agencyProfileRepo: IAgencyProfileRepository,
     @Inject('IUserRepository')
-    private readonly userRepo: IUserRepository,
+    private readonly _userRepo: IUserRepository,
     @Inject('IAgencyRepository')
-    private readonly agencyRepo: IAgencyRepository,
+    private readonly _agencyRepo: IAgencyRepository,
   ) {}
   async updateProfile(
     agencyId: string,
     updateAgencyProfileDto: UpdateAgencyProfileDto,
   ): Promise<AgencyProfileDto | null> {
-    const existingAgency = await this.agencyRepo.findByUserId(agencyId);
+    const existingAgency = await this._agencyRepo.findByUserId(agencyId);
     if (!existingAgency) {
       return null;
     }
-    const existingUser = await this.userRepo.findById(existingAgency.userId);
+    const existingUser = await this._userRepo.findById(existingAgency.userId);
     if (!existingUser) {
       return null;
     }
@@ -39,7 +39,7 @@ export class AgencyProfilService implements IAgencyProfileService {
     }
     console.log(agencyId, 'agencyId');
 
-    const agency = await this.agencyProfileRepo.updateProfile(
+    const agency = await this._agencyProfileRepo.updateProfile(
       agencyProfileEntity,
       agencyId,
     );
@@ -50,12 +50,12 @@ export class AgencyProfilService implements IAgencyProfileService {
   }
 
   async getAgencyProfile(): Promise<AgencyProfileDto[] | null> {
-    const agencies = await this.agencyProfileRepo.getAgencyProfile();
+    const agencies = await this._agencyProfileRepo.getAgencyProfile();
     if (!agencies) return null;
 
     const result: AgencyProfileDto[] = [];
     for (const agency of agencies) {
-      const user = await this.userRepo.findById(agency.userId);
+      const user = await this._userRepo.findById(agency.userId);
       if (user) {
         result.push(AgencyMapper.toAgencyProfileDto(agency, user));
       }
@@ -64,11 +64,11 @@ export class AgencyProfilService implements IAgencyProfileService {
   }
 
   async findProfile(id: string) {
-    const user = await this.userRepo.findById(id);
+    const user = await this._userRepo.findById(id);
     if (!user) {
       return null;
     }
-    const agency = await this.agencyProfileRepo.findByUserId(id);
+    const agency = await this._agencyProfileRepo.findByUserId(id);
     if (!agency) {
       return null;
     }

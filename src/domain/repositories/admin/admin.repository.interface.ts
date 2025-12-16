@@ -1,4 +1,3 @@
-import { preference } from '@prisma/client';
 import { UserEntity } from '../../entities/user.entity';
 
 // Interface for the raw booking data returned from the repository

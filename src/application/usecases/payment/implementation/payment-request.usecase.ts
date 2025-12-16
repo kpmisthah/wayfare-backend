@@ -19,7 +19,7 @@ export class CreatePayoutRequestUsecase implements ICreatePayoutRequestUsecase {
     private readonly _payoutRepo: IPayoutRequestRepository,
     @Inject('IWalletUseCase')
     private readonly _walletUseCase: IWalletUseCase,
-  ) {}
+  ) { }
 
   async execute(dto: PayoutRequestDto): Promise<PayoutRequestDto | null> {
     const entity = PayoutRequestEntity.create({
@@ -74,10 +74,7 @@ export class CreatePayoutRequestUsecase implements ICreatePayoutRequestUsecase {
     const updatePayoutRequest = payoutRequest.update({ status });
     console.log(updatePayoutRequest, 'updated');
 
-    const res = await this._payoutRepo.update(
-      payoutRequest.id,
-      updatePayoutRequest,
-    );
+    await this._payoutRepo.update(payoutRequest.id, updatePayoutRequest);
 
     return {
       code: StatusCode.SUCCESS,
@@ -94,8 +91,8 @@ export class CreatePayoutRequestUsecase implements ICreatePayoutRequestUsecase {
       rejectionReason: reason,
     });
 
-    const res = await this._payoutRepo.update(id, udpatePayout);
-    console.log(res, 'reason for cancelllattionnnn');
+    await this._payoutRepo.update(id, udpatePayout);
+    console.log(udpatePayout, 'payout rejected');
 
     return {
       code: StatusCode.SUCCESS,

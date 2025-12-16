@@ -42,6 +42,14 @@ export class CsvService {
   }
 
   private getNestedValue<T>(obj: T, path: string): unknown {
-    return path.split('.').reduce((acc: any, part) => acc && acc[part], obj);
+    return path.split('.').reduce<Record<string, unknown> | undefined>(
+      (acc, part) => {
+        if (acc && typeof acc === 'object' && part in acc) {
+          return acc[part] as Record<string, unknown> | undefined;
+        }
+        return undefined;
+      },
+      obj as Record<string, unknown>,
+    );
   }
 }

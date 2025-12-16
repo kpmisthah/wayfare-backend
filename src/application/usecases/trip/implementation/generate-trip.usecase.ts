@@ -7,7 +7,7 @@ import { IGenerateTripUsecase } from '../interafaces/generate-trip.usecase.inter
 export class GenerateTripUsecase implements IGenerateTripUsecase {
   constructor(
     @Inject('IAiModel')
-    private readonly aiService: IAiModel,
+    private readonly _aiService: IAiModel,
   ) {}
   async execute(dto: GenerateTripDto) {
     console.log(dto, 'in dto GenerateTripDto in ai');
@@ -96,7 +96,7 @@ ${dto.preferences?.interests ? `- Include places and experiences related to: ${d
 }
 `;
 
-    const aiService = await this.aiService.askModal(prompt);
+    const aiService = await this._aiService.askModal(prompt);
     console.log(aiService, 'aiServiceee');
     return aiService;
   }

@@ -9,7 +9,6 @@ import {
   ParseEnumPipe,
   ParseIntPipe,
   Patch,
-  Post,
   Query,
   UseGuards,
   Res,
@@ -24,10 +23,9 @@ import { SafeUser } from '../../application/dtos/safe-user.dto';
 import { PayoutDetailsDTO } from '../../application/dtos/payout-details.dto';
 import { WalletTransactionDto } from '../../application/dtos/wallet-transaction.dto';
 import { AgencyRevenueDTO } from '../../application/dtos/agency-revenue.dto';
-import { PreferenceDto } from '../../application/dtos/preferences.dto';
 import { IAdminRevenue } from '../../application/usecases/admin/interfaces/admin-revenue.usecase.interface';
 import { IAdminSumaryUsecase } from '../../application/usecases/admin/interfaces/admin-summary-usecase.interface';
-import { IAdminService } from '../../application/usecases/admin/interfaces/admin.usecase.interface';
+import { IAdminUsecase } from '../../application/usecases/admin/interfaces/admin.usecase.interface';
 import { IAgencyRevenue } from '../../application/usecases/admin/interfaces/agency-revenue.usecase.interface';
 import { IBookingUseCase } from '../../application/usecases/booking/interfaces/bookiing.usecase.interface';
 import { ICreatePayoutRequestUsecase } from '../../application/usecases/payment/interfaces/create-payout.usecase.interface';
@@ -45,7 +43,7 @@ import { Role } from '../../domain/enums/role.enum';
 export class AdminController {
   constructor(
     @Inject(ADMIN_TYPE.IAdminService)
-    private readonly _adminUsecase: IAdminService,
+    private readonly _adminUsecase: IAdminUsecase,
     @Inject('IAdminRevenue')
     private readonly _adminRevenue: IAdminRevenue,
     @Inject('IAgencyRevenue')
@@ -273,10 +271,7 @@ export class AdminController {
 
   @Get('/export/agency-revenue')
   async exportAgencyRevenue(@Res() res: Response) {
-    const result: any = await this._agencyRevenue.getAgencyRevenueSummary(
-      1,
-      10000,
-    );
+    const result = await this._agencyRevenue.getAgencyRevenueSummary(1, 10000);
     const revenue: AgencyRevenueDTO[] = result.data || [];
 
     const columns: ExportColumn<AgencyRevenueDTO>[] = [

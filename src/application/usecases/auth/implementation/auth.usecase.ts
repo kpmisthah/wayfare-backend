@@ -34,24 +34,24 @@ import { Role } from '../../../../domain/enums/role.enum';
 export class AuthService implements IAuthUsecase {
   constructor(
     @Inject(WINSTON_MODULE_NEST_PROVIDER)
-    private readonly logger: LoggerService,
+    private readonly _logger: LoggerService,
     @Inject('IUserService')
     private readonly _userUsecase: IUserUsecase,
 
-    private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
+    private readonly _jwtService: JwtService,
+    private readonly _configService: ConfigService,
 
     @Inject('IOtpService')
-    private readonly otpService: IOtpService,
+    private readonly _otpService: IOtpService,
 
     @Inject('IAuthRepository')
-    private readonly authRepo: IAuthRepository,
+    private readonly _authRepo: IAuthRepository,
 
     @Inject('IAgencyService')
-    private readonly agencyService: IAgencyService,
+    private readonly _agencyService: IAgencyService,
 
     @Inject('IArgonService')
-    private readonly argonService: IArgonService,
+    private readonly _argonService: IArgonService,
 
     private readonly jwtFactory: JwtTokenFactory,
     @Inject('IUserRepository')
@@ -61,7 +61,7 @@ export class AuthService implements IAuthUsecase {
     private readonly _redisService: IRedisService,
 
     @Inject('INodemailerService')
-    private readonly nodemailerService: NodemailerService,
+    private readonly _nodemailerService: NodemailerService,
   ) {}
 
   async signUp(signupDto: SignupDto) {
@@ -74,29 +74,33 @@ export class AuthService implements IAuthUsecase {
         signupDto.password,
         signupDto.confirmPassword,
       );
-      this.logger.debug?.('Hashing password for signup', {
+      this._logger.debug?.('Hashing password for signup', {
         email: signupDto.email,
       });
       const hashPassword = await this.hash(signupDto.password);
-      await this.otpService.sendOtp(
+      await this._otpService.sendOtp(
         signupDto.email,
         signupDto.name,
         hashPassword,
         signupDto.role,
         signupDto.mobile ?? '',
       );
-      this.logger.log('Signup OTP sent successfully', {
+      this._logger.log('Signup OTP sent successfully', {
         email: signupDto.email,
       });
       return { message: 'Otp sent to your email verify that otp' };
     } catch (error) {
-      this.logger.error('Signup failed', { email: signupDto.email, error });
+      const err = error instanceof Error ? error : new Error(String(error));
+      this._logger.error('Signup failed', {
+        email: signupDto.email,
+        error: err.message,
+      });
       throw error;
     }
   }
 
   async verifyOtp(verifyOtpDto: VerifyOtpDto) {
-    this.logger.debug?.('Verifying OTP', { email: verifyOtpDto.email });
+    this._logger.debug?.('Verifying OTP', { email: verifyOtpDto.email });
 
     const key = `otp:${verifyOtpDto.email}`;
     const data = await this._redisService.get(key);
@@ -134,7 +138,7 @@ export class AuthService implements IAuthUsecase {
     );
 
     await this.updateRefreshToken(user?.id, tokens?.refreshToken);
-    this.logger.log('User verified and created', {
+    this._logger.log('User verified and created', {
       userId: user.id,
       email: user.email,
     });
@@ -147,7 +151,7 @@ export class AuthService implements IAuthUsecase {
 
   async resendOtp(resendOtpDto: ResendOtpDto) {
     try {
-      this.logger.debug?.('Resending OTP', { email: resendOtpDto.email });
+      this._logger.debug?.('Resending OTP', { email: resendOtpDto.email });
 
       const key = `otp:${resendOtpDto.email}`;
       const existingData = await this._redisService.get(key);
@@ -175,7 +179,7 @@ export class AuthService implements IAuthUsecase {
         );
       }
 
-      const newOtp = await this.nodemailerService.sendOtpToEmail(
+      const newOtp = await this._nodemailerService.sendOtpToEmail(
         resendOtpDto.email,
       );
 
@@ -185,13 +189,16 @@ export class AuthService implements IAuthUsecase {
       };
 
       await this._redisService.set(key, JSON.stringify(newPayload), 300);
-      this.logger.log('OTP resent successfully', { email: resendOtpDto.email });
+      this._logger.log('OTP resent successfully', {
+        email: resendOtpDto.email,
+      });
 
       return { message: 'New OTP sent successfully' };
     } catch (error) {
-      this.logger.error('Resend OTP failed', {
+      const err = error instanceof Error ? error : new Error(String(error));
+      this._logger.error('Resend OTP failed', {
         email: resendOtpDto.email,
-        error,
+        error: err.message,
       });
       throw error;
     }
@@ -204,7 +211,7 @@ export class AuthService implements IAuthUsecase {
       throw new BadRequestException('This email does not exist');
     }
 
-    await this.otpService.sendForgotPasswordOtp(user.email, user.name);
+    await this._otpService.sendForgotPasswordOtp(user.email, user.name);
   }
 
   async verifyForgotPassword(verifyForgotPassword: VerifyForgotPasswordDto) {
@@ -238,7 +245,7 @@ export class AuthService implements IAuthUsecase {
     }
     console.log(resetPassword, 'password resett');
     const hashedPassword = await this.hash(resetPassword.password);
-    await this.authRepo.resetPassword(resetPassword.email, {
+    await this._authRepo.resetPassword(resetPassword.email, {
       password: hashedPassword,
     });
 
@@ -267,16 +274,18 @@ export class AuthService implements IAuthUsecase {
   async signIn(loginDto: LoginDto) {
     try {
       console.log(loginDto, 'loginDto');
-      const userEntity = await this._userUsecase.findByEmail(loginDto.email);
-      console.log(userEntity, 'userEntity');
-      if (!userEntity) {
+      const userWithPassword = await this._userUsecase.findByEmail(
+        loginDto.email,
+      );
+      console.log(userWithPassword, 'userWithPassword');
+      if (!userWithPassword) {
         throw new BadRequestException('User does not exist');
       }
-      if (userEntity.isBlock) {
+      if (userWithPassword.isBlock) {
         throw new ForbiddenException('Your Account has been Blocked by Admin');
       }
-      const isMatch = await this.argonService.comparePassword(
-        userEntity.password,
+      const isMatch = await this._argonService.comparePassword(
+        userWithPassword.password,
         loginDto.password,
       );
       console.log(isMatch, 'matching password');
@@ -285,14 +294,25 @@ export class AuthService implements IAuthUsecase {
         throw new BadRequestException('Password is incorrect');
       }
       const tokens = await this.jwtFactory.generateTokens(
-        userEntity.id,
-        userEntity.name,
-        userEntity.role,
+        userWithPassword.id,
+        userWithPassword.name,
+        userWithPassword.role,
       );
       if (!tokens) throw new BadRequestException('Token not found');
-      await this.updateRefreshToken(userEntity.id, tokens?.refreshToken);
+      await this.updateRefreshToken(userWithPassword.id, tokens?.refreshToken);
+      // Return AuthUserDto (no password) instead of UserEntity
       return {
-        user: userEntity,
+        user: {
+          id: userWithPassword.id,
+          name: userWithPassword.name,
+          email: userWithPassword.email,
+          role: userWithPassword.role,
+          isVerified: userWithPassword.isVerified,
+          isBlock: userWithPassword.isBlock,
+          phone: userWithPassword.phone,
+          profileImage: userWithPassword.profileImage,
+          bannerImage: userWithPassword.bannerImage,
+        },
         accessToken: tokens.accessToken,
         refreshToken: tokens.refreshToken,
       };
@@ -304,7 +324,7 @@ export class AuthService implements IAuthUsecase {
 
   async logout(userId: string): Promise<{ success: StatusCode; role: Role }> {
     try {
-      const user = await this.authRepo.logout(userId);
+      const user = await this._authRepo.logout(userId);
       console.log(user, 'in logout');
       return { success: StatusCode.SUCCESS, role: user.role };
     } catch (err) {
@@ -327,7 +347,7 @@ export class AuthService implements IAuthUsecase {
       refreshToken,
     );
 
-    const refreshTokenMatches = await this.argonService.comparePassword(
+    const refreshTokenMatches = await this._argonService.comparePassword(
       user.refreshToken,
       refreshToken,
     );
@@ -351,7 +371,7 @@ export class AuthService implements IAuthUsecase {
   }
 
   async updateRefreshToken(userId: string, refreshToken: string) {
-    const hashRereshToken = await this.argonService.hashPassword(refreshToken);
+    const hashRereshToken = await this._argonService.hashPassword(refreshToken);
     await this._userUsecase.update(userId, { refreshToken: hashRereshToken });
   }
 
@@ -359,7 +379,7 @@ export class AuthService implements IAuthUsecase {
     if (!password) {
       throw new Error('Password cannot be null');
     }
-    return await this.argonService.hashPassword(password);
+    return await this._argonService.hashPassword(password);
   }
   //Google Auth
   googleLoginResponse(
@@ -393,7 +413,7 @@ export class AuthService implements IAuthUsecase {
     if (!user) {
       throw new BadRequestException('User not found');
     }
-    const isOldPasswordMatch = await this.argonService.comparePassword(
+    const isOldPasswordMatch = await this._argonService.comparePassword(
       user.password,
       changePasswordDto.oldPassword,
     );
