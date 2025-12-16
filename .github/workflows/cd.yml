@@ -1,20 +1,12 @@
-# ============================================
-# Backend CD Pipeline (Continuous Deployment)
-# ============================================
-# This pipeline DEPLOYS your application to servers
-# It runs after CI passes and deploys to staging/production
+
 
 name: Backend CD
 
-# WHEN does this run?
 on:
-  # Automatically deploy when pushing to main
   push:
     branches: [main]
     tags:
-      - 'v*'    # Deploy on version tags like v1.0.0
-
-  # Manual deployment trigger (button in GitHub UI)
+      - 'v*'  
   workflow_dispatch:
     inputs:
       environment:
@@ -26,27 +18,21 @@ on:
           - staging
           - production
 
-# Environment variables
 env:
   NODE_VERSION: '22'
-  REGISTRY: ghcr.io    # GitHub Container Registry
+  REGISTRY: ghcr.io   
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  # ============================================
-  # Job 1: Run CI checks first
-  # ============================================
+
   ci:
     name: 🔄 Run CI Checks
-    uses: ./.github/workflows/ci.yml    # Reuse CI workflow
+    uses: ./.github/workflows/ci.yml    
 
-  # ============================================
-  # Job 2: Build Production Docker Image
-  # ============================================
   build:
     name: 🐳 Build Production Image
     runs-on: ubuntu-latest
-    needs: ci    # Only after CI passes!
+    needs: ci    
     permissions:
       contents: read
       packages: write
@@ -54,10 +40,10 @@ jobs:
       image-tag: ${{ steps.meta.outputs.tags }}
 
     steps:
-      - name: 📥 Checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: 🐳 Set up Docker Buildx
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
       # Login to GitHub Container Registry
@@ -92,126 +78,68 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  # ============================================
-  # Job 3: Deploy to Staging
-  # ============================================
+
   deploy-staging:
     name: 🚀 Deploy to Staging
     runs-on: ubuntu-latest
     needs: build
-    # Deploy to staging on main branch push
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     environment:
       name: staging
-      url: https://staging-api.wanderly.app    # Your staging URL
+      url: https://staging-api.wanderly.app   
 
     steps:
-      - name: 📥 Checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: 🚀 Deploy to Staging Server
+      - name: Deploy to Staging Server
         run: |
-          echo "🚀 Deploying to STAGING environment..."
+          echo "Deploying to STAGING environment..."
           echo "Image: ${{ needs.build.outputs.image-tag }}"
-          
-          # ================================================
-          # UNCOMMENT AND MODIFY BELOW FOR YOUR DEPLOYMENT
-          # ================================================
-          
-          # Option 1: Deploy via SSH
-          # --------------------------
-          # mkdir -p ~/.ssh
-          # echo "${{ secrets.STAGING_SSH_KEY }}" > ~/.ssh/id_rsa
-          # chmod 600 ~/.ssh/id_rsa
-          # ssh-keyscan -H ${{ secrets.STAGING_HOST }} >> ~/.ssh/known_hosts
-          # 
-          # ssh ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }} << 'EOF'
-          #   cd /app/wanderly-backend
-          #   docker pull ghcr.io/YOUR_USERNAME/backend:latest
-          #   docker-compose up -d
-          # EOF
-          
-          # Option 2: Deploy to Railway/Render/Fly.io
-          # ------------------------------------------
-          # curl -X POST ${{ secrets.STAGING_DEPLOY_WEBHOOK }}
-          
-          # Option 3: Deploy to AWS ECS
-          # ----------------------------
-          # aws ecs update-service --cluster staging --service backend --force-new-deployment
 
-      - name: ✅ Verify Deployment
+      - name: Verify Deployment
         run: |
           echo "⏳ Waiting for deployment to complete..."
           sleep 30
           
-          # Health check (uncomment when you have a health endpoint)
-          # curl -f https://staging-api.wanderly.app/api/health || exit 1
-          
-          echo "✅ Staging deployment successful!"
+          echo "Staging deployment successful!"
 
-  # ============================================
-  # Job 4: Deploy to Production
-  # ============================================
+
   deploy-production:
-    name: 🚀 Deploy to Production
+    name: Deploy to Production
     runs-on: ubuntu-latest
     needs: [build, deploy-staging]
-    # Only deploy to production on version tags OR manual trigger
     if: |
       startsWith(github.ref, 'refs/tags/v') || 
       (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production')
     environment:
       name: production
-      url: https://api.wanderly.app    # Your production URL
+      url: https://api.wanderly.app   
 
     steps:
-      - name: 📥 Checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: 🚀 Deploy to Production Server
+      - name: Deploy to Production Server
         run: |
-          echo "🚀 Deploying to PRODUCTION environment..."
+          echo "Deploying to PRODUCTION environment..."
           echo "Image: ${{ needs.build.outputs.image-tag }}"
-          
-          # ================================================
-          # UNCOMMENT AND MODIFY BELOW FOR YOUR DEPLOYMENT
-          # ================================================
-          
-          # Option 1: Deploy via SSH
-          # --------------------------
-          # mkdir -p ~/.ssh
-          # echo "${{ secrets.PROD_SSH_KEY }}" > ~/.ssh/id_rsa
-          # chmod 600 ~/.ssh/id_rsa
-          # ssh-keyscan -H ${{ secrets.PROD_HOST }} >> ~/.ssh/known_hosts
-          # 
-          # ssh ${{ secrets.PROD_USER }}@${{ secrets.PROD_HOST }} << 'EOF'
-          #   cd /app/wanderly-backend
-          #   docker pull ghcr.io/YOUR_USERNAME/backend:latest
-          #   docker-compose -f docker-compose.prod.yml up -d
-          # EOF
-          
-          # Option 2: Deploy to Railway/Render/Fly.io
-          # ------------------------------------------
-          # curl -X POST ${{ secrets.PROD_DEPLOY_WEBHOOK }}
-
-      - name: 🔄 Run Database Migrations
+        
+      - name: Run Database Migrations
         run: |
-          echo "🔄 Running database migrations..."
+          echo "Running database migrations..."
           # npx prisma migrate deploy
 
-      - name: ✅ Verify Production Deployment
+      - name: Verify Production Deployment
         run: |
           echo "⏳ Waiting for deployment to complete..."
           sleep 30
-          
-          # Health check (uncomment when you have a health endpoint)
-          # curl -f https://api.wanderly.app/api/health || exit 1
           
           echo "✅ Production deployment successful!"
 
       - name: 📧 Send Notification
         run: |
-          echo "📧 Sending deployment notification..."
+          echo "Sending deployment notification..."
           # You can add Slack/Discord/Email notifications here
           # curl -X POST -H 'Content-type: application/json' \
           #   --data '{"text":"🚀 Backend deployed to production!"}' \
