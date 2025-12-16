@@ -8,7 +8,6 @@ import { UserProfileEntity } from '../../../domain/entities/user-profile.entity'
 import { UserEntity } from '../../../domain/entities/user.entity';
 
 export class UserMapper {
-
   static toAuthUserDto(userEntity: UserEntity): AuthUserDto {
     return {
       id: userEntity.id,

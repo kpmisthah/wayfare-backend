@@ -19,7 +19,7 @@ export class CreatePayoutRequestUsecase implements ICreatePayoutRequestUsecase {
     private readonly _payoutRepo: IPayoutRequestRepository,
     @Inject('IWalletUseCase')
     private readonly _walletUseCase: IWalletUseCase,
-  ) { }
+  ) {}
 
   async execute(dto: PayoutRequestDto): Promise<PayoutRequestDto | null> {
     const entity = PayoutRequestEntity.create({

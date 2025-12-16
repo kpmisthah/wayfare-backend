@@ -1,8 +1,6 @@
-
 import { AgencyRevenueDTO } from '../dtos/agency-revenue.dto';
 import { PayoutDetailsDTO } from '../dtos/payout-details.dto';
 import { WalletTransactionDto } from '../dtos/wallet-transaction.dto';
-
 
 export interface AgencyRevenueSummaryResult {
   data: AgencyRevenueDTO[];
@@ -10,7 +8,6 @@ export interface AgencyRevenueSummaryResult {
   page: number;
   totalPages: number;
 }
-
 
 export interface PayoutDetailsResult {
   data: PayoutDetailsDTO[];
@@ -23,7 +20,6 @@ export interface TransactionSummaryResult {
   page: number;
   totalPages: number;
 }
-
 
 export interface UserGroupResult {
   id: string;
