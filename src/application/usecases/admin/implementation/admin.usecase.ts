@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { IAdminRepository } from '../../../../domain/repositories/admin/admin.repository.interface';
-import { IAdminService } from '../interfaces/admin.usecase.interface';
+import { IAdminUsecase } from '../interfaces/admin.usecase.interface';
 import { ADMIN_TYPE } from '../../../../domain/types';
 import { IAgencyRepository } from '../../../../domain/repositories/agency/agency.repository.interface';
 import { AgencyManagementDto } from '../../../dtos/agency-management.dto';
@@ -11,7 +11,7 @@ import { UserMapper } from '../../mapper/user.mapper';
 import { AgencyStatus } from '../../../../domain/enums/agency-status.enum';
 
 @Injectable()
-export class AdminService implements IAdminService {
+export class AdminService implements IAdminUsecase {
   constructor(
     @Inject(ADMIN_TYPE.IAdminRepository)
     private readonly _adminRepo: IAdminRepository,
