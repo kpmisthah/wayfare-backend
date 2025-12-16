@@ -24,12 +24,12 @@ import { Role } from '../../domain/enums/role.enum';
 export class UsersController {
   constructor(
     @Inject('IUserService')
-    private readonly userService: IUserUsecase,
+    private readonly _userService: IUserUsecase,
   ) {}
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+    return this._userService.create(createUserDto);
   }
 
   @Get()
@@ -38,21 +38,17 @@ export class UsersController {
     @Query('limit') limit: string = '10',
     @Query('search') search: string,
   ) {
-    return this.userService.findAllUserFromDb(+page, +limit, search);
+    return this._userService.findAllUserFromDb(+page, +limit, search);
   }
 
   @Get(':id')
   findById(@Param('id') id: string) {
-    return this.userService.findById(id);
+    return this._userService.findById(id);
   }
 
-  @Get('email/find')
-  findByEmail(@Query('email') email: string) {
-    return this.userService.findByEmail(email);
-  }
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     console.log(updateUserDto, 'update dto in controller');
-    return this.userService.update(id, updateUserDto);
+    return this._userService.update(id, updateUserDto);
   }
 }
