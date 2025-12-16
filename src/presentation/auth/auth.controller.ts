@@ -74,7 +74,7 @@ export class AuthController {
         path: '/',
         secure: false,
       });
-    res.redirect('http://localhost:3000/');
+    res.redirect('http://app:3000/');
   }
 
   @Post('signin')

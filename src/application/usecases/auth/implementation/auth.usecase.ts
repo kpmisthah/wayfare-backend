@@ -400,7 +400,7 @@ export class AuthService implements IAuthUsecase {
         secure: false,
         maxAge: 7 * 24 * 60 * 60 * 1000,
       })
-      .redirect('http://localhost:3000');
+      .redirect('http://app:3000');
   }
 
   async changePassword(
