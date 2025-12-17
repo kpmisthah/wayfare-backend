@@ -44,7 +44,7 @@ async function bootstrap() {
     app.use(cookieParser());
 
     app.enableCors({
-      origin: ['http://localhost:3000', 'https://wayfare-frontend.vercel.app/'],
+      origin: ['https://wayfare.misthah.site'],
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     });
