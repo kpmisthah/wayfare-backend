@@ -32,9 +32,7 @@ export class StripeController {
     @Req() req: RawBodyRequest,
     @Headers('stripe-signature') signature: string,
   ) {
-    console.log(
-      '<...............................>webhook verndooooooo.....................................',
-    );
+ 
     const rawBody = req.rawBody;
     if (!rawBody) {
       throw new Error('Raw body is missing');
