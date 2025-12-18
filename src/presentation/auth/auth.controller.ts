@@ -62,19 +62,21 @@ export class AuthController {
     res
       .cookie('accessToken', result.accessToken, {
         httpOnly: true,
-        sameSite: 'lax',
+        sameSite: 'none' as const,
+        domain: '.misthah.site',
         maxAge: Number(process.env.JWT_ACCESS_EXPIRES),
         path: '/',
-        secure: false,
+        secure: true,
       })
       .cookie('refreshToken', result.refreshToken, {
         httpOnly: true,
-        sameSite: 'lax',
+        sameSite: 'none' as const,
         maxAge: Number(process.env.JWT_REFRESH_EXPIRES),
+        domain: '.misthah.site',
         path: '/',
-        secure: false,
+        secure: true,
       });
-    res.redirect('http://app:3000/');
+    res.redirect('https://wayfare.misthah.site/')
   }
 
   @Post('signin')
@@ -89,15 +91,19 @@ export class AuthController {
     return res
       .cookie('refreshToken', refreshToken, {
         httpOnly: true,
-        secure: false,
+        secure: true,
+        domain: '.misthah.site',
         expires: new Date(
           Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!),
         ),
+        sameSite:'none' as const,
         path: '/',
       })
       .cookie('accessToken', accessToken, {
         httpOnly: true,
-        secure: false,
+        secure: true,
+        sameSite:'none' as const,
+        domain: '.misthah.site',
         expires: new Date(Date.now() + Number(process.env.JWT_ACCESS_EXPIRES!)),
         path: '/',
       })
@@ -122,7 +128,9 @@ export class AuthController {
     return res
       .cookie('refreshToken', refreshToken, {
         httpOnly: true,
-        secure: false,
+        secure: true,
+        sameSite:'none' as const,
+        domain: '.misthah.site',
         expires: new Date(
           Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!),
         ),
@@ -130,7 +138,9 @@ export class AuthController {
       })
       .cookie('accessToken', accessToken, {
         httpOnly: true,
-        secure: false,
+        secure: true,
+        domain: '.misthah.site',
+        sameSite:'none' as const,
         expires: new Date(Date.now() + Number(process.env.JWT_ACCESS_EXPIRES!)),
         path: '/',
       })
@@ -169,7 +179,9 @@ export class AuthController {
     return res
       .cookie('refreshToken', refreshToken, {
         httpOnly: true,
-        secure: false,
+        secure: true,
+        sameSite:'none' as const,
+        domain: '.misthah.site',
         expires: new Date(
           Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!),
         ),
@@ -177,7 +189,9 @@ export class AuthController {
       })
       .cookie('accessToken', accessToken, {
         httpOnly: true,
-        secure: false,
+        secure: true,
+        sameSite:'none' as const,
+        domain: '.misthah.site',
         expires: new Date(Date.now() + Number(process.env.JWT_ACCESS_EXPIRES!)),
         path: '/',
       })
@@ -199,8 +213,14 @@ export class AuthController {
     @Req() req: RequestWithUser,
     @Res({ passthrough: true }) res: Response,
   ) {
-    res.clearCookie('accessToken');
-    res.clearCookie('refreshToken');
+    res.clearCookie('accessToken',{
+      domain:'.misthah.site',
+      path:'/'
+    });
+    res.clearCookie('refreshToken',{
+      domain:'.misthah.site',
+      path:'/'
+    });
     const result = await this._authUsecase.logout(req.user.userId);
     console.log(result, 'resultttt');
     return result;
@@ -223,7 +243,9 @@ export class AuthController {
     return res
       .cookie('refreshToken', refreshTokenResponse, {
         httpOnly: true,
-        secure: false,
+        secure: true,
+        sameSite:'none' as const,
+        domain: '.misthah.site',
         expires: new Date(
           Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!),
         ),
@@ -231,7 +253,9 @@ export class AuthController {
       })
       .cookie('accessToken', accessTokenResponse, {
         httpOnly: true,
-        secure: false,
+        secure: true,
+        sameSite:"none" as const,
+        domain: '.misthah.site',
         expires: new Date(Date.now() + Number(process.env.JWT_ACCESS_EXPIRES!)),
         path: '/',
       })
