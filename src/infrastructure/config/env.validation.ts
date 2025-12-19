@@ -6,8 +6,12 @@ export const envSchema = z.object({
     .default('development'),
   PORT: z.coerce.number().default(3000),
 
-  POSTGRES_DATABASE_URL: z.string().url(),
-  MONGODB_DATABASE_URL: z.string().url(),
+  POSTGRES_DATABASE_URL: z
+  .string()
+  .min(1)
+  .refine((val) => val.startsWith('postgresql://'), {
+    message: 'POSTGRES_DATABASE_URL must be a valid PostgreSQL connection string',
+  }),
 
   JWT_SECRET: z.string().min(10),
   JWT_ACCESS_SECRET: z.string().min(10),
