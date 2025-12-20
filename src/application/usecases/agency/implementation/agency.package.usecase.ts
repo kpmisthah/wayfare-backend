@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { PackageDto } from '../../../dtos/add-package.dto';
 import { IAgencyPackageService } from '../interfaces/agency-package.interface';
 import { IAgencyPackageRepository } from '../../../../domain/repositories/agency/agency-package.repository';
@@ -33,7 +33,7 @@ export class AgencyPackageService implements IAgencyPackageService {
     private readonly _userRepo: IUserRepository,
     @Inject('ITransportationRepository')
     private readonly _transportationRepo: ITransportationRepository,
-  ) {}
+  ) { }
   async addPackages(
     addPackageDto: PackageDto,
     userId: string,
@@ -60,6 +60,14 @@ export class AgencyPackageService implements IAgencyPackageService {
 
     if (!existingAgency) {
       return null;
+    }
+
+    // Check if the agency's user is verified by admin
+    const user = await this._userRepo.findById(userId);
+    if (!user || !user.isVerified) {
+      throw new ForbiddenException(
+        'Your agency is not verified yet. Please wait for admin approval before adding packages.',
+      );
     }
     const createTransport = TransportationEntity.create({
       vehicle: addPackageDto.vehicle,

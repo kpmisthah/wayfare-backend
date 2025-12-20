@@ -49,7 +49,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     @Inject(forwardRef(() => 'IChatUsecase'))
     private readonly _chatUsecase: ChatUsecase,
-  ) {}
+  ) { }
   afterInit(server: Server) {
     server.use((socket: Socket, next) => {
       const cookies = cookie.parse(socket.handshake.headers.cookie || '');
@@ -149,7 +149,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   notifyConnectionRequest(
     receiverId: string,
-    payload: { senderId: string; senderName: string },
+    payload: { connectionId: string; senderId: string; senderName: string; senderProfileImage: string },
   ) {
     this.server.to(receiverId).emit('connectionRequest', payload);
   }

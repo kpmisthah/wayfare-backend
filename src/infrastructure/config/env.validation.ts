@@ -19,6 +19,7 @@ export const envSchema = z.object({
   JWT_ACCESS_EXPIRES: z.coerce.number(),
   JWT_REFRESH_EXPIRES: z.coerce.number(),
 
+
   EMAIL_HOST: z.string().min(1),
   EMAIL_PORT: z.coerce.number(),
   EMAIL_USER: z.string().email(),
@@ -36,6 +37,8 @@ export const envSchema = z.object({
 
   STRIPE_SECRET_KEY: z.string().min(1),
   STRIPE_WEBHOOK_SECRET: z.string().min(1),
+
+
 
   OPEN_ROUTER_API: z.string().min(1),
 

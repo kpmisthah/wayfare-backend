@@ -31,7 +31,7 @@ export class SendConnectionUseCase implements ISendConnection {
     @Inject('INotificationUsecase')
     private readonly _notificationUsecase: INotifactionUsecase,
     private readonly _chatGateway: ChatGateway,
-  ) {}
+  ) { }
 
   async execute(
     senderId: string,
@@ -50,7 +50,7 @@ export class SendConnectionUseCase implements ISendConnection {
       status: 'PENDING',
     });
 
-    await this._connectionRepo.create(connection);
+    const createdConnection = await this._connectionRepo.create(connection);
     const sender = await this._userRepo.findById(senderId);
     if (!sender) throw new NotFoundException('Sender not found');
 
@@ -63,8 +63,10 @@ export class SendConnectionUseCase implements ISendConnection {
       receiverId,
     );
     this._chatGateway.notifyConnectionRequest(receiverId, {
+      connectionId: createdConnection?.id ?? '',
       senderId,
       senderName: sender.name,
+      senderProfileImage: sender.profileImage ?? '',
     });
     return { message: 'Connection request sent successfully' };
   }
