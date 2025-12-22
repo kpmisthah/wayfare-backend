@@ -44,12 +44,7 @@ async function bootstrap() {
     app.use(cookieParser());
 
     app.enableCors({
-      origin: [
-        'https://wayfare.misthah.site',
-        'https://api.misthah.site',
-        'https://misthah.site',
-        /\.misthah\.site$/,  // Allow all subdomains
-      ],
+      origin: 'https://wayfare.misthah.site',
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
       allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With'],

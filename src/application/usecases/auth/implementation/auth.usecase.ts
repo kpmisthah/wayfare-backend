@@ -374,13 +374,21 @@ export class AuthService implements IAuthUsecase {
     res
       .cookie('accessToken', appAccessToken, {
         httpOnly: true,
-        secure: false,
-        maxAge: 5 * 60 * 1000,
+        secure: true,
+        sameSite:'none' as const,
+        domain:'.wayfare.misthah.site',
+        expires: new Date(Date.now() + Number(process.env.JWT_ACCESS_EXPIRES!)),
+        path:'/'
       })
       .cookie('refreshToken', appRefreshToken, {
         httpOnly: true,
-        secure: false,
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        secure: true,
+        sameSite: 'none' as const,
+        domain: '.wayfare.misthah.site',
+        expires: new Date(
+          Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!),
+        ),
+        path:'/'        
       })
       .redirect('http://app:3000');
   }

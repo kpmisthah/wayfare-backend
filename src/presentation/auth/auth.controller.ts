@@ -60,7 +60,7 @@ export class AuthController {
       .cookie('accessToken', result.accessToken, {
         httpOnly: true,
         sameSite: 'none' as const,
-        domain: '.misthah.site',
+        domain: '.wayfare.misthah.site',
         maxAge: Number(process.env.JWT_ACCESS_EXPIRES),
         path: '/',
         secure: true,
@@ -69,7 +69,7 @@ export class AuthController {
         httpOnly: true,
         sameSite: 'none' as const,
         maxAge: Number(process.env.JWT_REFRESH_EXPIRES),
-        domain: '.misthah.site',
+        domain: '.wayfare.misthah.site',
         path: '/',
         secure: true,
       });
@@ -88,7 +88,7 @@ export class AuthController {
       .cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: true,
-        domain: '.misthah.site',
+        domain: '.wayfare.misthah.site',
         expires: new Date(
           Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!),
         ),
@@ -99,7 +99,7 @@ export class AuthController {
         httpOnly: true,
         secure: true,
         sameSite: 'none' as const,
-        domain: '.misthah.site',
+        domain: '.wayfare.misthah.site',
         expires: new Date(Date.now() + Number(process.env.JWT_ACCESS_EXPIRES!)),
         path: '/',
       })
@@ -125,7 +125,7 @@ export class AuthController {
         httpOnly: true,
         secure: true,
         sameSite: 'none' as const,
-        domain: '.misthah.site',
+        domain: '.wayfare.misthah.site',
         expires: new Date(
           Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!),
         ),
@@ -134,7 +134,7 @@ export class AuthController {
       .cookie('accessToken', accessToken, {
         httpOnly: true,
         secure: true,
-        domain: '.misthah.site',
+        domain: '.wayfare.misthah.site',
         sameSite: 'none' as const,
         expires: new Date(Date.now() + Number(process.env.JWT_ACCESS_EXPIRES!)),
         path: '/',
@@ -174,7 +174,7 @@ export class AuthController {
         httpOnly: true,
         secure: true,
         sameSite: 'none' as const,
-        domain: '.misthah.site',
+        domain: '.wayfare.misthah.site',
         expires: new Date(
           Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!),
         ),
@@ -184,7 +184,7 @@ export class AuthController {
         httpOnly: true,
         secure: true,
         sameSite: 'none' as const,
-        domain: '.misthah.site',
+        domain: '.wayfare.misthah.site',
         expires: new Date(Date.now() + Number(process.env.JWT_ACCESS_EXPIRES!)),
         path: '/',
       })
@@ -206,11 +206,11 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     res.clearCookie('accessToken', {
-      domain: '.misthah.site',
+      domain: '.wayfare.misthah.site',
       path: '/',
     });
     res.clearCookie('refreshToken', {
-      domain: '.misthah.site',
+      domain: '.wayfare.misthah.site',
       path: '/',
     });
     const result = await this._authUsecase.logout(req.user.userId);
@@ -235,7 +235,7 @@ export class AuthController {
         httpOnly: true,
         secure: true,
         sameSite: 'none' as const,
-        domain: '.misthah.site',
+        domain: '.wayfare.misthah.site',
         expires: new Date(
           Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!),
         ),
@@ -245,7 +245,7 @@ export class AuthController {
         httpOnly: true,
         secure: true,
         sameSite: 'none' as const,
-        domain: '.misthah.site',
+        domain: '.wayfare.misthah.site',
         expires: new Date(Date.now() + Number(process.env.JWT_ACCESS_EXPIRES!)),
         path: '/',
       })
