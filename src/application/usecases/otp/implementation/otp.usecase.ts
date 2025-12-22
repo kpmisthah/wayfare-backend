@@ -13,7 +13,7 @@ export class OtpService implements IOtpService {
     private readonly _nodemailerService: NodemailerService,
     @Inject('IRedisService')
     private readonly _redisService: IRedisService,
-  ) {}
+  ) { }
 
   async sendOtp(
     email: string,
@@ -24,13 +24,16 @@ export class OtpService implements IOtpService {
   ) {
     try {
       const otp = await this._nodemailerService.sendOtpToEmail(email);
+      console.log(`📧 [OTP - SIGNUP] Email: ${email} | OTP: ${otp}`);
       const key = `otp:${email}`;
       await this._redisService.set(
         key,
         JSON.stringify({ otp, password, name, role, phone }),
         300,
       );
-    } catch (error) {}
+    } catch (error) {
+      console.error('[OTP - SIGNUP] Failed to send OTP:', error);
+    }
   }
   async agencyVerification(email: string, loginLink: string) {
     try {
@@ -48,6 +51,7 @@ export class OtpService implements IOtpService {
       email,
       name,
     );
+    console.log(`🔑 [OTP - FORGOT PASSWORD] Email: ${email} | OTP: ${otp}`);
     const key = `forgot:${email}`;
 
     await this._redisService.set(key, JSON.stringify({ otp }), 300);
