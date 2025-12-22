@@ -12,25 +12,19 @@ export class AgencyDashboardRepository implements IAgencyDashboardRepository {
   constructor(private readonly _prisma: PrismaService) {}
 
   async getDashboardData(userId: string): Promise<AgencyDashboardData> {
-    console.log(`[AgencyDashboard] Fetching data for userId: ${userId}`);
     const agency = await this._prisma.agency.findUnique({
       where: { userId },
     });
 
     if (!agency) {
-      console.error(
-        `[AgencyDashboard] Agency profile not found for userId: ${userId}`,
-      );
       throw new NotFoundException('Agency profile not found');
     }
 
     const agencyId = agency.id;
-    console.log(`[AgencyDashboard] Found agencyId: ${agencyId}`);
 
     const totalPackages = await this._prisma.package.count({
       where: { agencyId },
     });
-    console.log(`[AgencyDashboard] Total Packages: ${totalPackages}`);
 
     const activeBookings = await this._prisma.booking.count({
       where: {
@@ -38,7 +32,6 @@ export class AgencyDashboardRepository implements IAgencyDashboardRepository {
         status: { in: [BookingStatus.CONFIRMED, BookingStatus.PENDING] },
       },
     });
-    console.log(`[AgencyDashboard] Active Bookings: ${activeBookings}`);
 
     const revenueResult = await this._prisma.booking.aggregate({
       _sum: {
@@ -50,7 +43,6 @@ export class AgencyDashboardRepository implements IAgencyDashboardRepository {
       },
     });
     const totalRevenue = revenueResult._sum.agencyEarning || 0;
-    console.log(`[AgencyDashboard] Total Revenue: ${totalRevenue}`);
 
     const bookings = await this._prisma.booking.findMany({
       where: { agencyId },
@@ -61,7 +53,6 @@ export class AgencyDashboardRepository implements IAgencyDashboardRepository {
         package: { select: { destination: true } },
       },
     });
-    console.log(`[AgencyDashboard] Found ${bookings.length} recent bookings`);
 
     const recentBookings: RecentBooking[] = bookings.map((b) => ({
       id: b.bookingCode || b.id,

@@ -36,9 +36,7 @@ export class ProfileController {
 
   @Get('/profile')
   async getProfileData(@Req() req: RequestWithUser) {
-    console.log('Controller Hit');
     const userId = req.user['userId'];
-    console.log(userId, 'userId');
     return await this.profileService.getProfileData(userId);
   }
 
@@ -49,10 +47,8 @@ export class ProfileController {
   ) {
     try {
       const userId = req.user['userId'];
-      console.log(createProfileDto, 'in backedn controller');
       return await this.profileService.createProfile(userId, createProfileDto);
     } catch (error) {
-      console.log(error, 'error in ocntroller');
       throw new InternalServerErrorException('Failed to create Profile');
     }
   }
@@ -64,11 +60,8 @@ export class ProfileController {
     @UploadedFile() file: Express.Multer.File,
     @Body('type') type: 'profile' | 'banner',
   ) {
-    console.log(file);
     const userId = req.user['userId'];
-    console.log(userId, 'userId in upload-profile');
     const imageUrl = await this.uploadProfile.execute(userId, file, type);
-    console.log(imageUrl, 'img url');
 
     return { imageUrl };
   }
@@ -77,9 +70,7 @@ export class ProfileController {
     @Req() req: RequestWithUser,
     @Body('imageUrl') imageUrl: string,
   ) {
-    console.log('profile controller');
     const userId = req.user['userId'];
-    console.log(userId, 'profile controller l userId');
 
     return this.profileService.updateProfileImage(userId, imageUrl);
   }
@@ -90,14 +81,12 @@ export class ProfileController {
     @Body()
     data: { name: string; email: string; phone: string; location: string },
   ) {
-    console.log('update profile l');
     const userId = req.user['userId'];
     return await this.profileService.updateProfile(userId, data);
   }
   @Get('/me')
   async getUserProfile(@Req() req: RequestWithUser) {
     const userPr = await this.profileService.findById(req.user.userId);
-    console.log(userPr, 'user{rofile');
     return userPr;
   }
 }

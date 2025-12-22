@@ -8,8 +8,7 @@ import { MessageMapper } from '../../../../mappers/message.mapper';
 @Injectable()
 export class MessageRepository
   extends BaseRepository<MessageEntity>
-  implements IChatRepository
-{
+  implements IChatRepository {
   constructor(private readonly _prisma: PrismaService) {
     super(_prisma.message, MessageMapper);
   }
@@ -28,7 +27,6 @@ export class MessageRepository
     return MessageMapper.toDomains(msgs);
   }
   async createChat(message: MessageEntity): Promise<MessageEntity> {
-    console.log(message, 'messageeeee');
     const msg = await this._prisma.message.create({
       data: MessageMapper.toPrisma(message),
       include: {
@@ -37,10 +35,8 @@ export class MessageRepository
         },
       },
     });
-    console.log(msg, 'msgggg');
     return MessageMapper.toDomain(msg);
   }
-  // src/infrastructure/repositories/message.repository.ts (or create GroupRepository)
 
   async createGroup(data: {
     name: string;

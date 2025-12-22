@@ -41,7 +41,6 @@ export class BookingController {
   ): Promise<Response> {
     const userId = req.user['userId'];
     const result = await this._bookingUseCase.createBooking(bookingDto, userId);
-    console.log(result, 'resultofbooking controllererrrrr');
     if (!result) {
       return res
         .status(StatusCode.BAD_REQUEST)
@@ -84,7 +83,6 @@ export class BookingController {
   @Post('/cancel/:id')
   @Roles(Role.User)
   async cancelBooking(@Param('id') id: string) {
-    console.log(id, 'in booking.controller.ts');
     return await this._bookingUseCase.cancelBooking(id);
   }
 
@@ -96,7 +94,6 @@ export class BookingController {
     @Req() req: RequestWithUser,
   ) {
     const agencyId = req.user['userId'];
-    console.log(agencyId, 'agencyId');
 
     return this._bookingUseCase.updateBookingStatus(
       bookingId,
@@ -112,7 +109,6 @@ export class BookingController {
   ) {
     const userId = req.user['userId'];
     const result = await this._bookingUseCase.retryPayment(bookingId, userId);
-    console.log(result, 'in retry payment');
     return result;
   }
 

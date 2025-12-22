@@ -21,7 +21,6 @@ export class ProfileService implements IProfileService {
   ) {}
 
   async getProfileData(id: string): Promise<GetProfileDto | null> {
-    console.log('service l ethundo ', id);
     const userEntity = await this._userRepo.findById(id);
     if (!userEntity) {
       return null;
@@ -53,7 +52,6 @@ export class ProfileService implements IProfileService {
     userId: string,
     imageUrl: string,
   ): Promise<Pick<User, 'profileImage' | 'bannerImage'>> {
-    console.log(imageUrl, 'in profile service');
     return this._profileRepo.updateProfileImage(userId, {
       profileImage: imageUrl,
     });
@@ -64,15 +62,12 @@ export class ProfileService implements IProfileService {
     updateUserProfileDto: UpdateUserProfileDto,
   ): Promise<UpdateUserProfileDto | null> {
     const user = await this._userRepo.findById(userId);
-    console.log(user, 'from updateProfile in Backend');
     if (!user) return null;
     const userRepoUpdate = user?.update(updateUserProfileDto);
-    console.log(userRepoUpdate, 'userUpdate..........');
     if (!userRepoUpdate) {
       return null;
     }
     const userRepoUpdated = await this._userRepo.update(userId, userRepoUpdate);
-    console.log(userRepoUpdated, 'userRepoUpdated broo');
     const existingProfile = await this._profileRepo.findById(userId);
     let updateProfileEntity: UserProfileEntity;
     if (existingProfile) {
@@ -89,7 +84,6 @@ export class ProfileService implements IProfileService {
       userId,
       updateProfileEntity,
     );
-    console.log(updateUserProfile, 'updatedUserProfile');
 
     if (!updateUserProfile) {
       return null;
@@ -99,11 +93,9 @@ export class ProfileService implements IProfileService {
 
   async findById(userId: string): Promise<UpdateUserProfileDto | null> {
     const user = await this._userRepo.findById(userId);
-    console.log(user, 'in profileRepo');
 
     if (!user) return null;
     const userProfile = await this._profileRepo.findById(userId);
-    console.log(userProfile, 'userProfile in profile repo');
 
     if (!userProfile) return null;
     return UserMapper.toUserProfileDto(userProfile, user);

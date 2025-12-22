@@ -7,7 +7,7 @@ export class RejectConnectionUseCase implements IRejectConnection {
   constructor(
     @Inject('IConnectionRepository')
     private readonly _ConnectionRepo: IConnectionRepository,
-  ) {}
+  ) { }
 
   async execute(id: string): Promise<{ message: string }> {
     const connection = await this._ConnectionRepo.findById(id);

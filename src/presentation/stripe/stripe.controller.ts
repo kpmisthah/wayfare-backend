@@ -32,7 +32,6 @@ export class StripeController {
     @Req() req: RawBodyRequest,
     @Headers('stripe-signature') signature: string,
   ) {
- 
     const rawBody = req.rawBody;
     if (!rawBody) {
       throw new Error('Raw body is missing');

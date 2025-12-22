@@ -24,17 +24,13 @@ export class OtpService implements IOtpService {
   ) {
     try {
       const otp = await this._nodemailerService.sendOtpToEmail(email);
-      console.log(otp, 'otp');
       const key = `otp:${email}`;
       await this._redisService.set(
         key,
         JSON.stringify({ otp, password, name, role, phone }),
         300,
       );
-      console.log(`OTP for ${email}: ${otp}`);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }
   async agencyVerification(email: string, loginLink: string) {
     try {
@@ -55,8 +51,5 @@ export class OtpService implements IOtpService {
     const key = `forgot:${email}`;
 
     await this._redisService.set(key, JSON.stringify({ otp }), 300);
-
-    console.log(`Forgot Password OTP for ${email}: ${otp}`);
-    console.log(key, 'forgot_password_otp_key');
   }
 }

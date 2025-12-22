@@ -7,18 +7,18 @@ export const envSchema = z.object({
   PORT: z.coerce.number().default(3000),
 
   POSTGRES_DATABASE_URL: z
-  .string()
-  .min(1)
-  .refine((val) => val.startsWith('postgresql://'), {
-    message: 'POSTGRES_DATABASE_URL must be a valid PostgreSQL connection string',
-  }),
+    .string()
+    .min(1)
+    .refine((val) => val.startsWith('postgresql://'), {
+      message:
+        'POSTGRES_DATABASE_URL must be a valid PostgreSQL connection string',
+    }),
 
   JWT_SECRET: z.string().min(10),
   JWT_ACCESS_SECRET: z.string().min(10),
   JWT_REFRESH_SECRET: z.string().min(10),
   JWT_ACCESS_EXPIRES: z.coerce.number(),
   JWT_REFRESH_EXPIRES: z.coerce.number(),
-
 
   EMAIL_HOST: z.string().min(1),
   EMAIL_PORT: z.coerce.number(),
@@ -37,8 +37,6 @@ export const envSchema = z.object({
 
   STRIPE_SECRET_KEY: z.string().min(1),
   STRIPE_WEBHOOK_SECRET: z.string().min(1),
-
-
 
   OPEN_ROUTER_API: z.string().min(1),
 

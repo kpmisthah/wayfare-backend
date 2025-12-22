@@ -38,8 +38,6 @@ export class AiTripEntity {
       interests?: string[];
     } | null;
   }) {
-    console.log(props, 'in entrity');
-
     return new AiTripEntity(
       '',
       props.userId,

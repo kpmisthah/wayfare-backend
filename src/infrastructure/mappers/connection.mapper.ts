@@ -50,7 +50,6 @@ export class ConnectionMapper {
   static toConnectDomains(
     connections: ConnectionWithUser[],
   ): ConnectionEntity[] {
-    console.log(connections, 'in toConnectionDomain');
     return connections.map((connections) => {
       return ConnectionMapper.toConnectionDomain(connections);
     });

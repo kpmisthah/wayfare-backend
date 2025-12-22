@@ -16,7 +16,7 @@ export class TravellersUsecase implements ITravellersUsecase {
     private readonly _userRepo: IUserRepository,
     @Inject(PROFILE_TYPE.IProfileRepository)
     private readonly _profileRepo: IProfileRepository,
-  ) {}
+  ) { }
   async fetchTravellers(
     destination: string,
     userId: string,

@@ -11,7 +11,6 @@ export class WalletSchedulerService {
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async handleDailyWalletRelease() {
-    console.log('Running daily wallet pending credit release...');
     await this._walletStatusService.releasePendingCredits();
   }
 }

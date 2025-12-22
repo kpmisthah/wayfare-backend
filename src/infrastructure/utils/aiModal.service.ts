@@ -11,8 +11,6 @@ export class AiModal implements IAiModel {
   });
 
   async askModal(prompt: string): Promise<string> {
-    console.log(prompt, 'promptttttt in askModaaaalll');
-
     const completion = await this.openai.chat.completions.create({
       model: 'nvidia/nemotron-nano-9b-v2:free',
       messages: [
@@ -28,10 +26,8 @@ export class AiModal implements IAiModel {
       ],
       // response_format: { type: 'json_object' },
     });
-    console.log(completion, 'complettionnnnn');
 
     const message = completion.choices?.[0].message?.content || '';
-    console.log(message, 'message');
     const jsonMatch = message.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       console.error('Could not extract JSON from AI response:', message);

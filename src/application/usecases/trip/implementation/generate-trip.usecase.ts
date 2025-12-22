@@ -10,8 +10,6 @@ export class GenerateTripUsecase implements IGenerateTripUsecase {
     private readonly _aiService: IAiModel,
   ) {}
   async execute(dto: GenerateTripDto) {
-    console.log(dto, 'in dto GenerateTripDto in ai');
-
     let preferencesSection = '';
     if (dto.preferences) {
       preferencesSection = `\nUser Preferences:`;
@@ -97,7 +95,6 @@ ${dto.preferences?.interests ? `- Include places and experiences related to: ${d
 `;
 
     const aiService = await this._aiService.askModal(prompt);
-    console.log(aiService, 'aiServiceee');
     return aiService;
   }
 }

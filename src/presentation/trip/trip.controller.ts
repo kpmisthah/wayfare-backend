@@ -36,7 +36,6 @@ export class TripController {
     @Body() dto: GenerateTripDto,
   ): Promise<TripDto> {
     const userId = req.user.userId;
-    console.log(dto, 'dto in controlllerrrrrr trip controlllerrr');
     return await this._generateAndSaveTrip.execute(userId, dto);
   }
   @Get('/:id/:destination')

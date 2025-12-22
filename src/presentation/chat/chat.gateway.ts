@@ -49,14 +49,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     @Inject(forwardRef(() => 'IChatUsecase'))
     private readonly _chatUsecase: ChatUsecase,
-  ) { }
+  ) {}
   afterInit(server: Server) {
     server.use((socket: Socket, next) => {
       const cookies = cookie.parse(socket.handshake.headers.cookie || '');
       const token = cookies['accessToken'];
 
       if (!token) {
-        console.log('No token → disconnecting');
         return next(new Error('Authentication error'));
       }
 
@@ -73,10 +72,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         (socket as AuthenticatedSocket).userId = userId;
         void socket.join(userId);
-        console.log(`Authenticated socket ${socket.id} → user ${userId}`);
         next(); // success
       } catch (err) {
-        console.log('JWT verification failed:', err);
         return next(new Error('Authentication error'));
       }
     });
@@ -111,22 +108,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleConnection(client: Socket) {
     const userId = (client as unknown as AuthenticatedSocket).userId;
     if (!userId) {
-      console.log(`Unauthorized socket ${client.id} → disconnecting`);
       client.disconnect(true);
       return;
     }
     void client.join(userId);
-    console.log(`User ${userId} connected with socket ${client.id}`);
     client.broadcast.emit('userOnline', { userId });
     try {
       const groups = await this._chatUsecase.getUserGroups(userId);
-      console.log(
-        groups,
-        'ee grp s l entha vera noikknmonmofffdsdfsdfsd---0123024===================',
-      );
       groups.forEach((group: Group) => {
         void client.join(group.id);
-        console.log(`[AUTO-JOIN] ${userId} → group ${group.id}`);
       });
       void client.join(userId);
     } catch (err) {
@@ -143,13 +133,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
   }
 
-  handleDisconnect(client: Socket) {
-    console.log('Socket disconnected:', client.id);
-  }
+  handleDisconnect(client: Socket) {}
 
   notifyConnectionRequest(
     receiverId: string,
-    payload: { connectionId: string; senderId: string; senderName: string; senderProfileImage: string },
+    payload: {
+      connectionId: string;
+      senderId: string;
+      senderName: string;
+      senderProfileImage: string;
+    },
   ) {
     this.server.to(receiverId).emit('connectionRequest', payload);
   }
@@ -190,12 +183,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
     if (!client.rooms.has(roomId)) {
       void client.join(roomId);
-      console.log(`[JOIN] Client ${client.id} → room: ${roomId}`);
-      console.log('Rooms:', client.rooms); // <-- debug
-      console.log(
-        'Clients in room:',
-        this.server.sockets.adapter.rooms.get(roomId)?.size,
-      );
     }
   }
 
@@ -217,17 +204,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody()
     data: { conversationId?: string; groupId?: string; content: string },
   ) {
-    console.log(
-      'e]&=============================================================>',
-    );
-    console.log(
-      `[GATEWAY] Message received: "${data.content}" from socket ${client.id}`,
-    );
     const senderId = (client as unknown as AuthenticatedSocket).userId;
-    console.log(senderId, 'sernderIdddd');
-    console.log(`[GATEWAY] Message from ${senderId}:`, data.content);
-    console.log(`         → conversationId: ${data.conversationId || 'null'}`);
-    console.log(`         → groupId: ${data.groupId || 'null'}`);
     if (!data.content?.trim()) return;
     // Save message
     let savedMessage: MessageDto;
@@ -237,7 +214,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         senderId,
         data.content,
       );
-      console.log(savedMessage, '==============>saved message<============');
       this.server.to(data.groupId).emit('receiveMessage', savedMessage);
     } else if (data.conversationId) {
       const saved = await this._chatUsecase.saveMessages(
@@ -245,16 +221,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         senderId,
         data.content,
       );
-      console.log(
-        saved,
-        '==========================in chat gateway===========================',
-      );
 
       const messageWithStatus = { ...saved, status: 'sent' };
       this.server
         .to(data.conversationId)
         .emit('receiveMessage', messageWithStatus);
-      console.log('emit event sender');
     }
   }
 
@@ -289,10 +260,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     },
   ) {
     const fromUserId = (client as AuthenticatedSocket).userId;
-    console.log(
-      `----------<><><>${fromUserId} is calling ${data.toUserId} (${data.callType})----------------->`,
-    );
-    console.log(data, 'data in handlerStartCalll');
 
     this.server.to(data.toUserId).emit('incomingCall', {
       from: fromUserId,
@@ -306,7 +273,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { callerId: string; signal: unknown },
   ) {
-    console.log(`Call accepted by ${(client as AuthenticatedSocket).userId}`);
     this.server.to(data.callerId).emit('callAccepted', { signal: data.signal });
   }
   @SubscribeMessage('rejectCall')

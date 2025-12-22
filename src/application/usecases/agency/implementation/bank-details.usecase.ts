@@ -31,10 +31,8 @@ export class BankingDetailsUsecase implements IBankingDetailsUsecase {
       bankName: bankDetailsDto.bankName,
       branch: bankDetailsDto.branch,
     });
-    console.log(bankDetails, 'bank detailsss');
     const createBankDetails =
       await this._bankingDetailsRepo.create(bankDetails);
-    console.log(createBankDetails, 'createBankDetails');
     if (!createBankDetails) return null;
     return BankingMapper.toBankingDetailsDto(createBankDetails);
   }
@@ -44,7 +42,6 @@ export class BankingDetailsUsecase implements IBankingDetailsUsecase {
     const bankDetails = await this._bankingDetailsRepo.findByAgencyId(
       agency.id,
     );
-    console.log(bankDetails, 'bankdetailsss');
 
     if (!bankDetails) return null;
 

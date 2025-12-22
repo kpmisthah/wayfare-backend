@@ -28,7 +28,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       throw new Error('Google profile is undefined');
     }
     const { name, emails, photos } = profile;
-    console.log(name, 'name', emails, 'emails', photos, 'photos');
 
     const user = {
       email: emails![0].value,
@@ -36,7 +35,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       lastName: name?.familyName || '',
       picture: photos?.[0]?.value || '',
     };
-    console.log(user, 'user');
     return user;
   }
 }

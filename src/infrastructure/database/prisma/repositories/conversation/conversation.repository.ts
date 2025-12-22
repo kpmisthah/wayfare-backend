@@ -6,7 +6,7 @@ import { ConversationMapper } from '../../../../mappers/coversation.mapper';
 
 @Injectable()
 export class ConversationRepository implements IConversationRepository {
-  constructor(private readonly _prisma: PrismaService) {}
+  constructor(private readonly _prisma: PrismaService) { }
 
   async createConversation(userIds: string[]): Promise<ConversationEntity> {
     const conversation = await this._prisma.conversation.create({
@@ -16,7 +16,6 @@ export class ConversationRepository implements IConversationRepository {
         },
       },
     });
-    console.log(conversation, 'conersation in conversationr repo');
     return new ConversationEntity(
       conversation.id,
       userIds,
@@ -47,7 +46,7 @@ export class ConversationRepository implements IConversationRepository {
       where: { participants: { some: { userId } } },
       include: { participants: true },
     });
-    // if (conversations) return null;
+
     return ConversationMapper.toDomains(conversations);
   }
 }

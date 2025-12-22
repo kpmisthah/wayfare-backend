@@ -9,7 +9,6 @@ import { UserProfileEntity } from '../../../../../domain/entities/user-profile.e
 export class ProfileRepository implements IProfileRepository {
   constructor(private readonly _prisma: PrismaService) {}
   async findById(userId: string): Promise<UserProfileEntity | null> {
-    console.log(userId, 'userIddds');
     const profile = await this._prisma.userProfile.findFirst({
       where: {
         userId,
@@ -41,8 +40,6 @@ export class ProfileRepository implements IProfileRepository {
     userId: string,
     data: { profileImage?: string; bannerImage?: string },
   ): Promise<Pick<User, 'profileImage' | 'bannerImage'>> {
-    console.log('updateProfile l ethundo');
-
     return await this._prisma.user.update({
       where: { id: userId },
       data: {

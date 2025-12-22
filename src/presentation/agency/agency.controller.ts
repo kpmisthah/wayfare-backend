@@ -69,7 +69,6 @@ export class AgencyController {
     @Req() req: RequestWithUser,
   ) {
     const agencyId = req.user['userId'];
-    console.log(createAgencyDto, 'update agency profile dto');
     return await this._agencyUsecase.createAgency(createAgencyDto, agencyId);
   }
 
@@ -97,7 +96,6 @@ export class AgencyController {
     @UploadedFiles() files: Express.Multer.File[],
     @Req() req: RequestWithUser,
   ) {
-    console.log('post--------------------------adikkndoooo-------------');
     const userId = req.user['userId'];
 
     const parsedBody: PackageDto = {
@@ -106,7 +104,6 @@ export class AgencyController {
         addPackageDto.itinerary as unknown as string,
       ) as itineraryDto[],
     };
-    console.log(parsedBody, 'parsedBodyyyyyyyy');
     return await this._agencyPackageUsecase.addPackages(
       parsedBody,
       userId,
@@ -121,8 +118,6 @@ export class AgencyController {
     @Query('limit') limit: string = '5',
     @Query('search') search?: string,
   ) {
-    console.log('get adikkndooo-------------------------');
-
     const userId = req.user['userId'];
     return await this._agencyPackageUsecase.getPackages(
       userId,
@@ -139,8 +134,6 @@ export class AgencyController {
   }
   @Patch('/profile/:id')
   updateProfile(@Param('id') id: string) {
-    console.log(id, 'from agency');
-
     return this._agencyUsecase.updateStatus(id);
   }
 
@@ -153,7 +146,6 @@ export class AgencyController {
     @Query() filterPackageDto: FilterPackageDto,
   ): Promise<any> {
     // Update return type in interface first if possible
-    console.log('hello');
 
     return await this._agencyPackageUsecase.filterPackages(filterPackageDto);
   }
@@ -162,7 +154,6 @@ export class AgencyController {
     @Param('id') id: string,
     @Body() updatePackageDto: UpdatePackageDto,
   ) {
-    console.log(id, 'id in packageid');
     return await this._agencyPackageUsecase.updatePackage(id, updatePackageDto);
   }
   @Patch('/package/status/:id')
@@ -176,14 +167,12 @@ export class AgencyController {
   @Get('/trending/packages')
   async trendingPackages() {
     const result = await this._agencyPackageUsecase.trendingPackages();
-    console.log(result, 'result');
     return result;
   }
 
   @Get('/me')
   async getAgency(@Req() req: RequestWithUser) {
     const agencyId = req.user['userId'];
-    console.log(agencyId, 'agencyIddd');
     return await this._agencyProfileUsecase.findProfile(agencyId);
   }
 
@@ -221,12 +210,9 @@ export class AgencyController {
     @Query('limit') limit?: string,
     @Query('search') search?: string,
   ): Promise<{ data: PackageDto[]; total: number; totalPages: number }> {
-    console.log('==================Hellooooooo agecnyId==========', agencyId);
     const pageNumber = page ? Number(page) : 1;
-    console.log(pageNumber, 'pageNumber');
 
     const limitNumber = limit ? Number(limit) : 10;
-    console.log(limitNumber, 'limitNumber');
 
     const data = await this._agencyPackageUsecase.getPackagesByAgencyId(
       agencyId,
@@ -234,7 +220,6 @@ export class AgencyController {
       limitNumber,
       search,
     );
-    console.log(data, 'in agencyId/packages');
     return data;
   }
 
@@ -258,14 +243,11 @@ export class AgencyController {
     @Body() body: { action: 'accept' | 'reject'; reason?: string },
   ) {
     const { action, reason } = body;
-    console.log(action, 'action');
-    console.log(reason, 'reason');
     return await this._agencyUsecase.agencyApproval(id, action, reason);
   }
   @Get('/bank/details')
   async getAgencyBankDetails(@Req() req: RequestWithUser) {
     const userId = req.user['userId'];
-    console.log(userId, 'userIddd');
     return await this._bankingDetailsUsecase.getBankDetailsByAgency(userId);
   }
   @Post('/bank-details')

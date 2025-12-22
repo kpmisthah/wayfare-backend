@@ -36,9 +36,7 @@ export class ConnectionController {
     @Req() req: RequestWithUser,
   ): Promise<unknown[]> {
     const userId = req.user['userId'];
-    console.log(userId, 'userIddddddd');
     const u = await this._sendConnection.getAcceptedConnections(userId);
-    console.log(u, 'uu');
     return u as unknown[];
   }
   @Post(':receiverId')
@@ -46,14 +44,11 @@ export class ConnectionController {
     @Req() req: RequestWithUser,
     @Param('receiverId') receiverId: string,
   ): Promise<{ message: string }> {
-    console.log(receiverId, 'recieverIddd');
     const senderId = req.user['userId'];
-    console.log(senderId, 'senderIddd');
     return await this._sendConnection.execute(senderId, receiverId);
   }
   @Patch(':id/accept')
   async accept(@Param('id') id: string): Promise<{ message: string }> {
-    console.log(id, 'acceptance id in accept method');
     return await this._acceptConnection.execute(id);
   }
   @Patch(':id/reject')

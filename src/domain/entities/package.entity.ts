@@ -12,8 +12,7 @@ export class PackageEntity {
     private readonly _status: PackageStatus,
     private readonly _price: number,
     private readonly _transportationId: string,
-    // private readonly _transportation?: TransportationEntity | null,
-  ) {}
+  ) { }
 
   static create(props: {
     agencyId: string;
@@ -26,7 +25,6 @@ export class PackageEntity {
     status: PackageStatus;
     price: number;
     transportationId: string;
-    // transportationEntity:TransportationEntity
   }) {
     return new PackageEntity(
       '',
@@ -40,7 +38,6 @@ export class PackageEntity {
       props.status,
       props.price,
       props.transportationId,
-      // props.transportationEntity
     );
   }
 
@@ -52,10 +49,6 @@ export class PackageEntity {
     duration?: number;
     picture?: string[];
     price?: number;
-    // vehicle?:string,
-    // pickup_point?:string,
-    // drop_point?:string,
-    // detail?:string,
     status?: PackageStatus;
   }): PackageEntity {
     return new PackageEntity(
@@ -107,7 +100,4 @@ export class PackageEntity {
   get transportationId() {
     return this._transportationId;
   }
-  // get transportation() {
-  //   return this._transportation;
-  // }
 }

@@ -23,7 +23,7 @@ export class BookingEntity {
     private readonly _destination?: string,
     private readonly _title?: string,
     private readonly _duration?: number,
-  ) {}
+  ) { }
   static create(props: {
     packageId: string;
     userId: string;
@@ -35,7 +35,6 @@ export class BookingEntity {
     travelDate: string;
     commission: number;
   }) {
-    console.log(props, 'props in create');
     const platformEarning = (props.totalAmount * props.commission) / 100;
     const agencyEarning = props.totalAmount - platformEarning;
     return new BookingEntity(
@@ -113,9 +112,6 @@ export class BookingEntity {
   get travelDate() {
     return this._travelDate;
   }
-  // get paymentIndentedId(){
-  //     return this._paymentIndentedId
-  // }
   get agencyId() {
     return this._agencyId;
   }

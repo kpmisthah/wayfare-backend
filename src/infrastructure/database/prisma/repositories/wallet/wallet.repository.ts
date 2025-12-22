@@ -17,7 +17,6 @@ export class WalletRepository
     const wallet = await this._prisma.wallet.findFirst({
       where: { userId },
     });
-    console.log(wallet, 'already ino nokaaaanaaa');
 
     return WalletMapper.toDomain(wallet);
   }

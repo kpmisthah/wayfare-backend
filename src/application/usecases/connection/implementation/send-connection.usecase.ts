@@ -73,11 +73,9 @@ export class SendConnectionUseCase implements ISendConnection {
 
   async getConnectionForUser(userId: string): Promise<ConnectionDto[]> {
     const connection = await this._connectionRepo.getUserConnection(userId);
-    console.log(connection, 'connection');
     return ConnectionMapper.toConnectionsDto(connection);
   }
   async getAcceptedConnections(userId: string): Promise<AcceptedConnection[]> {
-    console.log(userId, 'usersIddddd in getAceepted connectin');
     return await this._connectionRepo.findAcceptedConnections(userId);
   }
 }

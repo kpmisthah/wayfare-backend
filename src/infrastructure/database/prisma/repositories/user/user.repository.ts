@@ -47,10 +47,7 @@ export class UserRepository
       },
     });
 
-    console.log(data, 'data');
-
     const allUser = UserMapper.toDomainMany(data);
-    console.log(allUser, 'allUser');
 
     const total = await this._prisma.user.count({
       where: {

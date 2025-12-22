@@ -15,7 +15,6 @@ export class AgencyPackageRepository
     super(_prisma.package, PackageMapper);
   }
   async addPackages(packages: PackageEntity): Promise<PackageEntity> {
-    console.log(packages, 'packages in agency packager repo');
     const createPackage = await this._prisma.package.create({
       data: PackageMapper.toPrisma(packages),
     });
@@ -99,10 +98,6 @@ export class AgencyPackageRepository
     minBudget: number,
     maxBudget: number,
   ): Promise<PackageEntity[]> {
-    console.log(destination, 'destination in filt repo');
-    console.log(duration, 'duration in repo');
-    console.log(minBudget, 'minBudget');
-    console.log(maxBudget, 'maxBudget');
     const filterPackages = await this._prisma.package.findMany({
       where: {
         destination,
@@ -119,7 +114,6 @@ export class AgencyPackageRepository
         },
       },
     });
-    console.log(filterPackages, 'filter packages');
 
     return PackageMapper.toPackageEntities(filterPackages);
   }
@@ -146,7 +140,6 @@ export class AgencyPackageRepository
         },
       },
     });
-    console.log(trending, 'trending in repo');
     return PackageMapper.toPackageEntities(trending);
   }
 }

@@ -37,8 +37,6 @@ export class AgencyProfilService implements IAgencyProfileService {
     if (!agencyProfileEntity) {
       return null;
     }
-    console.log(agencyId, 'agencyId');
-
     const agency = await this._agencyProfileRepo.updateProfile(
       agencyProfileEntity,
       agencyId,

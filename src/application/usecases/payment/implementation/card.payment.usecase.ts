@@ -21,8 +21,6 @@ export class CardPaymentUsecase implements IPayment {
   }
 
   async payment(booking: BookingEntity, agencyId: string) {
-    console.log(booking, 'in cardPayment and ', agencyId, 'in here');
-
     const checkoutUrl = await this._paymentProvider.createCheckoutSession({
       amount: booking.totalAmount,
       currency: 'inr',
@@ -44,11 +42,6 @@ export class CardPaymentUsecase implements IPayment {
       currency: 'inr',
       initiatedBy: Role.User,
     });
-    console.log(
-      transactionEntity,
-      'rransaction entity in card.payment.usecase',
-    );
-    console.log(checkoutUrl, 'in cardpayment.usecase');
     await this._transactionRepo.create(transactionEntity);
     return {
       checkoutUrl,

@@ -79,7 +79,6 @@ export class BookingMapper {
     agencyEntity: AgencyEntity[],
   ): (FetchUserBookingDto | undefined)[] {
     return bookingEntity.map((booking) => {
-      console.log(booking, '------------------------><--------------');
       const pkgEntity = packageEntity.find((pkg) => {
         if (pkg) {
           return pkg.id == booking.packageId;
@@ -87,12 +86,10 @@ export class BookingMapper {
       });
 
       if (!pkgEntity) return;
-      console.log(agencyEntity, 'gumb engne miss aay');
 
       const userEntity = agencyUsers.find((user) =>
         agencyEntity.find((agency) => agency.userId == user.id),
       );
-      console.log(userEntity, 'user enitty gumb evde');
 
       return BookingMapper.toFetchUserBookingDto(
         booking,

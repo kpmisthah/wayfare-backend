@@ -12,7 +12,6 @@ export class AgencyBankDetailsMapper {
       agencyBankDetails.bankName ?? '',
       agencyBankDetails.branch ?? '',
     );
-    console.log(obj, 'obj in toDmain');
     return obj;
   }
   static toPrisma(
@@ -26,7 +25,6 @@ export class AgencyBankDetailsMapper {
       agency: { connect: { id: agencyBankDetails.agencyId } },
       branch: agencyBankDetails.branch,
     };
-    console.log(obj, 'in proussa');
     return obj;
   }
 }

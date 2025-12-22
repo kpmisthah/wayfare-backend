@@ -15,16 +15,12 @@ export class NotificationUsecase implements INotifactionUsecase {
   ) {}
 
   async createNotification(dto: CreateNotificationDto, userId: string) {
-    console.log(dto, 'in createNotifacation');
-
     const entity = NotificationEntity.create({
       userId,
       title: dto.title,
       message: dto.message,
       type: dto.type,
     });
-
-    console.log(entity, 'in create notifcationENtityty');
 
     const notification = await this._notificationRepo.create(entity);
     if (!notification) return null;

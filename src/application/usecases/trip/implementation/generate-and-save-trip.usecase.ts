@@ -17,7 +17,6 @@ export class GenerateAndSaveTrip implements IGenerateAndSaveTrip {
   async execute(userId: string, dto: GenerateTripDto): Promise<TripDto> {
     const generate = await this._generateTrip.execute(dto);
     const JsonResponse: TripResponse = JSON.parse(generate) as TripResponse;
-    console.log(dto, 'in ecescurte application generate and save');
     const saveToDb = await this._saveTrip.saveTrip(
       userId,
       JsonResponse,
@@ -25,7 +24,6 @@ export class GenerateAndSaveTrip implements IGenerateAndSaveTrip {
       dto.visiblity,
       dto.preferences,
     );
-    console.log(saveToDb, 'saveToDbb');
 
     return saveToDb;
   }

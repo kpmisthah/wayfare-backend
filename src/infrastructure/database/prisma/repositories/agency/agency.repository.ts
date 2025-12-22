@@ -39,7 +39,6 @@ export class AgencyRepository
   // }
   async findAlll(): Promise<AgencyEntity[] | null> {
     const agency = await this._prisma.agency.findMany();
-    console.log(agency, 'agency in repo getAllAgencies');
     if (!agency) {
       return null;
     }
@@ -73,7 +72,6 @@ export class AgencyRepository
       take,
       where,
     });
-    console.log(agency, 'agency in repo getAllAgencies');
     if (!agency) {
       return null;
     }
@@ -105,7 +103,6 @@ export class AgencyRepository
       skip,
       take: limit,
     });
-    console.log(agencies, 'agency in repo getAllAgencies');
     if (!agencies) {
       return null;
     }
@@ -143,10 +140,6 @@ export class AgencyRepository
   //   return AgencyMapper.toDomain(agency);
   // }
   async findByUserId(id: string): Promise<AgencyEntity | null> {
-    console.log(
-      id,
-      '---------------------------from agency repo findByUserId------------------------------',
-    );
     const agency = await this._prisma.agency.findFirst({
       where: { userId: id },
     });

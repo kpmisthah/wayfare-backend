@@ -6,7 +6,7 @@ import { AgencyRevenueDTO } from '../../../../../application/dtos/agency-revenue
 
 @Injectable()
 export class AgenciesRevenueRepository implements IAgencyRevenueRepository {
-  constructor(private readonly _prisma: PrismaService) {}
+  constructor(private readonly _prisma: PrismaService) { }
 
   async getAgencyRevenueSummary(
     page: number,
@@ -38,13 +38,11 @@ export class AgenciesRevenueRepository implements IAgencyRevenueRepository {
       };
     }
 
-    // Get agencies with search filter
     const agencies = await this._prisma.agency.findMany({
       where: agencyWhereClause,
       select: { id: true, user: { select: { name: true } } },
     });
 
-    // Map and filter results
     const filteredResults: AgencyRevenueDTO[] = [];
     for (const summary of agencySummary) {
       const matchedAgency = agencies.find(
@@ -60,7 +58,6 @@ export class AgenciesRevenueRepository implements IAgencyRevenueRepository {
       }
     }
 
-    // Calculate pagination
     const total = filteredResults.length;
     const totalPages = Math.ceil(total / limit);
     const skip = (page - 1) * limit;

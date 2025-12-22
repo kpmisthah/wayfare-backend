@@ -48,9 +48,6 @@ export class AuthController {
     @Req() req: Request & { user: any },
     @Res() res: Response,
   ) {
-    console.log('ACCESS_EXPIRES:', process.env.JWT_ACCESS_EXPIRES);
-    console.log('PARSED:', Number(process.env.JWT_ACCESS_EXPIRES));
-
     const result = await this._googleLoginUsecase.execute(
       req.user as {
         email: string;
@@ -76,7 +73,7 @@ export class AuthController {
         path: '/',
         secure: true,
       });
-    res.redirect('https://wayfare.misthah.site/')
+    res.redirect('https://wayfare.misthah.site/');
   }
 
   @Post('signin')
@@ -87,7 +84,6 @@ export class AuthController {
   ): Promise<Response> {
     const { user, accessToken, refreshToken } =
       await this._authUsecase.signIn(loginDto);
-    console.log(user, 'iuser');
     return res
       .cookie('refreshToken', refreshToken, {
         httpOnly: true,
@@ -96,13 +92,13 @@ export class AuthController {
         expires: new Date(
           Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!),
         ),
-        sameSite:'none' as const,
+        sameSite: 'none' as const,
         path: '/',
       })
       .cookie('accessToken', accessToken, {
         httpOnly: true,
         secure: true,
-        sameSite:'none' as const,
+        sameSite: 'none' as const,
         domain: '.misthah.site',
         expires: new Date(Date.now() + Number(process.env.JWT_ACCESS_EXPIRES!)),
         path: '/',
@@ -113,7 +109,6 @@ export class AuthController {
   @Post('signup')
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   signup(@Body() singupDto: SignupDto) {
-    console.log(singupDto, 'signupDto gooys');
     return this._authUsecase.signUp(singupDto);
   }
 
@@ -129,7 +124,7 @@ export class AuthController {
       .cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: true,
-        sameSite:'none' as const,
+        sameSite: 'none' as const,
         domain: '.misthah.site',
         expires: new Date(
           Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!),
@@ -140,7 +135,7 @@ export class AuthController {
         httpOnly: true,
         secure: true,
         domain: '.misthah.site',
-        sameSite:'none' as const,
+        sameSite: 'none' as const,
         expires: new Date(Date.now() + Number(process.env.JWT_ACCESS_EXPIRES!)),
         path: '/',
       })
@@ -157,8 +152,6 @@ export class AuthController {
   @Post('forgot-password')
   @Throttle({ default: { limit: 3, ttl: 60000 } })
   forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
-    console.log('forgot password controller l ethunnund');
-
     return this._authUsecase.forgotPassword(forgotPasswordDto);
   }
 
@@ -180,7 +173,7 @@ export class AuthController {
       .cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: true,
-        sameSite:'none' as const,
+        sameSite: 'none' as const,
         domain: '.misthah.site',
         expires: new Date(
           Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!),
@@ -190,7 +183,7 @@ export class AuthController {
       .cookie('accessToken', accessToken, {
         httpOnly: true,
         secure: true,
-        sameSite:'none' as const,
+        sameSite: 'none' as const,
         domain: '.misthah.site',
         expires: new Date(Date.now() + Number(process.env.JWT_ACCESS_EXPIRES!)),
         path: '/',
@@ -203,7 +196,6 @@ export class AuthController {
   async getMe(@Req() req: RequestWithUser) {
     const userId = req.user['userId'];
     const user = await this._userUsecase.findById(userId);
-    console.log(user, 'user in /me');
     return user;
   }
 
@@ -213,16 +205,15 @@ export class AuthController {
     @Req() req: RequestWithUser,
     @Res({ passthrough: true }) res: Response,
   ) {
-    res.clearCookie('accessToken',{
-      domain:'.misthah.site',
-      path:'/'
+    res.clearCookie('accessToken', {
+      domain: '.misthah.site',
+      path: '/',
     });
-    res.clearCookie('refreshToken',{
-      domain:'.misthah.site',
-      path:'/'
+    res.clearCookie('refreshToken', {
+      domain: '.misthah.site',
+      path: '/',
     });
     const result = await this._authUsecase.logout(req.user.userId);
-    console.log(result, 'resultttt');
     return result;
   }
   @UseGuards(RefreshTokenGuard)
@@ -233,7 +224,6 @@ export class AuthController {
   ): Promise<Response> {
     const userId = req.user['userId'];
     const refreshToken = req.user['refreshToken'];
-    console.log('user id is there', userId);
     const user = await this._userUsecase.findById(userId);
     if (user?.isBlock) {
       throw new ForbiddenException('Account is Blocked');
@@ -244,7 +234,7 @@ export class AuthController {
       .cookie('refreshToken', refreshTokenResponse, {
         httpOnly: true,
         secure: true,
-        sameSite:'none' as const,
+        sameSite: 'none' as const,
         domain: '.misthah.site',
         expires: new Date(
           Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!),
@@ -254,7 +244,7 @@ export class AuthController {
       .cookie('accessToken', accessTokenResponse, {
         httpOnly: true,
         secure: true,
-        sameSite:"none" as const,
+        sameSite: 'none' as const,
         domain: '.misthah.site',
         expires: new Date(Date.now() + Number(process.env.JWT_ACCESS_EXPIRES!)),
         path: '/',

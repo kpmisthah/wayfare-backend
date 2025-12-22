@@ -8,8 +8,7 @@ import { NotificationMapper } from '../../../../mappers/notification.mapper';
 @Injectable()
 export class NotificationRepository
   extends BaseRepository<NotificationEntity>
-  implements INotificationRepository
-{
+  implements INotificationRepository {
   constructor(private readonly _prisma: PrismaService) {
     super(_prisma.notification, NotificationMapper);
   }

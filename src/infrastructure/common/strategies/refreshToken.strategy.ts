@@ -15,7 +15,6 @@ export class RefreshTokenStrategy extends PassportStrategy(
     @Inject('IUserService')
     private readonly _userService: IUserUsecase,
   ) {
-    console.log('refreshToken');
     const refreshSecret = _configService.get<string>('JWT_REFRESH_SECRET');
     if (!refreshSecret) {
       throw new Error('JWT_REFRESH_SECRET is not defined');
@@ -31,19 +30,15 @@ export class RefreshTokenStrategy extends PassportStrategy(
   }
 
   async validate(req: Request, payload: { sub: string }) {
-    console.log(payload, 'paypatti');
-
     const refreshToken: string = (
       req as Request & { cookies: Record<string, any> }
     )?.cookies?.refreshToken as string;
-    console.log(refreshToken, 'refreshToken');
 
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token missing');
     }
     const user = await this._userService.findById(payload.sub);
 
-    console.log(user, 'User frk access');
     if (!user || user.isBlock) {
       throw new UnauthorizedException('Invalid refresh token or user blocked');
     }
@@ -52,7 +47,6 @@ export class RefreshTokenStrategy extends PassportStrategy(
       user.refreshToken,
       refreshToken,
     );
-    console.log(isRefreshTokenValid, 'REfresh token validation');
 
     if (!isRefreshTokenValid) {
       throw new UnauthorizedException('Invalid refresh token');

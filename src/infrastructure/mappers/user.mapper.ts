@@ -22,8 +22,6 @@ export class UserMapper {
   static toPrisma(
     user: UserEntity,
   ): Omit<User, 'id' | 'createdAt' | 'updatedAt'> {
-    console.log(user, 'toPrisma saving');
-
     const saveTodb = {
       email: user.email,
       password: user.password,
@@ -37,7 +35,6 @@ export class UserMapper {
       phone: user.phone,
       lastSeen: user.lastSeen || new Date(),
     };
-    console.log(saveTodb, 'in prisma saveToDb');
     return saveTodb;
   }
 

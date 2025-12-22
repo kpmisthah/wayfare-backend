@@ -15,8 +15,6 @@ export class TripRepository
   }
 
   async createAiTrip(data: AiTripEntity): Promise<AiTripEntity> {
-    console.log(data, 'from ai trip entity');
-
     const createPlan = await this._prisma.tripPlan.create({
       data: TripMapper.toPrisma(data),
     });

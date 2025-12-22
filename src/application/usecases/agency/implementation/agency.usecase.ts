@@ -37,7 +37,6 @@ export class AgencyService implements IAgencyService {
     userId: string,
   ): Promise<AgencyResponseDto | null> {
     const existingUser = await this._userService.findById(userId);
-    console.log(existingUser, 'existingUser from agency');
     if (!existingUser) return null;
     const agencyEntity = AgencyEntity.create({
       ...createAgencyDto,
@@ -46,10 +45,7 @@ export class AgencyService implements IAgencyService {
       totalEarnings: 0,
       transactionId: null,
     });
-    console.log(agencyEntity, 'agencyEntity');
-
     const agency = await this._agencyRepo.create(agencyEntity);
-    console.log(agency, 'agency');
     if (!agency) {
       return null;
     }
@@ -60,7 +56,6 @@ export class AgencyService implements IAgencyService {
     action: 'accept' | 'reject',
     reason?: string,
   ): Promise<AgencyManagementDto | null> {
-    console.log(action, 'action in usecase', reason, 'reason in usecase');
     const agencyEntity = await this._agencyRepo.findById(id);
     if (!agencyEntity) return null;
     const userEntity = await this._userRepo.findById(agencyEntity.userId);
@@ -68,21 +63,16 @@ export class AgencyService implements IAgencyService {
     let updatedUser: UserEntity;
     let updatedAgency: AgencyEntity;
     if (action === 'accept') {
-      console.log('reject aakumbo accept l verndo');
       const userUpdate = userEntity.update({ isVerified: true });
       updatedUser = await this._userRepo.update(userUpdate.id, userUpdate);
       updatedAgency = agencyEntity.updateAgency({ reason: null });
       const u = await this._agencyRepo.update(updatedAgency.id, updatedAgency);
-      console.log(u, 'updated agency');
     } else {
-      console.log('reject aakumbo ivide alle verunne');
       const userUpdate = userEntity.update({ isVerified: false });
       updatedUser = await this._userRepo.update(userUpdate.id, userUpdate);
 
       updatedAgency = agencyEntity.updateAgency({ reason });
-      console.log(updatedAgency, 'updateagency after rejection');
       const v = await this._agencyRepo.update(updatedAgency.id, updatedAgency);
-      console.log(v, 'updated agency');
     }
     return AgencyMapper.toAgencyManagement(updatedUser, updatedAgency);
   }
@@ -157,7 +147,6 @@ export class AgencyService implements IAgencyService {
         isBlock: agency.user.isBlock,
       },
     }));
-    console.log(mapped, 'mapped agenciessss');
     return {
       data: mapped,
       totalPages: Math.ceil(total / limit),

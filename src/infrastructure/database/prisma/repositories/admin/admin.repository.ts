@@ -16,7 +16,6 @@ export class AdminRepository implements IAdminRepository {
       },
     });
     if (!admin) return null;
-    console.log(admin, 'admin in infra repo');
     return UserMapper.toDomain(admin);
   }
 

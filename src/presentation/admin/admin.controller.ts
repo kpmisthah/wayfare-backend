@@ -141,7 +141,6 @@ export class AdminController {
     @Param('id') id: string,
     @Body('status') status: PayoutStatus,
   ) {
-    console.log(status, 'statuss');
     return await this._payoutRequestUsecase.approvePayout(id, status);
   }
 

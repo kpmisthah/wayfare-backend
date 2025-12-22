@@ -10,8 +10,6 @@ import { Readable } from 'stream';
 @Injectable()
 export class CloudinaryService implements ICloudinaryService {
   async uploadImage(file: Express.Multer.File): Promise<string> {
-    console.log('Uploading file:', file.originalname, 'size:', file.size);
-
     return new Promise((resolve, reject) => {
       try {
         const upload = cloudinary.uploader.upload_stream(
@@ -28,7 +26,6 @@ export class CloudinaryService implements ICloudinaryService {
               console.error('Cloudinary returned no result');
               return reject(new Error('Upload failed with no result'));
             }
-            console.log('Upload success, URL:', result.secure_url);
             resolve(result.secure_url);
           },
         );

@@ -19,12 +19,11 @@ export class StripeWebhookUsecase {
     private readonly _bookingRepo: IBookingRepository,
     @Inject('IWalletUseCase')
     private readonly _walletUseCase: IWalletUseCase,
-  ) {}
+  ) { }
 
   async handle(rawBody: Buffer, sig: string, secret: string) {
     const event = this._paymentProvider.constructEvent(rawBody, sig, secret);
 
-    // Ignore legacy Stripe events
     if (
       event.type.startsWith('payment_intent.') ||
       event.type.startsWith('charge.')

@@ -8,8 +8,6 @@ export class ArgonService implements IArgonService {
     return await argon2.hash(password);
   }
   async comparePassword(hash: string, plain: string): Promise<boolean> {
-    console.log(hash, 'hashed and plain', plain);
-
     return await argon2.verify(hash, plain);
   }
 }

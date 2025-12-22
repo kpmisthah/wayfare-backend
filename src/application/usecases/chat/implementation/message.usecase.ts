@@ -25,11 +25,7 @@ export class ChatUsecase implements IChatUsecase {
       senderId,
       content,
     });
-    console.log(conversationId, 'in message app');
-    console.log(senderId, 'sender id in message app');
-    console.log(content, 'in content in app');
     const chat = await this._chatRepo.createChat(messageEntity);
-    console.log(chat, 'chattter in app');
     const participants =
       await this._chatRepo.getConversationParticipants(conversationId);
     const receiverId = participants.find((id) => id !== senderId);
@@ -72,7 +68,6 @@ export class ChatUsecase implements IChatUsecase {
         userRoom.forEach((socketId) => {
           const socket = this._chatGateway.server.sockets.sockets.get(socketId);
           void socket?.join(groupId);
-          console.log(`[SERVER] Auto-joined ${userId} → group ${groupId}`);
         });
       }
     });
@@ -140,7 +135,6 @@ export class ChatUsecase implements IChatUsecase {
   }
   async isGroupId(id: string): Promise<boolean> {
     const group = await this._chatRepo.getGroupById(id);
-    console.log(group, '=====group in isGroupIdd===========');
     return !!group;
   }
   async getGroupMessages(groupId: string): Promise<MessageDto[]> {

@@ -25,12 +25,10 @@ export class TravellersMapper {
   ): TravellersDto[] {
     return tripEntity.map((trip) => {
       const user = userEntity.find((u) => u && u.id == trip.userId);
-      console.log(user, 'in toTravellersDto');
       if (!user) throw new Error('User not found');
       const profile = userProfile.find(
         (userPro) => userPro && userPro.userId == trip.userId,
       );
-      console.log(profile, 'in profileTotravelersDto');
       return TravellersMapper.toTravellerDto(trip, user, profile);
     });
   }

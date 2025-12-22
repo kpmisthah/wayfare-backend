@@ -38,12 +38,7 @@ export class MessageController {
     @Req() req: RequestWithUser,
   ) {
     const creatorId = req.user['userId'];
-    console.log(creatorId, 'creatorIddddd');
     const result = await this._chatUsecase.createGroup(creatorId, groupChatDto);
-    console.log(
-      result,
-      '===========>in creatrion group======================<',
-    );
     return result;
   }
   @Get('/groups')
@@ -84,7 +79,6 @@ export class MessageController {
     );
 
     const groups = await this._chatUsecase.getUserGroups(userId);
-    console.log(groups, 'grpupssssss');
     const formattedGroups = groups.map((g) => ({
       groupId: g.id,
       conversationId: null,
@@ -116,7 +110,6 @@ export class MessageController {
   async getMessages(@Param('conversationId') conversationId: string) {
     const isGroup = await this._chatUsecase.isGroupId(conversationId);
     if (isGroup) {
-      console.log(isGroup, '=========isGroup=========...');
       return this._chatUsecase.getGroupMessages(conversationId);
     } else {
       return await this._chatUsecase.getMessages(conversationId);

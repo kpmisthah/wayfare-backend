@@ -50,7 +50,6 @@ async function bootstrap() {
     });
     app.useGlobalPipes(new ValidationPipe());
     await app.listen(3000, '0.0.0.0');
-    console.log('Server started on port 3000');
   } catch (error) {
     console.error(error);
   }

@@ -20,7 +20,6 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
     @Inject('IAgencyService')
     private readonly _agencyService: IAgencyService,
   ) {
-    console.log('starting stragegy...');
     const accessSecret = _configService.get<string>('JWT_ACCESS_SECRET');
     if (!accessSecret) {
       throw new Error('JWT_ACCESS_SECRET is not defined');
@@ -39,9 +38,7 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: JwtPayload) {
-    console.log(payload, 'payload');
     const user = await this._userService.findById(payload.sub);
-    console.log(user, 'user in accessToken strategy');
     if (!user) {
       throw new UnauthorizedException({
         code: 'USER_NOT_FOUND',

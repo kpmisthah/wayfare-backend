@@ -1,10 +1,6 @@
 import { MessageDto } from '../../dtos/message.dto';
 import { MessageEntity } from '../../../domain/entities/message.entity';
 
-/**
- * Interface for MessageEntity with sender information
- * Used when messages are fetched with user relation included
- */
 interface MessageWithSender extends MessageEntity {
   sender?: {
     name: string;

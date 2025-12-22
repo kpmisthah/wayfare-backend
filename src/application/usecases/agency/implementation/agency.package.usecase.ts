@@ -39,30 +39,17 @@ export class AgencyPackageService implements IAgencyPackageService {
     userId: string,
     files: Express.Multer.File[],
   ): Promise<PackageDto | null> {
-    console.log(addPackageDto, 'addPackageDtooo');
-    console.log(files, 'filesssss');
     const uploadedUrls: string[] = [];
     for (const file of files) {
       const imageUrl = await this._cloudinaryService.uploadImage(file);
-      console.log(
-        '-------------------------------------',
-        imageUrl,
-        '-------------------------------',
-      );
       uploadedUrls.push(imageUrl);
     }
-    console.log(
-      uploadedUrls,
-      '---------------------uploadImageUrls--------------------------------',
-    );
     const existingAgency = await this._agencyRepo.findByUserId(userId);
-    console.log(existingAgency, 'exisitng agency');
 
     if (!existingAgency) {
       return null;
     }
 
-    // Check if the agency's user is verified by admin
     const user = await this._userRepo.findById(userId);
     if (!user || !user.isVerified) {
       throw new ForbiddenException(
@@ -75,15 +62,8 @@ export class AgencyPackageService implements IAgencyPackageService {
       drop_point: addPackageDto.drop_point,
       details: addPackageDto.details,
     });
-    console.log(
-      createTransport,
-      '---------------createTransporttt---------------------------',
-    );
-
     const transportaionEntity =
       await this._transportationRepo.create(createTransport);
-    console.log(transportaionEntity, 'transportationEntityyy');
-
     if (!transportaionEntity) {
       return null;
     }
@@ -99,12 +79,9 @@ export class AgencyPackageService implements IAgencyPackageService {
       status: PackageStatus.ACTIVE,
       price: Number(addPackageDto.price),
       transportationId: transportaionEntity.id,
-      // transportationEntity:transportaionEntity
     });
     const savePackage =
       await this._agencyPackageRepo.addPackages(createPackage);
-    console.log(savePackage, 'savePacakge');
-
     if (!savePackage) {
       return null;
     }
@@ -117,26 +94,17 @@ export class AgencyPackageService implements IAgencyPackageService {
         packageId: savePackage.id,
       });
     });
-
-    console.log(
-      itinerary,
-      'create itenerary.create for agency package service',
-    );
-
     const saveItinerary = await Promise.all(
       itinerary.map((it) => this._iteneraryRepo.create(it)),
     );
     if (!saveItinerary) {
       return null;
     }
-    console.log(saveItinerary, 'saveeeItinnerrraaryy');
-
     const a = AgencyMapper.toPackageDto(
       savePackage,
       saveItinerary,
       transportaionEntity,
     );
-    console.log(a, 'aaaa');
     return a;
   }
 
@@ -152,7 +120,6 @@ export class AgencyPackageService implements IAgencyPackageService {
     total: number;
   } | null> {
     const agency = await this._agencyRepo.findByUserId(userId);
-    console.log(agency, 'agency');
     if (!agency) return { items: [], page: 1, totalPages: 1, total: 0 };
     const total = await this._agencyPackageRepo.countPackages(
       agency.id,
@@ -164,11 +131,9 @@ export class AgencyPackageService implements IAgencyPackageService {
       limit,
       search,
     );
-    console.log(packages, 'packages');
     const iteneraries = await this._iteneraryRepo.getIteneraries();
     if (!iteneraries) return null;
     const items = AgencyMapper.toListPackages(packages, iteneraries);
-    console.log(items, 'itemssss');
     return {
       items,
       page,
@@ -198,15 +163,8 @@ export class AgencyPackageService implements IAgencyPackageService {
     limit: number,
     search?: string,
   ): Promise<{ data: PackageDto[]; total: number; totalPages: number }> {
-    console.log(agencyId, 'agencyidddddd');
-
     let getPackages =
       await this._agencyPackageRepo.findActiveByAgencyId(agencyId);
-    console.log(
-      getPackages,
-      '----------------->>>>>getPakcagesss,,,,,,,,,,,,--',
-    );
-
     if (search && search.trim()) {
       const searchLower = search.toLowerCase();
       getPackages = getPackages.filter(
@@ -225,15 +183,11 @@ export class AgencyPackageService implements IAgencyPackageService {
     const iteneraries = await Promise.all(
       slicedPackages.map((pkg) => this._iteneraryRepo.findByItenerary(pkg.id)),
     );
-    console.log(iteneraries);
-
     const allItineraries = iteneraries.flat();
     const mappedAgencies = AgencyMapper.toListPackages(
       slicedPackages,
       allItineraries,
     );
-    console.log(mappedAgencies, 'mapped agencies');
-
     return {
       data: mappedAgencies,
       total,
@@ -243,15 +197,12 @@ export class AgencyPackageService implements IAgencyPackageService {
 
   async getPackageDetails(packageId: string): Promise<PackageDto | null> {
     const pack = await this._agencyPackageRepo.findById(packageId);
-    console.log(pack, '<==============pack======================>');
     if (!pack) return null;
     const trans = await this._transportationRepo.findById(
       pack.transportationId,
     );
-    console.log(trans, '[[[[[[[[[[[[[[[[[[[[[trns]]]]]]]]]]]]]]]]]]]]');
     const itinerary =
       (await this._iteneraryRepo.findByItenerary(pack.id)) ?? [];
-    console.log(itinerary, 'itinerary');
 
     return AgencyMapper.toPackageDto(pack, itinerary, trans ?? undefined);
   }
@@ -349,8 +300,6 @@ export class AgencyPackageService implements IAgencyPackageService {
       travelpackage.transportationId,
     );
     if (!transportation) return null;
-    console.log(travelpackage, 'travelPackagesss in app');
-
     if (!travelpackage) return null;
     const packageUpdate = travelpackage.update({
       name: updatePackageDto.title,
@@ -362,7 +311,6 @@ export class AgencyPackageService implements IAgencyPackageService {
       price: updatePackageDto.price,
       status: updatePackageDto.status,
     });
-    console.log(packageUpdate, 'in package updare app');
     const transportationUpdate = transportation.update({
       vehicle: updatePackageDto.vehicle,
       pickup_point: updatePackageDto.pickup_point,
@@ -370,13 +318,11 @@ export class AgencyPackageService implements IAgencyPackageService {
       details: updatePackageDto.details,
     });
     const updated = await this._agencyPackageRepo.update(id, packageUpdate);
-    console.log(updated, 'in package Mapper');
     if (!updated) return null;
     const updateTransportation = await this._transportationRepo.update(
       transportation.id,
       transportationUpdate,
     );
-    console.log(updateTransportation);
     if (!updateTransportation) return null;
     return PackageMapper.toPackageDto(updated, updateTransportation);
   }
@@ -397,7 +343,6 @@ export class AgencyPackageService implements IAgencyPackageService {
     );
     if (!transportation) return null;
     const updated = pkg.update({ status });
-    console.log(updated, 'updateeddd paackage status');
     const updatedPackage = await this._agencyPackageRepo.update(id, updated);
     if (!updatedPackage) return null;
     return PackageMapper.toPackageDto(updatedPackage, transportation);

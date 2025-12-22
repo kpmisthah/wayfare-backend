@@ -13,16 +13,12 @@ export class AuthRepository implements IAuthRepository {
     data: { password: string },
   ): Promise<UserEntity | null> {
     try {
-      console.log(email, 'email in reset password repo');
-      console.log(data.password, 'in password repo');
-
       const resetPassword = await this._prisma.user.update({
         where: { email },
         data,
       });
       return UserMapper.toDomain(resetPassword);
     } catch (error) {
-      console.log(error);
       return null;
     }
   }
@@ -31,7 +27,6 @@ export class AuthRepository implements IAuthRepository {
       where: { id: userId },
       data: { refreshToken: null },
     });
-    console.log(d, 'ddddd');
     return UserMapper.toDomain(d);
   }
 }

@@ -31,7 +31,6 @@ export class PaymentController {
   async paymentVerification(
     @Param('id') id: string,
   ): Promise<{ status: PaymentStatus } | null> {
-    console.log(id, 'id');
     return await this._bookingUsecase.paymentVerification(id);
   }
 
@@ -40,7 +39,6 @@ export class PaymentController {
   async request(
     @Body() dto: PayoutRequestDto,
   ): Promise<PayoutRequestDto | null> {
-    console.log(dto, 'dtoo');
     return this._payoutRequestUsecase.execute(dto);
   }
 }

@@ -62,7 +62,7 @@ export class AuthService implements IAuthUsecase {
 
     @Inject('INodemailerService')
     private readonly _nodemailerService: NodemailerService,
-  ) {}
+  ) { }
 
   async signUp(signupDto: SignupDto) {
     try {
@@ -206,7 +206,6 @@ export class AuthService implements IAuthUsecase {
 
   async forgotPassword(forgotPassword: ForgotPasswordDto) {
     const user = await this._userUsecase.findByEmail(forgotPassword.email);
-    console.log(forgotPassword, 'in auth service of forgot password');
     if (!user) {
       throw new BadRequestException('This email does not exist');
     }
@@ -216,7 +215,6 @@ export class AuthService implements IAuthUsecase {
 
   async verifyForgotPassword(verifyForgotPassword: VerifyForgotPasswordDto) {
     try {
-      console.log(verifyForgotPassword, 'Verify forgot password dtooooo');
       const key = `forgot:${verifyForgotPassword.email}`;
       const data = await this._redisService.get(key);
       if (!data) throw new BadRequestException('OTP expired or not found');
@@ -226,7 +224,6 @@ export class AuthService implements IAuthUsecase {
       }
       return { message: 'Reset password page loaded successfully' };
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }
@@ -243,7 +240,6 @@ export class AuthService implements IAuthUsecase {
         'Password reset not allowed for this account',
       );
     }
-    console.log(resetPassword, 'password resett');
     const hashedPassword = await this.hash(resetPassword.password);
     await this._authRepo.resetPassword(resetPassword.email, {
       password: hashedPassword,
@@ -273,11 +269,9 @@ export class AuthService implements IAuthUsecase {
 
   async signIn(loginDto: LoginDto) {
     try {
-      console.log(loginDto, 'loginDto');
       const userWithPassword = await this._userUsecase.findByEmail(
         loginDto.email,
       );
-      console.log(userWithPassword, 'userWithPassword');
       if (!userWithPassword) {
         throw new BadRequestException('User does not exist');
       }
@@ -288,7 +282,6 @@ export class AuthService implements IAuthUsecase {
         userWithPassword.password,
         loginDto.password,
       );
-      console.log(isMatch, 'matching password');
 
       if (!isMatch) {
         throw new BadRequestException('Password is incorrect');
@@ -300,7 +293,6 @@ export class AuthService implements IAuthUsecase {
       );
       if (!tokens) throw new BadRequestException('Token not found');
       await this.updateRefreshToken(userWithPassword.id, tokens?.refreshToken);
-      // Return AuthUserDto (no password) instead of UserEntity
       return {
         user: {
           id: userWithPassword.id,
@@ -317,7 +309,6 @@ export class AuthService implements IAuthUsecase {
         refreshToken: tokens.refreshToken,
       };
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }
@@ -325,7 +316,6 @@ export class AuthService implements IAuthUsecase {
   async logout(userId: string): Promise<{ success: StatusCode; role: Role }> {
     try {
       const user = await this._authRepo.logout(userId);
-      console.log(user, 'in logout');
       return { success: StatusCode.SUCCESS, role: user.role };
     } catch (err) {
       console.error('Logout service failed:', err);
@@ -340,18 +330,10 @@ export class AuthService implements IAuthUsecase {
       throw new ForbiddenException('Access Denied');
     }
 
-    console.log(
-      '__________USER token',
-      user.refreshToken,
-      'another',
-      refreshToken,
-    );
-
     const refreshTokenMatches = await this._argonService.comparePassword(
       user.refreshToken,
       refreshToken,
     );
-    console.log(refreshTokenMatches, 'refreshokenMatches');
 
     if (!refreshTokenMatches) {
       throw new ForbiddenException('Access Denied');
@@ -408,7 +390,6 @@ export class AuthService implements IAuthUsecase {
     changePasswordDto: ChangePassword,
   ): Promise<{ message: string }> {
     const user = await this._userRepo.findById(userId);
-    console.log(user);
 
     if (!user) {
       throw new BadRequestException('User not found');
@@ -417,7 +398,6 @@ export class AuthService implements IAuthUsecase {
       user.password,
       changePasswordDto.oldPassword,
     );
-    console.log(isOldPasswordMatch, 'oldmatch');
 
     if (!isOldPasswordMatch) {
       throw new BadRequestException('Old password is incorrect');
@@ -426,7 +406,6 @@ export class AuthService implements IAuthUsecase {
     const userEntity = user.update({
       password: hashedNewPassword,
     });
-    console.log(userEntity, 'user entity');
     await this._userUsecase.update(userId, userEntity);
     return { message: 'Password changed successfully' };
   }

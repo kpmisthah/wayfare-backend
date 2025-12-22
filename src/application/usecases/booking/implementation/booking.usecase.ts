@@ -128,22 +128,18 @@ export class BookingUseCase implements IBookingUseCase {
     const agency = await this._agencyRepo.findByUserId(userId);
     if (!agency) return null;
     const bookings = await this._bookingRepo.fetchBookingDetails(agency.id);
-    console.log(bookings, 'bookings in booking.usecase');
     const userEntity = await Promise.all(
       bookings.map((booking) => this._userRepo.findById(booking.userId)),
     );
-    console.log(userEntity, 'in booking.usecase');
     const filteredBooking = bookings.filter(
       (booking) => booking.agencyId != null,
     );
-    console.log(filteredBooking);
 
     const packageEntity = await Promise.all(
       filteredBooking.map((booking) =>
         this._packageRepo.findBookedPackage(booking.agencyId),
       ),
     );
-    console.log(packageEntity, 'in booking.usecase');
 
     return BookingMapper.toFetchBookingsDto(
       bookings,
@@ -164,17 +160,6 @@ export class BookingUseCase implements IBookingUseCase {
     page: number;
     total: number;
   }> {
-    console.log(
-      page,
-      'pageee',
-      limit,
-      'limitttt',
-      search,
-      'searchhh',
-      status,
-      'statuss',
-    );
-
     const result = await this._bookingRepo.findByUserId(userId, {
       search,
       status,
@@ -201,12 +186,10 @@ export class BookingUseCase implements IBookingUseCase {
         return Promise.resolve(null);
       }),
     );
-    console.log(agencies, 'agenciesin userbookingss');
     const filteredAgencies = agencies.filter(
       (agency) => agency !== null && agency !== undefined,
     );
 
-    console.log(filteredAgencies, 'filtered agenciesin userbookingss');
     const agencyUsers = await Promise.all(
       agencies.map((agency) => {
         if (agency) {
@@ -215,18 +198,15 @@ export class BookingUseCase implements IBookingUseCase {
         return Promise.resolve(null);
       }),
     );
-    console.log(agencyUsers, 'agency usersin userbookingss');
     const filteredAgencyUsers = agencyUsers.filter(
       (user) => user !== null && user !== undefined,
     );
-    console.log(filteredAgencyUsers, 'filtered agency usersin userbookingss');
     const mapped = BookingMapper.toFetchUserBookingsDto(
       paginatedBookings,
       packages,
       filteredAgencyUsers,
       filteredAgencies,
     );
-    console.log(mapped, 'mapped in usecase');
     return {
       data: mapped,
       totalPages,
@@ -329,9 +309,6 @@ export class BookingUseCase implements IBookingUseCase {
     agencyId: string,
     status: BookingStatus,
   ) {
-    console.log(agencyId, 'agencyId');
-    console.log(bookingId, 'bookingId');
-
     const updatedBooking = await this._bookingRepo.updateStatus(
       bookingId,
       status,
@@ -361,8 +338,6 @@ export class BookingUseCase implements IBookingUseCase {
 
   async paymentVerification(bookingId: string) {
     const transaction = await this._transactionRepo.findByBookingId(bookingId);
-    console.log('Reached Payment Controller at:', new Date().toISOString());
-    console.log(transaction, '-----trnasaction----');
     if (!transaction) return null;
     return {
       status: transaction.status,
@@ -372,7 +347,6 @@ export class BookingUseCase implements IBookingUseCase {
   async getUserBookingDetails(id: string): Promise<BookingResponseDto | null> {
     const getBookingDetails =
       await this._bookingRepo.fetchUserBookingDetails(id);
-    console.log(getBookingDetails, 'getBookingdetailss');
     if (!getBookingDetails) {
       return null;
     }

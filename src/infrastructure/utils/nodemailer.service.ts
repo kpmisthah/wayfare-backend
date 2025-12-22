@@ -32,8 +32,6 @@ export class NodemailerService implements INodeMailerService {
       });
       return otp;
     } catch (error) {
-      console.log(error);
-
       throw new Error('Failed to send OTP via email');
     }
   }
@@ -60,7 +58,6 @@ export class NodemailerService implements INodeMailerService {
       });
       return otp;
     } catch (error) {
-      console.log(error);
       throw new Error('Failed to send forgot password OTP');
     }
   }

@@ -23,15 +23,6 @@ export class SaveTrip implements ISaveTrip {
       interests?: string[];
     },
   ): Promise<TripDto> {
-    console.log(
-      startDate,
-      'startDate in savetrip and',
-      visibility,
-      'in savTripp',
-      preferences,
-      'preferences received',
-    );
-
     const createAiTrip = AiTripEntity.create({
       userId,
       duration: response.duration,
@@ -44,7 +35,6 @@ export class SaveTrip implements ISaveTrip {
       visibility,
       preferences: preferences || null,
     });
-    console.log(createAiTrip, 'entity aftrer creatrign');
 
     const aiTripPlan = await this._tripRepo.createAiTrip(createAiTrip);
     return TripMapper.toTripDto(aiTripPlan);

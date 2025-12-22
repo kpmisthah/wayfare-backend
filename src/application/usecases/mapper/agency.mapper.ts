@@ -9,9 +9,7 @@ import { TransportationEntity } from '../../../domain/entities/transportation.en
 import { UserEntity } from '../../../domain/entities/user.entity';
 
 export class AgencyMapper {
-  /**
-   * Converts AgencyEntity to AgencyInternalDto for internal use cases.
-   */
+
   static toAgencyInternalDto(agencyEntity: AgencyEntity): AgencyInternalDto {
     return {
       id: agencyEntity.id,
@@ -72,7 +70,6 @@ export class AgencyMapper {
       ownerName: agencyEntity?.ownerName ?? '',
       websiteUrl: agencyEntity?.websiteUrl ?? '',
       description: agencyEntity?.description ?? '',
-      // transportationId:agencyEntity?.transactionId,
       reason: agencyEntity?.reason ?? '',
       user: {
         id: userEntity.id,
@@ -99,12 +96,7 @@ export class AgencyMapper {
     itineraryEntity: (ItineraryEntity | null)[],
     transportationEntity?: TransportationEntity,
   ): PackageDto {
-    console.log(packageEntity, 'in application mapper');
-    console.log(itineraryEntity, 'in package');
-    console.log(transportationEntity, 'transportation in app mapper');
-
     const validation = itineraryEntity.filter((it) => it != null);
-    console.log(validation, 'validaationnn');
 
     return {
       id: packageEntity.id,
@@ -128,20 +120,6 @@ export class AgencyMapper {
       details: transportationEntity?.details ?? '',
     };
   }
-  // static toListPackages(
-  //   packageEntity: PackageEntity[],
-  //   itineraryEntity: (ItineraryEntity[] | null)[],
-  // ): PackageDto[] {
-  //   return packageEntity.map((pkg,index) => {
-  //     const itnForPackage = itineraryEntity[index] ?? []
-  //     return AgencyMapper.toPackageDto(
-  //       pkg,
-  //       itnForPackage ?? [],
-  //       // pkg.transportation ?? undefined,
-  //     );
-  //   });
-  // }
-
   static toManyPackages(
     packageEntity: PackageEntity[],
     itineraryEntity: ItineraryEntity[],
@@ -173,12 +151,10 @@ export class AgencyMapper {
       return AgencyMapper.toPackageDto(
         pkg,
         itnForPackage ?? [],
-        // pkg.transportation ?? undefined,
       );
     });
   }
   static toAgency(domain: AgencyEntity, user: UserEntity) {
-    console.log(user);
     return {
       id: domain.id,
       address: domain.address ?? '',

@@ -15,7 +15,6 @@ export class AgencyProfileRepository implements IAgencyProfileRepository {
       where: { userId: agencyId },
       data: AgencyMapper.toPrisma(updateAgencyProfile),
     });
-    console.log(agencyProfileUpdate, 'in agency-profile-repo');
 
     if (!agencyProfileUpdate) {
       return null;

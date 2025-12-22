@@ -30,9 +30,6 @@ export class WalletPaymentStatus implements IWalletPaymentStatus {
           updateWalletTransaction,
         );
       }
-      console.log(
-        `Auto release: Booking ${booking.id}, credited: ${txn.amount}`,
-      );
     }
   }
 }

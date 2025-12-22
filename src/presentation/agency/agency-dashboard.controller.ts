@@ -16,10 +16,8 @@ export class AgencyDashboardController {
 
   @Get()
   async getDashboardData(@Req() req: RequestWithUser) {
-    console.log('[AgencyDashboardController] GET /agency/dashboard called');
     try {
       const userId = req.user['userId'];
-      console.log(`[AgencyDashboardController] User ID from token: ${userId}`);
 
       if (!userId) {
         console.error(

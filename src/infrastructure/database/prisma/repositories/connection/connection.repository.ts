@@ -36,7 +36,6 @@ export class ConnectionRepository
       },
       orderBy: { createdAt: 'desc' },
     });
-    console.log(getConnection, 'getConnnection in connectionRepo');
     return ConnectionMapper.toConnectDomains(getConnection);
   }
   async findAcceptedConnections(userId: string): Promise<AcceptedConnection[]> {
@@ -50,12 +49,10 @@ export class ConnectionRepository
         receiver: { select: { id: true, name: true, profileImage: true } },
       },
     });
-    console.log(connections, 'connectionsssss');
     const conversations = await this._prisma.conversation.findMany({
       where: { participants: { some: { userId } } },
       include: { participants: true },
     });
-    console.log(conversations, 'cnverdsattionnnssss in repo');
 
     const result = connections.map((conn) => {
       const otherUser = conn.senderId === userId ? conn.receiver : conn.sender;
@@ -72,7 +69,6 @@ export class ConnectionRepository
         type: 'direct',
       };
     });
-    console.log(result, 'in resulttt');
 
     return result;
   }

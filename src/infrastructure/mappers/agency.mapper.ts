@@ -1,9 +1,6 @@
 import { Agency, Prisma } from '@prisma/client';
 import { AgencyEntity } from '../../domain/entities/agency.entity';
 
-/**
- * Type for Agency with optional user relation
- */
 type AgencyWithUser = Agency & {
   user?: {
     bannerImage: string | null;
@@ -17,10 +14,6 @@ export class AgencyMapper {
     return new AgencyEntity(
       agency.id,
       agency.description,
-      // agency.status as AgencyStatus,
-      // agency.specialization,
-      // agency.phone,
-      // agency.role as Role,
       agency.userId,
       agency.pendingPayouts,
       agency.totalEarnings,
@@ -43,10 +36,6 @@ export class AgencyMapper {
   static toPrisma(agency: AgencyEntity): Prisma.AgencyCreateInput {
     return {
       description: agency.description,
-      // status: agency.status,
-      // specialization:agency.specialization,
-      // phone:agency.phone,
-      // role:agency.role,
       pendingPayouts: agency.pendingPayouts,
       totalEarnings: agency.totalEarnings,
       address: agency.address,
@@ -69,7 +58,6 @@ export class AgencyMapper {
       include: { user: true; package: true };
     }>,
   ) {
-    console.log(a.user, 'in frompirsma');
     return {
       domain: {
         id: a.id,

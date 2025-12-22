@@ -21,12 +21,10 @@ export class UploadProfileUseCase implements IUploadProfileUseCase {
     file: Express.Multer.File,
     type: 'profile' | 'banner',
   ): Promise<string> {
-    console.log(file, 'file in service and userId', userId);
     const user = await this._userRepo.findById(userId);
     if (!user) {
       throw new Error('User not found');
     }
-    console.log(user);
 
     const imageUrl = await this._cloudinaryService.uploadImage(file);
     if (type == 'profile') {

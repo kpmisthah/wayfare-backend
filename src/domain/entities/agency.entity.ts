@@ -15,7 +15,7 @@ export class AgencyEntity {
     private readonly _reason?: string | null,
     private readonly _bannerImage?: string | null,
     private readonly _profileImage?: string | null,
-  ) {}
+  ) { }
 
   static create(props: {
     description: string;
@@ -31,17 +31,9 @@ export class AgencyEntity {
     if (!props.description) {
       throw new Error('Description is mandatory');
     }
-    // if(!props.phone){
-    //     throw new Error("Phone number is mandatory")
-    // }
     return new AgencyEntity(
       '',
       props.description,
-      // props.status,
-      // props.specialization,
-      // props.phone,
-      // props.role,
-      // AgencyStatus.ACTIVE,
       props.userId,
       props.pendingPayouts,
       props.totalEarnings,
@@ -57,14 +49,9 @@ export class AgencyEntity {
     status?: AgencyStatus;
     reason?: string | null;
   }) {
-    console.log(props.reason, 'reaaspm');
     return new AgencyEntity(
       this._id,
       this._description,
-      // props.status,
-      // this._specialization,
-      // this._phone,
-      // this._role,
       this._userId,
       this._pendingPayouts,
       this._totalEarnings,
@@ -88,10 +75,6 @@ export class AgencyEntity {
     return new AgencyEntity(
       this._id,
       props.description ?? this._description,
-      // this._status,
-      //    props.specialization ?? this._specialization,
-      //    props.phone ?? this._phone,
-      //    this._role,
       this._userId,
       this._pendingPayouts,
       this._totalEarnings,
@@ -109,24 +92,12 @@ export class AgencyEntity {
   get description() {
     return this._description;
   }
-  // get status() {
-  //   return this._status;
-  // }
-  // get specialization(){
-  //     return this._specialization
-  // }
-  // get phone(){
-  //     return this._phone
-  // }
   get pendingPayouts() {
     return this._pendingPayouts;
   }
   get totalEarnings() {
     return this._totalEarnings;
   }
-  // get role(){
-  //     return this._role
-  // }
 
   get transactionId() {
     return this._transactionId;

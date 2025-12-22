@@ -25,15 +25,12 @@ export class UserService implements IUserUsecase {
       isVerified: false,
       phone: createUserDto.phone ?? '',
     });
-    console.log(userEntity, 'in user.service.ts');
 
     const user = await this._userRepo.create(userEntity);
-    console.log(user, 'in user service after create repo gooys');
 
     if (!user) {
       throw new Error('User not found');
     }
-    console.log(user, 'in user service');
 
     return UserMapper.toSafeUserDto(user);
   }
@@ -70,7 +67,6 @@ export class UserService implements IUserUsecase {
 
   async findById(id: string): Promise<SafeUser | null> {
     const user = await this._userRepo.findById(id);
-    console.log(user, 'user frmo id');
 
     if (!user) return null;
     return UserMapper.toSafeUserDto(user);
@@ -80,7 +76,6 @@ export class UserService implements IUserUsecase {
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<SafeUser | null> {
-    console.log(updateUserDto, 'update dto in usecase');
     const updateUserEntity = await this._userRepo.findById(id);
     if (!updateUserEntity) return null;
     const userUpdate = updateUserEntity.update({
@@ -91,7 +86,6 @@ export class UserService implements IUserUsecase {
       isBlock: updateUserDto.isBlock,
     });
     const user = await this._userRepo.update(id, userUpdate);
-    console.log(user, 'updated user in usecase');
     if (!user) return null;
     return UserMapper.toSafeUserDto(user);
   }

@@ -26,10 +26,8 @@ export class CreatePayoutRequestUsecase implements ICreatePayoutRequestUsecase {
       agencyId: dto.agencyId,
       amount: dto.amount,
     });
-    console.log(entity, 'enitututut');
 
     const result = await this._payoutRepo.create(entity);
-    console.log(result, 'resulttt');
     if (!result) return null;
     return PayoutRequestMapper.toDto(result);
   }
@@ -49,14 +47,9 @@ export class CreatePayoutRequestUsecase implements ICreatePayoutRequestUsecase {
     status: PayoutStatus,
   ): Promise<ResponseDto | null> {
     const payoutRequest = await this._payoutRepo.findById(id);
-    console.log(payoutRequest, 'payoutreq');
     if (!payoutRequest) return null;
 
     if (status === PayoutStatus.APPROVED) {
-      console.log(
-        `Deducting ${payoutRequest.amount} from agency ${payoutRequest.agencyId}`,
-      );
-
       const deductResult = await this._walletUseCase.deductAgency(
         payoutRequest.agencyId,
         payoutRequest.amount,
@@ -67,12 +60,9 @@ export class CreatePayoutRequestUsecase implements ICreatePayoutRequestUsecase {
       if (!deductResult || deductResult.status !== StatusCode.SUCCESS) {
         throw new Error('Failed to deduct amount from agency wallet');
       }
-
-      console.log('Amount deducted successfully from agency wallet');
     }
 
     const updatePayoutRequest = payoutRequest.update({ status });
-    console.log(updatePayoutRequest, 'updated');
 
     await this._payoutRepo.update(payoutRequest.id, updatePayoutRequest);
 
@@ -92,7 +82,6 @@ export class CreatePayoutRequestUsecase implements ICreatePayoutRequestUsecase {
     });
 
     await this._payoutRepo.update(id, udpatePayout);
-    console.log(udpatePayout, 'payout rejected');
 
     return {
       code: StatusCode.SUCCESS,

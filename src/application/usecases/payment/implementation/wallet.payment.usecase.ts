@@ -33,11 +33,9 @@ export class WalletPaymentUsecase implements IPayment {
 
   async payment(booking: CreateBookingDto, agencyId: string) {
     const bookingEntity = await this._bookingRepo.findById(booking.id);
-    console.log(booking, 'booking');
 
     if (!bookingEntity) throw new Error('Bookings  not found');
     let wallet = await this._walletRepo.findByUserId(bookingEntity.userId);
-    console.log(wallet, 'wallettt');
 
     if (!wallet) {
       const newWallet = WalletEntity.create({
@@ -50,9 +48,7 @@ export class WalletPaymentUsecase implements IPayment {
       wallet = createWallet;
     }
     const updateWallet = wallet.debit(booking.totalAmount);
-    console.log(updateWallet, 'updateWallet heee');
     const c = await this._walletRepo.update(wallet.id, updateWallet);
-    console.log(c, 'walletrepo update');
 
     const walletTransactionEntity = WalletTransactionEntity.create({
       walletId: wallet.id,
@@ -70,7 +66,6 @@ export class WalletPaymentUsecase implements IPayment {
     await this._bookingRepo.update(bookingEntity.id, updatedBooking);
 
     const w = await this._walletTransactionRepo.create(walletTransactionEntity);
-    console.log(w, 'walletTransaction Entity');
     const agencyWalletStatus = bookingEntity.getAgencyCreditStatus();
     const d = await this._walletUseCase.creditAgency(
       agencyId,
@@ -78,13 +73,11 @@ export class WalletPaymentUsecase implements IPayment {
       agencyWalletStatus,
       bookingEntity.id,
     );
-    console.log(d, 'credit agency in wallet paymebt');
 
     const z = await this._walletUseCase.creditAdmin(
       bookingEntity.platformEarning,
       bookingEntity.id,
     );
-    console.log(z, 'credit admin in walllet paybment');
 
     return {};
   }

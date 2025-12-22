@@ -16,14 +16,8 @@ export class TravellersController {
     @Req() req: RequestWithUser,
     @Query('destination') destination: string,
   ) {
-    console.log('Insidee fetchTravelllersss');
     const userId = req.user['userId'];
-    const t = await this._travellersUsecase.fetchTravellers(
-      destination,
-      userId,
-    );
-    console.log(t, 'from ttt');
-    return t;
+    return await this._travellersUsecase.fetchTravellers(destination, userId);
   }
 
   @Get()

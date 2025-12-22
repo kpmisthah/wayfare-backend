@@ -10,8 +10,7 @@ import { BookingStatus } from '../../../../../domain/enums/booking-status.enum';
 @Injectable()
 export class BookingRepository
   extends BaseRepository<BookingEntity>
-  implements IBookingRepository
-{
+  implements IBookingRepository {
   constructor(private _prisma: PrismaService) {
     super(_prisma.booking, BookingMapper);
   }
@@ -60,22 +59,16 @@ export class BookingRepository
   }
 
   async fetchBookingDetails(agencyId: string): Promise<BookingEntity[]> {
-    console.log(agencyId, 'agencyId in booking repo');
     const fetchBooking = await this._prisma.booking.findMany({
       where: { agencyId },
       include: {
         package: true,
       },
     });
-    console.log(fetchBooking, 'fetchBooking in booking repo');
 
     return BookingMapper.toDomains(fetchBooking);
   }
-  // findByPaymentIntentId(
-  //   paymentIntentId: string,
-  // ): Promise<BookingEntity | null> {
-  //   throw new Error('Method not implemented.');
-  // }
+
   async updateStatus(
     bookingId: string,
     status: BookingStatus,

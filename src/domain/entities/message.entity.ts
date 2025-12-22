@@ -3,10 +3,10 @@ export class MessageEntity {
     private readonly _id: string,
     private readonly _senderId: string,
     private readonly _content: string,
-    private readonly _conversationId: string | null, // null for group messages
-    private readonly _groupId: string | null, // null for 1-on-1 messages
+    private readonly _conversationId: string | null,
+    private readonly _groupId: string | null,
     private readonly _createdAt?: string,
-  ) {}
+  ) { }
   static create(props: {
     conversationId: string;
     senderId: string;
@@ -33,7 +33,7 @@ export class MessageEntity {
       '',
       props.senderId,
       props.content,
-      null, // conversationId = null
+      null,
       props.groupId,
       props.createdAt,
     );
