@@ -62,7 +62,7 @@ export class AgencyController {
     private readonly _walletUseCase: IWalletUseCase,
     @Inject('ICreatePayoutRequestUsecase')
     private readonly _payoutUsecase: ICreatePayoutRequestUsecase,
-  ) {}
+  ) { }
   @Post('/agency-profile')
   async createAgencyProfile(
     @Body() createAgencyDto: CreateAgencyDto,

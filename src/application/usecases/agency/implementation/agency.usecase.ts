@@ -25,7 +25,7 @@ export class AgencyService implements IAgencyService {
     private readonly _emailService: IOtpService,
     @Inject('IUserService')
     private readonly _userService: IUserUsecase,
-    @Inject('IUserRepository')
+    @Inject('IUserRepository') 
     private readonly _userRepo: IUserRepository,
     @Inject('IIteneraryRepository')
     private readonly _IteneraryRepo: IItineraryRepository,

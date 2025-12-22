@@ -44,9 +44,16 @@ async function bootstrap() {
     app.use(cookieParser());
 
     app.enableCors({
-      origin: ['https://wayfare.misthah.site'],
+      origin: [
+        'https://wayfare.misthah.site',
+        'https://api.misthah.site',
+        'https://misthah.site',
+        /\.misthah\.site$/,  // Allow all subdomains
+      ],
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With'],
+      exposedHeaders: ['Set-Cookie'],
     });
     app.useGlobalPipes(new ValidationPipe());
     await app.listen(3000, '0.0.0.0');
