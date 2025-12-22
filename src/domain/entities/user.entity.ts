@@ -15,7 +15,6 @@ export class UserEntity {
     private readonly _bannerImage?: string,
     private readonly _refreshToken?: string,
   ) {
-    // if (!email.includes('@')) throw new Error('Invalid Email');
   }
 
   static create(props: {
@@ -44,9 +43,9 @@ export class UserEntity {
       props.isVerified ?? false,
       null,
       props.phone ?? '',
+      '',
+      '',
       props.refreshToken,
-      '',
-      '',
     );
   }
 
