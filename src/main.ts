@@ -41,13 +41,29 @@ async function bootstrap() {
     app.useGlobalFilters(new UnauthorizedExceptionFilter());
     app.use(helmet());
 
+    app.use((req: Request, res: Response, next) => {
+      res.setHeader(
+        'Cache-Control',
+        'no-store, no-cache, must-revalidate, proxy-revalidate',
+      );
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      res.setHeader('Surrogate-Control', 'no-store');
+      next();
+    });
+
     app.use(cookieParser());
 
     app.enableCors({
       origin: 'https://wayfare.misthah.site',
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-      allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With'],
+      allowedHeaders: [
+        'Content-Type',
+        'Authorization',
+        'Cookie',
+        'X-Requested-With',
+      ],
       exposedHeaders: ['Set-Cookie'],
     });
     app.useGlobalPipes(new ValidationPipe());
