@@ -26,7 +26,7 @@ export class WalletPaymentUsecase implements IPayment {
     private readonly _bookingRepo: IBookingRepository,
     @Inject('IWalletUseCase')
     private readonly _walletUseCase: IWalletUseCase,
-  ) {}
+  ) { }
   supports(type: string): boolean {
     return type == 'wallet';
   }
@@ -79,6 +79,6 @@ export class WalletPaymentUsecase implements IPayment {
       bookingEntity.id,
     );
 
-    return {};
+    return { success: true, checkoutUrl: '' };
   }
 }
