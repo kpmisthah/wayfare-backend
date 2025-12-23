@@ -9,8 +9,7 @@ import { Prisma } from '@prisma/client';
 @Injectable()
 export class AgencyPackageRepository
   extends BaseRepository<PackageEntity>
-  implements IAgencyPackageRepository
-{
+  implements IAgencyPackageRepository {
   constructor(private readonly _prisma: PrismaService) {
     super(_prisma.package, PackageMapper);
   }
@@ -98,9 +97,14 @@ export class AgencyPackageRepository
     minBudget: number,
     maxBudget: number,
   ): Promise<PackageEntity[]> {
+    const mainDestination = destination.split(',')[0].trim();
+
     const filterPackages = await this._prisma.package.findMany({
       where: {
-        destination,
+        destination: {
+          contains: mainDestination,
+          mode: 'insensitive',
+        },
         duration,
         price: {
           lte: maxBudget,
