@@ -124,7 +124,6 @@ export class WalletUsecase implements IWalletUseCase {
 
     const wallet = await this._walletRepo.findByUserId(agencyUser.userId);
 
-    // Check if wallet has sufficient balance before deducting
     if (wallet.balance < deductAmount) {
       return { status: StatusCode.BAD_REQUEST };
     }
