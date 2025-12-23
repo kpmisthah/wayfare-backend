@@ -20,4 +20,8 @@ export interface IWalletTransactionRepository
     limit: number,
   ): Promise<unknown>;
   findByBookingId(bookingId: string): Promise<WalletTransactionEntity | null>;
+  findAgencyCreditByBookingId(
+    bookingId: string,
+    agencyId: string,
+  ): Promise<WalletTransactionEntity | null>;
 }

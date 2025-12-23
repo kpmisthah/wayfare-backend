@@ -59,7 +59,7 @@ export class BookingUseCase implements IBookingUseCase {
     private readonly _walletTransactionRepo: IWalletTransactionRepository,
     @Inject(ADMIN_TYPE.IAdminRepository)
     private readonly _adminRepo: IAdminRepository,
-  ) {}
+  ) { }
   @UseGuards(AccessTokenGuard)
   async createBooking(
     createBookingDto: BookingDto,
@@ -246,6 +246,13 @@ export class BookingUseCase implements IBookingUseCase {
       refundPercentage,
     });
 
+
+    const agencyCreditTxn =
+      await this._walletTransactionRepo.findAgencyCreditByBookingId(
+        bookingEntity.id,
+        bookingEntity.agencyId,
+      );
+
     if (refundPercentage > 0) {
       const refundAmount = (bookingEntity.totalAmount * refundPercentage) / 100;
 
@@ -275,12 +282,47 @@ export class BookingUseCase implements IBookingUseCase {
         existingWallet = newWallet;
       }
 
-      await this._walletUsecase.deductAgency(
-        bookingEntity.agencyId,
-        refundAmount,
-        PaymentStatus.SUCCEEDED,
-        bookingEntity.id,
-      );
+
+      if (
+        agencyCreditTxn &&
+        agencyCreditTxn.paymentStatus === PaymentStatus.PENDING
+      ) {
+        this._logger.log('Agency credit is still PENDING, adjusting pending transaction', {
+          bookingId: id,
+          agencyId: bookingEntity.agencyId,
+          originalAmount: agencyCreditTxn.amount,
+          refundAmount,
+        });
+
+        const remainingAmount = agencyCreditTxn.amount - refundAmount;
+
+        if (remainingAmount <= 0) {
+          const updatedTxn = agencyCreditTxn.updateWalletTransaction({
+            status: PaymentStatus.REFUNDED,
+            deductAmount: agencyCreditTxn.amount,
+          });
+          await this._walletTransactionRepo.update(agencyCreditTxn.id, updatedTxn);
+        } else {
+          const updatedTxn = agencyCreditTxn.updateWalletTransaction({
+            status: PaymentStatus.PENDING,
+            deductAmount: refundAmount,
+          });
+          await this._walletTransactionRepo.update(agencyCreditTxn.id, updatedTxn);
+        }
+      } else {
+        this._logger.log('Agency credit is SUCCEEDED, deducting from current balance', {
+          bookingId: id,
+          agencyId: bookingEntity.agencyId,
+          refundAmount,
+        });
+
+        await this._walletUsecase.deductAgency(
+          bookingEntity.agencyId,
+          refundAmount,
+          PaymentStatus.SUCCEEDED,
+          bookingEntity.id,
+        );
+      }
 
       const walletTransactionEntity = WalletTransactionEntity.create({
         walletId: existingWallet?.id ?? '',
@@ -299,6 +341,21 @@ export class BookingUseCase implements IBookingUseCase {
         userId: bookingEntity.userId,
         refundAmount,
       });
+    } else {
+      if (
+        agencyCreditTxn &&
+        agencyCreditTxn.paymentStatus === PaymentStatus.PENDING
+      ) {
+        this._logger.log('No refund but marking pending transaction as SUCCEEDED', {
+          bookingId: id,
+          agencyId: bookingEntity.agencyId,
+        });
+
+        const updatedTxn = agencyCreditTxn.updateWalletTransaction({
+          status: PaymentStatus.SUCCEEDED,
+        });
+        await this._walletTransactionRepo.update(agencyCreditTxn.id, updatedTxn);
+      }
     }
 
     return BookingMapper.toUpdateBookingStatus(update);

@@ -9,8 +9,7 @@ import { PaymentStatus } from '../../../../../domain/enums/payment-status.enum';
 @Injectable()
 export class WalletTransactionRepository
   extends BaseRepository<WalletTransactionEntity>
-  implements IWalletTransactionRepository
-{
+  implements IWalletTransactionRepository {
   constructor(private readonly _prisma: PrismaService) {
     super(_prisma.walletTransaction, WalletTransactionMapper);
   }
@@ -23,6 +22,22 @@ export class WalletTransactionRepository
     });
     if (!walletTransaciton) return null;
     return WalletTransactionMapper.toDomain(walletTransaciton);
+  }
+
+  async findAgencyCreditByBookingId(
+    bookingId: string,
+    agencyId: string,
+  ): Promise<WalletTransactionEntity | null> {
+    const walletTransaction = await this._prisma.walletTransaction.findFirst({
+      where: {
+        bookingId,
+        agencyId,
+        type: 'CREDIT',
+        category: 'AGENCY_CREDIT',
+      },
+    });
+    if (!walletTransaction) return null;
+    return WalletTransactionMapper.toDomain(walletTransaction);
   }
   async getTransactionsByWalletId(
     walletId: string,
