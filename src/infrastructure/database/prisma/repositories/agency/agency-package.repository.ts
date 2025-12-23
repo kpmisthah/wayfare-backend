@@ -105,7 +105,10 @@ export class AgencyPackageRepository
           contains: mainDestination,
           mode: 'insensitive',
         },
-        duration,
+        duration: {
+          lte: duration,
+          gte: 1,
+        },
         price: {
           lte: maxBudget,
           gte: minBudget,
