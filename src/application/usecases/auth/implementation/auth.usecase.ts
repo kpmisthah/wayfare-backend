@@ -62,7 +62,7 @@ export class AuthService implements IAuthUsecase {
 
     @Inject('INodemailerService')
     private readonly _nodemailerService: NodemailerService,
-  ) { }
+  ) {}
 
   async signUp(signupDto: SignupDto) {
     try {
@@ -214,18 +214,14 @@ export class AuthService implements IAuthUsecase {
   }
 
   async verifyForgotPassword(verifyForgotPassword: VerifyForgotPasswordDto) {
-    try {
-      const key = `forgot:${verifyForgotPassword.email}`;
-      const data = await this._redisService.get(key);
-      if (!data) throw new BadRequestException('OTP expired or not found');
-      const { otp } = JSON.parse(data) as { otp: string };
-      if (otp !== verifyForgotPassword.otp) {
-        throw new BadRequestException('Invalid OTP');
-      }
-      return { message: 'Reset password page loaded successfully' };
-    } catch (error) {
-      throw error;
+    const key = `forgot:${verifyForgotPassword.email}`;
+    const data = await this._redisService.get(key);
+    if (!data) throw new BadRequestException('OTP expired or not found');
+    const { otp } = JSON.parse(data) as { otp: string };
+    if (otp !== verifyForgotPassword.otp) {
+      throw new BadRequestException('Invalid OTP');
     }
+    return { message: 'Reset password page loaded successfully' };
   }
 
   async resetPassword(resetPassword: ResetPasswordDto) {
@@ -268,49 +264,45 @@ export class AuthService implements IAuthUsecase {
   }
 
   async signIn(loginDto: LoginDto) {
-    try {
-      const userWithPassword = await this._userUsecase.findByEmail(
-        loginDto.email,
-      );
-      if (!userWithPassword) {
-        throw new BadRequestException('User does not exist');
-      }
-      if (userWithPassword.isBlock) {
-        throw new ForbiddenException('Your Account has been Blocked by Admin');
-      }
-      const isMatch = await this._argonService.comparePassword(
-        userWithPassword.password,
-        loginDto.password,
-      );
-
-      if (!isMatch) {
-        throw new BadRequestException('Password is incorrect');
-      }
-      const tokens = await this.jwtFactory.generateTokens(
-        userWithPassword.id,
-        userWithPassword.name,
-        userWithPassword.role,
-      );
-      if (!tokens) throw new BadRequestException('Token not found');
-      await this.updateRefreshToken(userWithPassword.id, tokens?.refreshToken);
-      return {
-        user: {
-          id: userWithPassword.id,
-          name: userWithPassword.name,
-          email: userWithPassword.email,
-          role: userWithPassword.role,
-          isVerified: userWithPassword.isVerified,
-          isBlock: userWithPassword.isBlock,
-          phone: userWithPassword.phone,
-          profileImage: userWithPassword.profileImage,
-          bannerImage: userWithPassword.bannerImage,
-        },
-        accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken,
-      };
-    } catch (error) {
-      throw error;
+    const userWithPassword = await this._userUsecase.findByEmail(
+      loginDto.email,
+    );
+    if (!userWithPassword) {
+      throw new BadRequestException('User does not exist');
     }
+    if (userWithPassword.isBlock) {
+      throw new ForbiddenException('Your Account has been Blocked by Admin');
+    }
+    const isMatch = await this._argonService.comparePassword(
+      userWithPassword.password,
+      loginDto.password,
+    );
+
+    if (!isMatch) {
+      throw new BadRequestException('Password is incorrect');
+    }
+    const tokens = await this.jwtFactory.generateTokens(
+      userWithPassword.id,
+      userWithPassword.name,
+      userWithPassword.role,
+    );
+    if (!tokens) throw new BadRequestException('Token not found');
+    await this.updateRefreshToken(userWithPassword.id, tokens?.refreshToken);
+    return {
+      user: {
+        id: userWithPassword.id,
+        name: userWithPassword.name,
+        email: userWithPassword.email,
+        role: userWithPassword.role,
+        isVerified: userWithPassword.isVerified,
+        isBlock: userWithPassword.isBlock,
+        phone: userWithPassword.phone,
+        profileImage: userWithPassword.profileImage,
+        bannerImage: userWithPassword.bannerImage,
+      },
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+    };
   }
 
   async logout(userId: string): Promise<{ success: StatusCode; role: Role }> {
@@ -375,10 +367,10 @@ export class AuthService implements IAuthUsecase {
       .cookie('accessToken', appAccessToken, {
         httpOnly: true,
         secure: true,
-        sameSite:'none' as const,
-        domain:'.wayfare.misthah.site',
+        sameSite: 'none' as const,
+        domain: '.wayfare.misthah.site',
         expires: new Date(Date.now() + Number(process.env.JWT_ACCESS_EXPIRES!)),
-        path:'/'
+        path: '/',
       })
       .cookie('refreshToken', appRefreshToken, {
         httpOnly: true,
@@ -388,7 +380,7 @@ export class AuthService implements IAuthUsecase {
         expires: new Date(
           Date.now() + Number(process.env.JWT_REFRESH_EXPIRES!),
         ),
-        path:'/'        
+        path: '/',
       })
       .redirect('http://app:3000');
   }

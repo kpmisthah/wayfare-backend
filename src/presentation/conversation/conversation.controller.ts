@@ -1,9 +1,13 @@
 import { Controller, Get, Inject, Param, UseGuards } from '@nestjs/common';
 import { IConversationUsecase } from '../../application/usecases/conversation/interfaces/conversation.interface';
 import { AccessTokenGuard } from '../../infrastructure/common/guard/accessToken.guard';
+import { RolesGuard } from '../roles/auth.guard';
+import { Roles } from '../roles/roles.decorator';
+import { Role } from '../../domain/enums/role.enum';
 
 @Controller('conversations')
-@UseGuards(AccessTokenGuard)
+@UseGuards(AccessTokenGuard, RolesGuard)
+@Roles(Role.User)
 export class ConversationController {
   constructor(
     @Inject('IConversationUseCase')

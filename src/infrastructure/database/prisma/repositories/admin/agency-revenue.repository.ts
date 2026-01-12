@@ -6,7 +6,7 @@ import { AgencyRevenueDTO } from '../../../../../application/dtos/agency-revenue
 
 @Injectable()
 export class AgenciesRevenueRepository implements IAgencyRevenueRepository {
-  constructor(private readonly _prisma: PrismaService) { }
+  constructor(private readonly _prisma: PrismaService) {}
 
   async getAgencyRevenueSummary(
     page: number,

@@ -18,9 +18,13 @@ import {
 import { AccessTokenGuard } from '../../infrastructure/common/guard/accessToken.guard';
 import { ChatGateway } from './chat.gateway';
 import { IChatRepository } from '../../domain/repositories/chat/chat.repository.interface';
+import { RolesGuard } from '../roles/auth.guard';
+import { Roles } from '../roles/roles.decorator';
+import { Role } from '../../domain/enums/role.enum';
 
 @Controller('messages')
-@UseGuards(AccessTokenGuard)
+@UseGuards(AccessTokenGuard, RolesGuard)
+@Roles(Role.User)
 export class MessageController {
   constructor(
     @Inject('IChatUsecase')
@@ -48,7 +52,6 @@ export class MessageController {
   }
   // message.controller.ts
   @Get('chats')
-  @UseGuards(AccessTokenGuard)
   async getUserChats(@Req() req: RequestWithUser) {
     const userId = req.user.userId;
 

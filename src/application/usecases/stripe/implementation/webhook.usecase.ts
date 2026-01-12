@@ -19,7 +19,7 @@ export class StripeWebhookUsecase {
     private readonly _bookingRepo: IBookingRepository,
     @Inject('IWalletUseCase')
     private readonly _walletUseCase: IWalletUseCase,
-  ) { }
+  ) {}
 
   async handle(rawBody: Buffer, sig: string, secret: string) {
     const event = this._paymentProvider.constructEvent(rawBody, sig, secret);

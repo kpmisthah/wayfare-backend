@@ -9,7 +9,6 @@ import { TransportationEntity } from '../../../domain/entities/transportation.en
 import { UserEntity } from '../../../domain/entities/user.entity';
 
 export class AgencyMapper {
-
   static toAgencyInternalDto(agencyEntity: AgencyEntity): AgencyInternalDto {
     return {
       id: agencyEntity.id,
@@ -148,10 +147,7 @@ export class AgencyMapper {
       const itnForPackage = itineraryEntity?.filter(
         (it) => it?.packageId == pkg.id,
       );
-      return AgencyMapper.toPackageDto(
-        pkg,
-        itnForPackage ?? [],
-      );
+      return AgencyMapper.toPackageDto(pkg, itnForPackage ?? []);
     });
   }
   static toAgency(domain: AgencyEntity, user: UserEntity) {

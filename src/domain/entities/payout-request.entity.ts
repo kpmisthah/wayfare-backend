@@ -1,6 +1,5 @@
 import { PayoutStatus } from '../enums/payout-status.enum';
 
-// domain/entities/payout-request.entity.ts
 export class PayoutRequestEntity {
   constructor(
     private readonly _id: string,

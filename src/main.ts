@@ -41,7 +41,7 @@ async function bootstrap() {
     app.useGlobalFilters(new UnauthorizedExceptionFilter());
     app.use(helmet());
 
-    app.use((req: Request, res: Response, next) => {
+    app.use((req: Request, res: Response, next: () => void) => {
       res.setHeader(
         'Cache-Control',
         'no-store, no-cache, must-revalidate, proxy-revalidate',

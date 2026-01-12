@@ -31,7 +31,7 @@ export class SendConnectionUseCase implements ISendConnection {
     @Inject('INotificationUsecase')
     private readonly _notificationUsecase: INotifactionUsecase,
     private readonly _chatGateway: ChatGateway,
-  ) { }
+  ) {}
 
   async execute(
     senderId: string,

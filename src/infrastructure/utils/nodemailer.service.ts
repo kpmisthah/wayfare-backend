@@ -31,7 +31,7 @@ export class NodemailerService implements INodeMailerService {
         html: `<p>Your Otp is <strong>${otp}</strong></p>`,
       });
       return otp;
-    } catch (error) {
+    } catch {
       throw new Error('Failed to send OTP via email');
     }
   }
@@ -57,7 +57,7 @@ export class NodemailerService implements INodeMailerService {
       `,
       });
       return otp;
-    } catch (error) {
+    } catch {
       throw new Error('Failed to send forgot password OTP');
     }
   }

@@ -9,7 +9,8 @@ import { Prisma } from '@prisma/client';
 @Injectable()
 export class AgencyPackageRepository
   extends BaseRepository<PackageEntity>
-  implements IAgencyPackageRepository {
+  implements IAgencyPackageRepository
+{
   constructor(private readonly _prisma: PrismaService) {
     super(_prisma.package, PackageMapper);
   }

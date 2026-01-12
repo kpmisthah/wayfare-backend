@@ -12,7 +12,7 @@ export class PackageEntity {
     private readonly _status: PackageStatus,
     private readonly _price: number,
     private readonly _transportationId: string,
-  ) { }
+  ) {}
 
   static create(props: {
     agencyId: string;

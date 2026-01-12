@@ -18,7 +18,7 @@ export class AuthRepository implements IAuthRepository {
         data,
       });
       return UserMapper.toDomain(resetPassword);
-    } catch (error) {
+    } catch {
       return null;
     }
   }

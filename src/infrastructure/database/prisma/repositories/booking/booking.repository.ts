@@ -10,7 +10,8 @@ import { BookingStatus } from '../../../../../domain/enums/booking-status.enum';
 @Injectable()
 export class BookingRepository
   extends BaseRepository<BookingEntity>
-  implements IBookingRepository {
+  implements IBookingRepository
+{
   constructor(private _prisma: PrismaService) {
     super(_prisma.booking, BookingMapper);
   }

@@ -67,7 +67,7 @@ export class ProfileService implements IProfileService {
     if (!userRepoUpdate) {
       return null;
     }
-    const userRepoUpdated = await this._userRepo.update(userId, userRepoUpdate);
+    await this._userRepo.update(userId, userRepoUpdate);
     const existingProfile = await this._profileRepo.findById(userId);
     let updateProfileEntity: UserProfileEntity;
     if (existingProfile) {

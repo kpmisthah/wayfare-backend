@@ -15,7 +15,7 @@ export class AgencyEntity {
     private readonly _reason?: string | null,
     private readonly _bannerImage?: string | null,
     private readonly _profileImage?: string | null,
-  ) { }
+  ) {}
 
   static create(props: {
     description: string;

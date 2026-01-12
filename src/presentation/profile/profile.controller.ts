@@ -48,7 +48,7 @@ export class ProfileController {
     try {
       const userId = req.user['userId'];
       return await this.profileService.createProfile(userId, createProfileDto);
-    } catch (error) {
+    } catch {
       throw new InternalServerErrorException('Failed to create Profile');
     }
   }

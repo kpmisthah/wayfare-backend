@@ -25,7 +25,7 @@ export class AgencyService implements IAgencyService {
     private readonly _emailService: IOtpService,
     @Inject('IUserService')
     private readonly _userService: IUserUsecase,
-    @Inject('IUserRepository') 
+    @Inject('IUserRepository')
     private readonly _userRepo: IUserRepository,
     @Inject('IIteneraryRepository')
     private readonly _IteneraryRepo: IItineraryRepository,
@@ -66,13 +66,13 @@ export class AgencyService implements IAgencyService {
       const userUpdate = userEntity.update({ isVerified: true });
       updatedUser = await this._userRepo.update(userUpdate.id, userUpdate);
       updatedAgency = agencyEntity.updateAgency({ reason: null });
-      const u = await this._agencyRepo.update(updatedAgency.id, updatedAgency);
+      await this._agencyRepo.update(updatedAgency.id, updatedAgency);
     } else {
       const userUpdate = userEntity.update({ isVerified: false });
       updatedUser = await this._userRepo.update(userUpdate.id, userUpdate);
 
       updatedAgency = agencyEntity.updateAgency({ reason });
-      const v = await this._agencyRepo.update(updatedAgency.id, updatedAgency);
+      await this._agencyRepo.update(updatedAgency.id, updatedAgency);
     }
     return AgencyMapper.toAgencyManagement(updatedUser, updatedAgency);
   }

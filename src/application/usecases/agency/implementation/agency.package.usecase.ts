@@ -33,7 +33,7 @@ export class AgencyPackageService implements IAgencyPackageService {
     private readonly _userRepo: IUserRepository,
     @Inject('ITransportationRepository')
     private readonly _transportationRepo: ITransportationRepository,
-  ) { }
+  ) {}
   async addPackages(
     addPackageDto: PackageDto,
     userId: string,

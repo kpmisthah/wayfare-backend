@@ -25,7 +25,7 @@ export class WalletUsecase implements IWalletUseCase {
     private readonly _adminRepo: IAdminRepository,
     @Inject('IWalletTransactionRepo')
     private readonly _walletTransactionRepo: IWalletTransactionRepository,
-  ) { }
+  ) {}
   async createWallet(balance: number, userId: string): Promise<WalletDto> {
     const existingWallet = await this._walletRepo.findByUserId(userId);
 
@@ -134,7 +134,7 @@ export class WalletUsecase implements IWalletUseCase {
       const updateWalletTransaction = walletTransaction.updateWalletTransaction(
         { status, deductAmount },
       );
-      const c = await this._walletTransactionRepo.update(
+      await this._walletTransactionRepo.update(
         updateWalletTransaction.id,
         updateWalletTransaction,
       );
@@ -150,9 +150,7 @@ export class WalletUsecase implements IWalletUseCase {
         agencyId,
       });
 
-      const created = await this._walletTransactionRepo.create(
-        walletTransactionEntity,
-      );
+      await this._walletTransactionRepo.create(walletTransactionEntity);
     }
 
     const newBalance = wallet.balance - deductAmount;
@@ -161,7 +159,7 @@ export class WalletUsecase implements IWalletUseCase {
       balance: newBalance,
     });
 
-    const d = await this._walletRepo.update(wallet.id, updateWallet);
+    await this._walletRepo.update(wallet.id, updateWallet);
 
     return { status: StatusCode.SUCCESS };
   }

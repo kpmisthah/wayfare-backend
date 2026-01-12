@@ -20,7 +20,7 @@ export class AcceptConnectionUseCase implements IAcceptConnection {
     private readonly _userRepo: IUserRepository,
     @Inject('INotificationUsecase')
     private readonly _notificationUsecase: INotifactionUsecase,
-  ) { }
+  ) {}
 
   async execute(id: string) {
     const connection = await this._connectionRepo.findById(id);
@@ -38,7 +38,7 @@ export class AcceptConnectionUseCase implements IAcceptConnection {
       mappedConnection.receieverId,
     );
     if (!receiver) throw new NotFoundException('Receiver not found');
-    const n = await this._notificationUsecase.createNotification(
+    await this._notificationUsecase.createNotification(
       {
         title: 'Connection Accepted',
         message: `${receiver.name} accepted your connection request`,

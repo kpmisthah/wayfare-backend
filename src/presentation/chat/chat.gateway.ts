@@ -73,7 +73,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         (socket as AuthenticatedSocket).userId = userId;
         void socket.join(userId);
         next(); // success
-      } catch (err) {
+      } catch {
         return next(new Error('Authentication error'));
       }
     });
@@ -133,7 +133,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
   }
 
-  handleDisconnect(client: Socket) {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  handleDisconnect(_client: Socket) {}
 
   notifyConnectionRequest(
     receiverId: string,

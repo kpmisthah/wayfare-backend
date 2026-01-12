@@ -23,7 +23,7 @@ export class BookingEntity {
     private readonly _destination?: string,
     private readonly _title?: string,
     private readonly _duration?: number,
-  ) { }
+  ) {}
   static create(props: {
     packageId: string;
     userId: string;

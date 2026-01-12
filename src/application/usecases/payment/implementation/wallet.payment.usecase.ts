@@ -26,7 +26,7 @@ export class WalletPaymentUsecase implements IPayment {
     private readonly _bookingRepo: IBookingRepository,
     @Inject('IWalletUseCase')
     private readonly _walletUseCase: IWalletUseCase,
-  ) { }
+  ) {}
   supports(type: string): boolean {
     return type == 'wallet';
   }
@@ -48,7 +48,7 @@ export class WalletPaymentUsecase implements IPayment {
       wallet = createWallet;
     }
     const updateWallet = wallet.debit(booking.totalAmount);
-    const c = await this._walletRepo.update(wallet.id, updateWallet);
+    await this._walletRepo.update(wallet.id, updateWallet);
 
     const walletTransactionEntity = WalletTransactionEntity.create({
       walletId: wallet.id,
@@ -65,16 +65,16 @@ export class WalletPaymentUsecase implements IPayment {
     });
     await this._bookingRepo.update(bookingEntity.id, updatedBooking);
 
-    const w = await this._walletTransactionRepo.create(walletTransactionEntity);
+    await this._walletTransactionRepo.create(walletTransactionEntity);
     const agencyWalletStatus = bookingEntity.getAgencyCreditStatus();
-    const d = await this._walletUseCase.creditAgency(
+    await this._walletUseCase.creditAgency(
       agencyId,
       bookingEntity.agencyEarning,
       agencyWalletStatus,
       bookingEntity.id,
     );
 
-    const z = await this._walletUseCase.creditAdmin(
+    await this._walletUseCase.creditAdmin(
       bookingEntity.platformEarning,
       bookingEntity.id,
     );

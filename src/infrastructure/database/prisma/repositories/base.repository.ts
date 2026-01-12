@@ -5,7 +5,7 @@ export interface IMapper<T, U> {
   toDomain(data: unknown): T;
 }
 
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface IModel<_U = unknown> {
   create(args: any): Promise<unknown>;
 
@@ -19,7 +19,7 @@ export class BaseRepository<T, U = unknown> {
   constructor(
     protected model: IModel<U>,
     protected mapper: IMapper<T, U>,
-  ) { }
+  ) {}
   async create(entity: T): Promise<T | null> {
     const data: unknown = await this.model.create({
       data: this.mapper.toPrisma(entity),

@@ -13,9 +13,13 @@ import { IAcceptConnection } from 'src/application/usecases/connection/interface
 import { IRejectConnection } from 'src/application/usecases/connection/interfaces/reject-connection.interface';
 import { ISendConnection } from 'src/application/usecases/connection/interfaces/send-connection.interface';
 import { AccessTokenGuard } from 'src/infrastructure/common/guard/accessToken.guard';
+import { RolesGuard } from '../roles/auth.guard';
+import { Roles } from '../roles/roles.decorator';
+import { Role } from '../../domain/enums/role.enum';
 
 @Controller('connections')
-@UseGuards(AccessTokenGuard)
+@UseGuards(AccessTokenGuard, RolesGuard)
+@Roles(Role.User)
 export class ConnectionController {
   constructor(
     @Inject('ISendConnectionUseCase')

@@ -6,7 +6,7 @@ export class MessageEntity {
     private readonly _conversationId: string | null,
     private readonly _groupId: string | null,
     private readonly _createdAt?: string,
-  ) { }
+  ) {}
   static create(props: {
     conversationId: string;
     senderId: string;
