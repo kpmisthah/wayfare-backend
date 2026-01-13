@@ -49,7 +49,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     @Inject(forwardRef(() => 'IChatUsecase'))
     private readonly _chatUsecase: ChatUsecase,
-  ) {}
+  ) { }
   afterInit(server: Server) {
     server.use((socket: Socket, next) => {
       const cookies = cookie.parse(socket.handshake.headers.cookie || '');
@@ -134,7 +134,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  handleDisconnect(_client: Socket) {}
+  handleDisconnect(_client: Socket) { }
 
   notifyConnectionRequest(
     receiverId: string,
@@ -207,14 +207,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     const senderId = (client as unknown as AuthenticatedSocket).userId;
     if (!data.content?.trim()) return;
+
     // Save message
-    let savedMessage: MessageDto;
     if (data.groupId) {
-      savedMessage = await this._chatUsecase.saveGroupMessage(
+      const savedMessage = await this._chatUsecase.saveGroupMessage(
         data.groupId,
         senderId,
         data.content,
       );
+      // Emit to group room (all members are joined to this room on connect)
       this.server.to(data.groupId).emit('receiveMessage', savedMessage);
     } else if (data.conversationId) {
       const saved = await this._chatUsecase.saveMessages(
@@ -224,9 +225,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       );
 
       const messageWithStatus = { ...saved, status: 'sent' };
+
+      // Emit to conversation room for active chat
       this.server
         .to(data.conversationId)
         .emit('receiveMessage', messageWithStatus);
+
+      // Also emit to both users' personal rooms so their chat list updates
+      // This is crucial for updating the sidebar when not in the active chat
+      const participants = await this._chatUsecase.getConversationParticipants(data.conversationId);
+      participants.forEach((userId) => {
+        this.server.to(userId).emit('receiveMessage', messageWithStatus);
+      });
     }
   }
 

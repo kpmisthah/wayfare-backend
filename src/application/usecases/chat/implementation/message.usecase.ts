@@ -14,7 +14,7 @@ export class ChatUsecase implements IChatUsecase {
     private readonly _chatRepo: IChatRepository,
     @Inject(forwardRef(() => ChatGateway))
     private readonly _chatGateway: ChatGateway,
-  ) {}
+  ) { }
   async saveMessages(
     conversationId: string,
     senderId: string,
@@ -150,5 +150,9 @@ export class ChatUsecase implements IChatUsecase {
 
   async getLastSeen(userId: string): Promise<Date | null> {
     return this._chatRepo.getLastSeen(userId);
+  }
+
+  async getConversationParticipants(conversationId: string): Promise<string[]> {
+    return this._chatRepo.getConversationParticipants(conversationId);
   }
 }

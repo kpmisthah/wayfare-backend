@@ -24,4 +24,5 @@ export interface IChatUsecase {
   markChatAsRead(userId: string, chatId: string): Promise<void>;
   updateLastSeen(userId: string, date: Date): Promise<void>;
   getLastSeen(userId: string): Promise<Date | null>;
+  getConversationParticipants(conversationId: string): Promise<string[]>;
 }
