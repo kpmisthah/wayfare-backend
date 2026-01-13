@@ -9,12 +9,7 @@ import {
 } from 'class-validator';
 import { Role } from '../../domain/enums/role.enum';
 
-// Password complexity regex:
-// - At least 8 characters
-// - At least one uppercase letter
-// - At least one lowercase letter
-// - At least one number
-// - At least one special character (expanded set)
+
 const PASSWORD_REGEX =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{}|;':",.\/<>?`~]).{8,}$/;
 const PASSWORD_ERROR_MESSAGE =
