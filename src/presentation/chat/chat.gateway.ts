@@ -133,7 +133,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleDisconnect(_client: Socket) { }
 
   notifyConnectionRequest(
