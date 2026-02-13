@@ -85,7 +85,7 @@ export class AgencyEntity {
       this._transactionId,
     );
   }
-  //getters
+  
   get id() {
     return this._id;
   }
