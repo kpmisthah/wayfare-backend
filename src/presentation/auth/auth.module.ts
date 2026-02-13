@@ -34,15 +34,10 @@ import { AgencyModule } from '../agency/agency.module';
       provide: 'IUserService',
       useClass: UserService,
     },
-    // {
-    //   provide: 'IAgencyService',
-    //   useClass: AgencyService,
-    // },
     AccessTokenStrategy,
     RefreshTokenStrategy,
     AccessTokenGuard,
     RefreshTokenGuard,
-    // GoogleStrategy,
     JwtTokenFactory,
   ],
 })
