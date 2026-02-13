@@ -1,6 +1,6 @@
 import { UserEntity } from '../../entities/user.entity';
 
-// Interface for the raw booking data returned from the repository
+
 export interface RecentBookingData {
   id: string;
   totalAmount: number;
