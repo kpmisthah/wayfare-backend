@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import { UnauthorizedExceptionFilter } from './infrastructure/filters/unauthorized.filter';
+import {corsOptions} from "./infrastructure/config/cors.config"
 import { json, urlencoded, Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
 
@@ -54,18 +55,7 @@ async function bootstrap() {
 
     app.use(cookieParser());
 
-    app.enableCors({
-      origin: 'https://wayfare.misthah.site',
-      credentials: true,
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-      allowedHeaders: [
-        'Content-Type',
-        'Authorization',
-        'Cookie',
-        'X-Requested-With',
-      ],
-      exposedHeaders: ['Set-Cookie'],
-    });
+    app.enableCors(corsOptions);
     app.useGlobalPipes(new ValidationPipe());
     await app.listen(3000, '0.0.0.0');
   } catch (error) {
