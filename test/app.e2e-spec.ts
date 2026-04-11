@@ -20,4 +20,4 @@ describe('AppController (e2e)', () => {
     const server = app.getHttpServer() as Server;
     return request.default(server).get('/').expect(200).expect('Hello World!');
   });
-});
+})
